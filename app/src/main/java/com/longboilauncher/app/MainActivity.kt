@@ -25,6 +25,7 @@ import androidx.metrics.performance.JankStats
 import com.longboilauncher.app.core.common.LauncherRoleHandler
 import com.longboilauncher.app.core.common.LauncherRoleManager
 import com.longboilauncher.app.core.designsystem.theme.LongboiLauncherTheme
+import com.longboilauncher.app.core.settings.HapticFeedbackManager
 import com.longboilauncher.app.feature.allapps.AllAppsScreen
 import com.longboilauncher.app.feature.allapps.AllAppsViewModel
 import com.longboilauncher.app.feature.home.HomeEvent
@@ -39,6 +40,9 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @javax.inject.Inject
+    lateinit var hapticFeedbackManager: HapticFeedbackManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -63,7 +67,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    LauncherApp()
+                    LauncherApp(hapticFeedbackManager = hapticFeedbackManager)
                 }
             }
         }
@@ -72,6 +76,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun LauncherApp(
+    hapticFeedbackManager: HapticFeedbackManager,
     homeViewModel: HomeViewModel = hiltViewModel(),
     roleManager: LauncherRoleManager = hiltViewModel()
 ) {
@@ -107,7 +112,8 @@ fun LauncherApp(
                 homeViewModel.onEvent(HomeEvent.LaunchApp(appEntry))
                 homeViewModel.onEvent(HomeEvent.NavigateTo(LauncherSurface.HOME))
             },
-            onDismiss = { homeViewModel.onEvent(HomeEvent.NavigateTo(LauncherSurface.HOME)) }
+            onDismiss = { homeViewModel.onEvent(HomeEvent.NavigateTo(LauncherSurface.HOME)) },
+            hapticFeedbackManager = hapticFeedbackManager
         )
     }
 

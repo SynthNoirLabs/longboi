@@ -9,14 +9,23 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
+sealed class SearchResult {
+    data class AppResult(val app: AppEntry) : SearchResult()
+    data class ShortcutResult(val app: AppEntry, val shortcut: String, val shortcutId: String) : SearchResult()
+    data class CalculatorResult(val expression: String, val result: String) : SearchResult()
+    data class SettingsShortcutResult(val title: String, val key: String, val destination: String) : SearchResult()
+}
+
 data class SearchState(
     val searchQuery: String = "",
-    val searchResults: List<AppEntry> = emptyList()
+    val searchResults: List<SearchResult> = emptyList()
 )
 
 sealed class SearchEvent {
     data class UpdateSearchQuery(val query: String) : SearchEvent()
     data class LaunchApp(val app: AppEntry) : SearchEvent()
+    data class LaunchShortcut(val app: AppEntry, val shortcutId: String) : SearchEvent()
+    data class OpenSettings(val destination: String) : SearchEvent()
 }
 
 @HiltViewModel
@@ -36,28 +45,41 @@ class SearchViewModel @Inject constructor(
             _uiState.map { it.searchQuery }.distinctUntilChanged()
         ) { apps, hiddenApps, favorites, query ->
             if (query.isBlank()) {
-                emptyList()
+                emptyList<SearchResult>()
             } else {
+                val results = mutableListOf<SearchResult>()
                 val favoritePackageNames = favorites.map { it.appEntry.packageName }.toSet()
-                apps.filter { app ->
+
+                // Calculator result (highest priority if valid)
+                evaluateCalculator(query)?.let { result ->
+                    results.add(SearchResult.CalculatorResult(query, result))
+                }
+
+                // Settings shortcuts
+                results.addAll(findSettingsShortcuts(query))
+
+                // App results
+                val appResults = apps.filter { app ->
                     val isHidden = app.packageName in hiddenApps
                     val matchesQuery = matchesSearch(app, query)
                     !isHidden && matchesQuery && app.isEnabled
                 }.sortedWith(
                     compareByDescending<AppEntry> {
-                        // Exact prefix match first
                         it.label.lowercase().startsWith(query.lowercase())
                     }.thenByDescending {
-                        // Then favorites boost
                         if (it.packageName in favoritePackageNames) 1 else 0
                     }.thenByDescending {
-                        // Then fuzzy match score
                         calculateMatchScore(it.label, query)
                     }.thenBy {
-                        // Then alphabetically
                         it.label.lowercase()
                     }
-                ).take(20)
+                ).take(12)
+
+                results.addAll(appResults.map { SearchResult.AppResult(it) })
+
+                // TODO: App shortcuts (future)
+
+                results.take(20)
             }
         }.onEach { results ->
             _uiState.update { it.copy(searchResults = results) }
@@ -68,6 +90,8 @@ class SearchViewModel @Inject constructor(
         when (event) {
             is SearchEvent.UpdateSearchQuery -> _uiState.update { it.copy(searchQuery = event.query) }
             is SearchEvent.LaunchApp -> appCatalogRepository.launchApp(event.app)
+            is SearchEvent.LaunchShortcut -> appCatalogRepository.launchShortcut(event.app, event.shortcutId)
+            is SearchEvent.OpenSettings -> appCatalogRepository.openSettings(event.destination)
         }
     }
 
@@ -90,6 +114,45 @@ class SearchViewModel @Inject constructor(
         if (fuzzyMatch(lowerLabel, lowerQuery)) return true
 
         return false
+    }
+
+    private fun evaluateCalculator(query: String): String? {
+        val clean = query.trim().replace(" ", "")
+        // Simple arithmetic: +, -, *, /
+        val regex = Regex("""^(-?\d+(?:\.\d+)?)([+\-*/])(-?\d+(?:\.\d+)?)$""")
+        val match = regex.matchEntire(clean) ?: return null
+        val (a, op, b) = match.destructured
+        return try {
+            val result = when (op) {
+                "+" -> a.toDouble() + b.toDouble()
+                "-" -> a.toDouble() - b.toDouble()
+                "*" -> a.toDouble() * b.toDouble()
+                "/" -> a.toDouble() / b.toDouble()
+                else -> return null
+            }
+            if (result == result.toLong().toDouble()) {
+                result.toLong().toString()
+            } else {
+                "%.2f".format(result).trimEnd('0').trimEnd('.')
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    private fun findSettingsShortcuts(query: String): List<SearchResult.SettingsShortcutResult> {
+        val lowerQuery = query.lowercase()
+        val shortcuts = listOf(
+            SearchResult.SettingsShortcutResult("Wi-Fi", "wifi", "wifi"),
+            SearchResult.SettingsShortcutResult("Bluetooth", "bluetooth", "bluetooth"),
+            SearchResult.SettingsShortcutResult("Display", "display", "display"),
+            SearchResult.SettingsShortcutResult("Sound", "sound", "sound"),
+            SearchResult.SettingsShortcutResult("Apps", "apps", "apps"),
+            SearchResult.SettingsShortcutResult("Battery", "battery", "battery"),
+            SearchResult.SettingsShortcutResult("Storage", "storage", "storage"),
+            SearchResult.SettingsShortcutResult("Security", "security", "security")
+        )
+        return shortcuts.filter { it.title.lowercase().contains(lowerQuery) || it.key.contains(lowerQuery) }
     }
 
     private fun fuzzyMatch(text: String, query: String): Boolean {

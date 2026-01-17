@@ -2,6 +2,8 @@ package com.longboilauncher.app.core.designsystem.components
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,13 +18,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.longboilauncher.app.core.model.FavoriteEntry
+import com.longboilauncher.app.core.icons.AppIcon
 
 @Composable
 fun FavoriteAppItem(
@@ -30,17 +37,35 @@ fun FavoriteAppItem(
     modifier: Modifier = Modifier,
     isPressed: Boolean = false,
     showNotifications: Boolean = true,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    onSwipeRight: () -> Unit = {},
+    onLongClick: () -> Unit = {}
 ) {
     val scale by animateFloatAsState(
         targetValue = if (isPressed) 0.95f else 1f,
         label = "scale"
     )
+    var dragOffset by remember { mutableFloatStateOf(0f) }
 
     Card(
         modifier = modifier
             .scale(scale)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .pointerInput(Unit) {
+                detectHorizontalDragGestures(
+                    onDragEnd = {
+                        if (dragOffset > 100) {
+                            onSwipeRight()
+                        }
+                        dragOffset = 0f
+                    },
+                    onDragCancel = { dragOffset = 0f },
+                    onHorizontalDrag = { _, dragAmount ->
+                        dragOffset += dragAmount
+                    }
+                )
+            }
+            .clickable { onClick() },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
         ),

@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.longboilauncher.app.core.model.AppEntry
+import com.longboilauncher.app.core.icons.AppIcon
 
 data class AppAction(
     val icon: ImageVector,

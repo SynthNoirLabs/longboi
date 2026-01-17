@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.inject.Inject
+import android.content.pm.ShortcutInfo
 
 enum class LauncherSurface {
     HOME, ALL_APPS, SEARCH, SETTINGS
@@ -32,7 +33,9 @@ data class HomeState(
         weather = null,
         nextAlarm = null,
         nowPlaying = null
-    )
+    ),
+    val popupApp: AppEntry? = null,
+    val popupShortcuts: List<ShortcutInfo> = emptyList()
 )
 
 sealed class HomeEvent {
@@ -43,6 +46,12 @@ sealed class HomeEvent {
     data class RemoveFromFavorites(val favoriteId: String) : HomeEvent()
     data class ReorderFavorites(val favoriteIds: List<String>) : HomeEvent()
     object RefreshCatalog : HomeEvent()
+    data class ShowPopup(val app: AppEntry) : HomeEvent()
+    object HidePopup : HomeEvent()
+    data class LaunchShortcut(val app: AppEntry, val shortcutId: String) : HomeEvent()
+    object ShowAppInfo : HomeEvent()
+    object UninstallApp : HomeEvent()
+    object HideApp : HomeEvent()
 }
 
 @HiltViewModel
@@ -108,6 +117,31 @@ class HomeViewModel @Inject constructor(
                 _uiState.update { it.copy(isLoading = true) }
                 appCatalogRepository.refreshAppCatalog()
                 _uiState.update { it.copy(isLoading = false) }
+            }
+            is HomeEvent.ShowPopup -> {
+                _uiState.update { it.copy(popupApp = event.app) }
+                viewModelScope.launch {
+                    val shortcuts = appCatalogRepository.getAppShortcuts(event.app)
+                    _uiState.update { it.copy(popupShortcuts = shortcuts) }
+                }
+            }
+            HomeEvent.HidePopup -> {
+                _uiState.update { it.copy(popupApp = null, popupShortcuts = emptyList()) }
+            }
+            is HomeEvent.LaunchShortcut -> appCatalogRepository.launchShortcut(event.app, event.shortcutId)
+            HomeEvent.ShowAppInfo -> {
+                // TODO: Open app info screen
+            }
+            HomeEvent.UninstallApp -> {
+                // TODO: Start uninstall intent
+            }
+            HomeEvent.HideApp -> {
+                _uiState.value.popupApp?.let { app ->
+                    viewModelScope.launch {
+                        favoritesRepository.hideApp(app.packageName)
+                        _uiState.update { it.copy(popupApp = null, popupShortcuts = emptyList()) }
+                    }
+                }
             }
         }
     }

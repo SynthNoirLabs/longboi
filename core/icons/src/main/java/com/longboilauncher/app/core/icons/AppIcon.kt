@@ -23,8 +23,8 @@ import com.longboilauncher.app.core.model.AppEntry
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import android.graphics.drawable.BitmapDrawable
-import androidx.compose.ui.graphics.BitmapPainter
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.toArgb
 
 import android.graphics.drawable.AdaptiveIconDrawable

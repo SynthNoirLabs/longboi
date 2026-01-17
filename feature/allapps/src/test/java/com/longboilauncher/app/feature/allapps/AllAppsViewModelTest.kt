@@ -4,14 +4,14 @@ import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.model.ProfileType
 import com.longboilauncher.app.core.appcatalog.AppCatalogRepository
 import com.longboilauncher.app.core.datastore.FavoritesRepository
-import com.longboilauncher.app.feature.home.AllAppsViewModel
-import com.longboilauncher.app.feature.home.ProfileFilter
+import com.longboilauncher.app.core.settings.PreferencesRepository
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.After
@@ -27,6 +27,7 @@ class AllAppsViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
     private val appCatalogRepository = mockk<AppCatalogRepository>()
     private val favoritesRepository = mockk<FavoritesRepository>()
+    private val preferencesRepository = mockk<PreferencesRepository>()
     private lateinit var viewModel: AllAppsViewModel
 
     private val testApps = listOf(
@@ -42,7 +43,8 @@ class AllAppsViewModelTest {
         Dispatchers.setMain(testDispatcher)
         every { appCatalogRepository.apps } returns MutableStateFlow(testApps)
         every { favoritesRepository.hiddenApps } returns MutableStateFlow(emptySet())
-        viewModel = AllAppsViewModel(appCatalogRepository, favoritesRepository)
+        every { preferencesRepository.hapticsEnabled } returns MutableStateFlow(true)
+        viewModel = AllAppsViewModel(appCatalogRepository, favoritesRepository, preferencesRepository)
     }
 
     @After
@@ -53,6 +55,8 @@ class AllAppsViewModelTest {
     @Test
     fun `apps are filtered by personal profile`() = runTest {
         viewModel.onEvent(AllAppsEvent.SelectProfile(ProfileFilter.PERSONAL))
+
+        advanceUntilIdle()
 
         viewModel.uiState.test {
             val state = awaitItem()
@@ -65,6 +69,8 @@ class AllAppsViewModelTest {
     fun `apps are filtered by work profile`() = runTest {
         viewModel.onEvent(AllAppsEvent.SelectProfile(ProfileFilter.WORK))
 
+        advanceUntilIdle()
+
         viewModel.uiState.test {
             val state = awaitItem()
             assertThat(state.filteredApps.all { it.profile == ProfileType.WORK }).isTrue()
@@ -75,6 +81,8 @@ class AllAppsViewModelTest {
 
     @Test
     fun `apps are grouped into sections correctly`() = runTest {
+        advanceUntilIdle()
+
         viewModel.uiState.test {
             val state = awaitItem()
             assertThat(state.appSections.keys).containsExactly("M", "P", "S", "W", "Y")
@@ -85,6 +93,8 @@ class AllAppsViewModelTest {
 
     @Test
     fun `section indices are calculated correctly`() = runTest {
+        advanceUntilIdle()
+
         viewModel.uiState.test {
             val state = awaitItem()
             // Sections: M (1 app), P (1 app), S (1 app), W (1 app), Y (1 app)
@@ -103,6 +113,8 @@ class AllAppsViewModelTest {
     fun `search query filters apps`() = runTest {
         viewModel.onEvent(AllAppsEvent.UpdateSearchQuery("set"))
 
+        advanceUntilIdle()
+
         viewModel.uiState.test {
             val state = awaitItem()
             assertThat(state.filteredApps).hasSize(1)
@@ -112,12 +124,28 @@ class AllAppsViewModelTest {
 
     @Test
     fun `hidden apps are excluded from list`() = runTest {
-        every { favoritesRepository.hiddenApps } returns MutableStateFlow(setOf("com.whatsapp"))
-        viewModel = AllAppsViewModel(appCatalogRepository, favoritesRepository)
+        every { favoritesRepository.hiddenApps } returns MutableStateFlow(setOf("com.google.android.youtube"))
+        every { preferencesRepository.hapticsEnabled } returns MutableStateFlow(true)
+        viewModel = AllAppsViewModel(appCatalogRepository, favoritesRepository, preferencesRepository)
 
-        viewModel.filteredApps.test {
-            val apps = awaitItem()
-            assertThat(apps.any { it.packageName == "com.whatsapp" }).isFalse()
+        advanceUntilIdle()
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertThat(state.filteredApps.any { it.packageName == "com.google.android.youtube" }).isFalse()
         }
+    }
+
+    @Test
+    fun `scrubberIndexForY maps y to valid index`() {
+        assertThat(scrubberIndexForY(y = -10f, height = 100f, itemCount = 26)).isEqualTo(0)
+        assertThat(scrubberIndexForY(y = 0f, height = 100f, itemCount = 26)).isEqualTo(0)
+        assertThat(scrubberIndexForY(y = 99.9f, height = 100f, itemCount = 26)).isEqualTo(25)
+        assertThat(scrubberIndexForY(y = 100f, height = 100f, itemCount = 26)).isEqualTo(25)
+        assertThat(scrubberIndexForY(y = 200f, height = 100f, itemCount = 26)).isEqualTo(25)
+
+        assertThat(scrubberIndexForY(y = 50f, height = 100f, itemCount = 10)).isEqualTo(5)
+        assertThat(scrubberIndexForY(y = 0f, height = 0f, itemCount = 10)).isEqualTo(0)
+        assertThat(scrubberIndexForY(y = 10f, height = 100f, itemCount = 0)).isEqualTo(0)
     }
 }

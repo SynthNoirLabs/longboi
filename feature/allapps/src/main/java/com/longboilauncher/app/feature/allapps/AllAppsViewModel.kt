@@ -6,6 +6,8 @@ import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.model.ProfileType
 import com.longboilauncher.app.core.appcatalog.AppCatalogRepository
 import com.longboilauncher.app.core.datastore.FavoritesRepository
+import com.longboilauncher.app.core.settings.PreferencesRepository
+import com.longboilauncher.app.core.settings.HapticFeedbackManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -30,7 +32,8 @@ sealed class AllAppsEvent {
 @HiltViewModel
 class AllAppsViewModel @Inject constructor(
     private val appCatalogRepository: AppCatalogRepository,
-    private val favoritesRepository: FavoritesRepository
+    private val favoritesRepository: FavoritesRepository,
+    private val preferencesRepository: PreferencesRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AllAppsState())
@@ -102,4 +105,17 @@ enum class ProfileFilter {
     PERSONAL,
     WORK,
     PRIVATE
+}
+
+internal fun scrubberIndexForY(
+    y: Float,
+    height: Float,
+    itemCount: Int
+): Int {
+    if (itemCount <= 0) return 0
+    if (height <= 0f) return 0
+
+    val clampedY = y.coerceIn(0f, height)
+    val ratio = (clampedY / height).coerceIn(0f, 1f)
+    return (ratio * itemCount).toInt().coerceIn(0, itemCount - 1)
 }

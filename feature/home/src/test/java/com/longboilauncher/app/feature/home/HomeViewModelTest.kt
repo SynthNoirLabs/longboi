@@ -15,6 +15,7 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
@@ -26,6 +27,7 @@ import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runTest
 import java.time.Instant
+import android.content.pm.ShortcutInfo
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModelTest {
@@ -132,6 +134,67 @@ class HomeViewModelTest {
 
             viewModel.onEvent(HomeEvent.NavigateTo(LauncherSurface.SEARCH))
             assertThat(awaitItem().currentSurface).isEqualTo(LauncherSurface.SEARCH)
+        }
+    }
+
+    @Test
+    fun `showPopup sets popupApp and fetches shortcuts`() = runTest {
+        val shortcut = mockk<ShortcutInfo>()
+        coEvery { appCatalogRepository.getAppShortcuts(testApp) } returns listOf(shortcut)
+
+        viewModel.uiState.test {
+            assertThat(awaitItem().popupApp).isNull()
+
+            viewModel.onEvent(HomeEvent.ShowPopup(testApp))
+            val state = awaitItem()
+            assertThat(state.popupApp).isEqualTo(testApp)
+            // Shortcuts are fetched asynchronously; advance to ensure they arrive
+            advanceTimeBy(100)
+            assertThat(awaitItem().popupShortcuts).hasSize(1)
+        }
+        coVerify { appCatalogRepository.getAppShortcuts(testApp) }
+    }
+
+    @Test
+    fun `hidePopup clears popupApp and shortcuts`() = runTest {
+        // First show a popup
+        coEvery { appCatalogRepository.getAppShortcuts(any()) } returns emptyList()
+        viewModel.onEvent(HomeEvent.ShowPopup(testApp))
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        viewModel.uiState.test {
+            val initialState = awaitItem()
+            assertThat(initialState.popupApp).isNotNull()
+
+            viewModel.onEvent(HomeEvent.HidePopup)
+            val state = awaitItem()
+            assertThat(state.popupApp).isNull()
+            assertThat(state.popupShortcuts).isEmpty()
+        }
+    }
+
+    @Test
+    fun `launchShortcut calls repository`() {
+        every { appCatalogRepository.launchShortcut(any(), any()) } returns Unit
+        viewModel.onEvent(HomeEvent.LaunchShortcut(testApp, "shortcut_1"))
+        coVerify { appCatalogRepository.launchShortcut(testApp, "shortcut_1") }
+    }
+
+    @Test
+    fun `hideApp calls repository and closes popup`() = runTest {
+        coEvery { favoritesRepository.hideApp(any()) } returns Unit
+        // First show popup
+        coEvery { appCatalogRepository.getAppShortcuts(any()) } returns emptyList()
+        viewModel.onEvent(HomeEvent.ShowPopup(testApp))
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        viewModel.uiState.test {
+            assertThat(awaitItem().popupApp).isNotNull()
+
+            viewModel.onEvent(HomeEvent.HideApp)
+            coVerify { favoritesRepository.hideApp(testApp.packageName)
+            val state = awaitItem()
+            assertThat(state.popupApp).isNull()
         }
     }
 }

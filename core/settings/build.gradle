@@ -26,5 +26,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+    implementation(libs.datastore)
     implementation(project(":core:datastore"))
+    implementation(project(":core:datastore-proto"))
 }

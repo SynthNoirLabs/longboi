@@ -1,7 +1,6 @@
 package com.longboilauncher.app.feature.settingsui
 
 import com.longboilauncher.app.core.settings.PreferencesRepository
-import com.longboilauncher.app.feature.home.SettingsViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every

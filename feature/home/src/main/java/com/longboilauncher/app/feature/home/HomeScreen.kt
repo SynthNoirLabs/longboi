@@ -33,7 +33,9 @@ import com.longboilauncher.app.feature.home.HomeState
 import com.longboilauncher.app.feature.home.LauncherSurface
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.material3.ExperimentalMaterial3Api
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     uiState: HomeState,
@@ -105,8 +107,9 @@ fun HomeScreen(
                         ) {
                             uiState.favorites.forEach { favorite ->
                                 FavoriteAppItem(
-                                    app = favorite.appEntry,
+                                    favorite = favorite,
                                     onClick = { onEvent(HomeEvent.LaunchFavorite(favorite)) },
+                                    onSwipeRight = { onEvent(HomeEvent.ShowPopup(favorite.appEntry)) },
                                     onLongClick = { showActionsSheet = favorite.appEntry }
                                 )
                             }
@@ -144,6 +147,22 @@ fun HomeScreen(
                     onHideApp = {
                         showActionsSheet = null
                     }
+                )
+            }
+
+            // Popup Panel
+            uiState.popupApp?.let { app ->
+                PopupPanel(
+                    isVisible = true,
+                    app = app,
+                    shortcuts = uiState.popupShortcuts,
+                    onDismiss = { onEvent(HomeEvent.HidePopup) },
+                    onLaunchShortcut = { shortcut ->
+                        onEvent(HomeEvent.LaunchShortcut(app, shortcut.id))
+                    },
+                    onAppInfo = { onEvent(HomeEvent.ShowAppInfo) },
+                    onUninstall = { onEvent(HomeEvent.UninstallApp) },
+                    onHide = { onEvent(HomeEvent.HideApp) }
                 )
             }
         }

@@ -4,6 +4,8 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipeRight
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.model.FavoriteEntry
 import com.longboilauncher.app.core.model.GlanceHeaderData
@@ -16,6 +18,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Rule
 import org.junit.Test
+import android.content.pm.ShortcutInfo
 
 class HomeScreenUITest {
 
@@ -84,5 +87,31 @@ class HomeScreenUITest {
 
         // CircularProgressIndicator doesn't have text, but we can check if content is not there
         composeTestRule.onNodeWithText("Test App").assertDoesNotExist()
+    }
+
+    @Test
+    fun homeScreen_showsPopup_whenPopupAppSet() {
+        val shortcut = mockk<ShortcutInfo>()
+        every { shortcut.shortLabel } returns "Test Shortcut"
+        every { shortcut.id } returns "shortcut_1"
+
+        every { viewModel.popupApp } returns MutableStateFlow(testApp)
+        every { viewModel.popupShortcuts } returns MutableStateFlow(listOf(shortcut))
+
+        composeTestRule.setContent {
+            LongboiLauncherTheme {
+                HomeScreen(viewModel = viewModel)
+            }
+        }
+
+        // Verify popup panel content
+        composeTestRule.onNodeWithText("Test App").assertIsDisplayed()
+        composeTestRule.onNodeWithText("com.test.app").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Quick Actions").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Shortcuts").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Test Shortcut").assertIsDisplayed()
+        composeTestRule.onNodeWithText("App Info").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Uninstall").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Hide").assertIsDisplayed()
     }
 }

@@ -24,10 +24,9 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:common"))
+    implementation(project(":core:model"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
-
-    // Internal dependencies would go here
-    // implementation(project(":core:model"))
 }

@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import com.longboilauncher.app.UserSettings
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 import javax.inject.Inject
@@ -93,6 +94,16 @@ class PreferencesRepository @Inject constructor(
         }
         .map { it.perAppIconOverridesMap }
 
+    val reduceMotion: Flow<Boolean> = dataStore.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(UserSettings.getDefaultInstance())
+            } else {
+                throw exception
+            }
+        }
+        .map { it.reduceMotion }
+
     suspend fun setTheme(theme: String) {
         dataStore.updateData { currentSettings ->
             currentSettings.toBuilder()
@@ -129,6 +140,14 @@ class PreferencesRepository @Inject constructor(
         dataStore.updateData { currentSettings ->
             currentSettings.toBuilder()
                 .setHapticsEnabled(enabled)
+                .build()
+        }
+    }
+
+    suspend fun setReduceMotion(reduce: Boolean) {
+        dataStore.updateData { currentSettings ->
+            currentSettings.toBuilder()
+                .setReduceMotion(reduce)
                 .build()
         }
     }

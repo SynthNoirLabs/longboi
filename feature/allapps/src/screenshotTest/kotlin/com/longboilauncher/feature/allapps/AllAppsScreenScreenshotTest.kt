@@ -6,22 +6,50 @@ import com.longboilauncher.app.core.designsystem.theme.LongboiLauncherTheme
 import com.longboilauncher.app.feature.allapps.AllAppsScreen
 import com.longboilauncher.app.feature.allapps.AllAppsState
 import com.longboilauncher.app.core.model.AppEntry
+import com.longboilauncher.app.core.settings.NoOpHapticFeedbackManager
 
 class AllAppsScreenScreenshotTest {
 
     @Preview(showBackground = true)
     @Composable
     fun AllAppsScreenPreview() {
+        val apps = listOf(
+            AppEntry(
+                packageName = "com.android.chrome",
+                className = "com.google.android.apps.chrome.Main",
+                label = "Chrome"
+            ),
+            AppEntry(
+                packageName = "com.android.contacts",
+                className = "com.android.contacts.activities.PeopleActivity",
+                label = "Contacts"
+            ),
+            AppEntry(
+                packageName = "com.android.settings",
+                className = "com.android.settings.Settings",
+                label = "Settings"
+            )
+        )
+
+        val sections = sortedMapOf(
+            "C" to apps.take(2),
+            "S" to apps.takeLast(1)
+        )
+
         LongboiLauncherTheme {
             AllAppsScreen(
-                state = AllAppsState(
-                    apps = listOf(
-                        AppEntry("com.android.settings", "Settings", "com.android.settings.Settings"),
-                        AppEntry("com.android.chrome", "Chrome", "com.google.android.apps.chrome.Main"),
-                        AppEntry("com.android.contacts", "Contacts", "com.android.contacts.activities.PeopleActivity")
+                uiState = AllAppsState(
+                    filteredApps = apps,
+                    appSections = sections,
+                    sectionIndices = mapOf(
+                        "C" to 0,
+                        "S" to 3
                     )
                 ),
-                onEvent = {}
+                onEvent = {},
+                onAppSelected = {},
+                onDismiss = {},
+                hapticFeedbackManager = NoOpHapticFeedbackManager()
             )
         }
     }

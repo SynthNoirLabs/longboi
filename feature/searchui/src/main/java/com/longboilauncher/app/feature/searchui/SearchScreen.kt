@@ -4,12 +4,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
@@ -17,6 +20,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Calculate
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -27,9 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -37,14 +40,8 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.designsystem.components.AppListItem
-import com.longboilauncher.app.feature.home.SearchViewModel
-
-import com.longboilauncher.app.feature.home.SearchState
-import com.longboilauncher.app.feature.home.SearchEvent
 
 @Composable
 fun SearchScreen(
@@ -111,7 +108,12 @@ fun SearchScreen(
                     onSearch = {
                         keyboardController?.hide()
                         if (uiState.searchResults.isNotEmpty()) {
-                            onAppSelected(uiState.searchResults.first())
+                            when (val first = uiState.searchResults.first()) {
+                                is SearchResult.AppResult -> onAppSelected(first.app)
+                                is SearchResult.ShortcutResult -> onEvent(SearchEvent.LaunchShortcut(first.app, first.shortcutId))
+                                is SearchResult.CalculatorResult -> { /* No action on search */ }
+                                is SearchResult.SettingsShortcutResult -> onEvent(SearchEvent.OpenSettings(first.destination))
+                            }
                         }
                     }
                 ),
@@ -133,7 +135,7 @@ fun SearchScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "No apps found",
+                            text = "No results",
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -147,17 +149,48 @@ fun SearchScreen(
                     ) {
                         items(
                             items = uiState.searchResults,
-                            key = { "${it.packageName}_${it.userIdentifier}" }
-                        ) { app ->
-                            AppListItem(
-                                app = app,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        keyboardController?.hide()
-                                        onAppSelected(app)
-                                    }
-                            )
+                            key = { result ->
+                                when (result) {
+                                    is SearchResult.AppResult -> "app_${result.app.packageName}_${result.app.userIdentifier}"
+                                    is SearchResult.ShortcutResult -> "shortcut_${result.app.packageName}_${result.shortcutId}"
+                                    is SearchResult.CalculatorResult -> "calc_${result.expression}"
+                                    is SearchResult.SettingsShortcutResult -> "settings_${result.destination}"
+                                }
+                            }
+                        ) { result ->
+                            when (result) {
+                                is SearchResult.AppResult -> {
+                                    AppListItem(
+                                        app = result.app,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable {
+                                                keyboardController?.hide()
+                                                onAppSelected(result.app)
+                                            }
+                                    )
+                                }
+                                is SearchResult.ShortcutResult -> {
+                                    // TODO: Implement shortcut UI
+                                }
+                                is SearchResult.CalculatorResult -> {
+                                    CalculatorResultItem(
+                                        expression = result.expression,
+                                        resultValue = result.result,
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                }
+                                is SearchResult.SettingsShortcutResult -> {
+                                    SettingsShortcutItem(
+                                        title = result.title,
+                                        onClick = {
+                                            keyboardController?.hide()
+                                            onEvent(SearchEvent.OpenSettings(result.destination))
+                                        },
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -170,12 +203,72 @@ fun SearchScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Type to search apps",
+                        text = "Type to search apps, settings, or calculate",
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun CalculatorResultItem(
+    expression: String,
+    resultValue: String,
+    modifier: Modifier = Modifier
+) {
+    androidx.compose.foundation.layout.Row(
+        modifier = modifier
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = Icons.Default.Calculate,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(24.dp)
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Column {
+            Text(
+                text = expression,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = "= $resultValue",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+    }
+}
+
+@Composable
+private fun SettingsShortcutItem(
+    title: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    androidx.compose.foundation.layout.Row(
+        modifier = modifier
+            .clickable { onClick() }
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = Icons.Default.Settings,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(24.dp)
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(
+            text = title,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurface
+        )
     }
 }

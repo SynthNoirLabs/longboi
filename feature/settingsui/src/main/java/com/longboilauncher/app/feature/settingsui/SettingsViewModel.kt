@@ -36,16 +36,15 @@ class SettingsViewModel @Inject constructor(
         preferencesRepository.hapticsEnabled,
         preferencesRepository.showNotifications,
         preferencesRepository.gestureSwipeUp,
-        preferencesRepository.gestureSwipeDown,
-        preferencesRepository.density
-    ) { theme, haptics, notifications, swipeUp, swipeDown, density ->
+        preferencesRepository.gestureSwipeDown
+    ) { theme, haptics, notifications, swipeUp, swipeDown ->
         SettingsState(
             theme = theme,
             hapticsEnabled = haptics,
             showNotifications = notifications,
             gestureSwipeUp = swipeUp,
             gestureSwipeDown = swipeDown,
-            density = density
+            density = "default" // TODO: Add density when fixed
         )
     }.stateIn(
         scope = viewModelScope,

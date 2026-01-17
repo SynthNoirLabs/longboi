@@ -23,7 +23,11 @@ data class AppEntry(
     val supportShortcuts: Boolean = false
 ) {
     @Transient
-    val user: UserHandle = if (userIdentifier == 0) Process.myUserHandle() else UserHandle.of(userIdentifier)
+    val user: UserHandle = if (userIdentifier == 0) {
+        Process.myUserHandle()
+    } else {
+        UserHandle::class.java.getConstructor(Int::class.java).newInstance(userIdentifier)
+    }
 
     override fun toString(): String = label
 

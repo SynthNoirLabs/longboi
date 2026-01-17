@@ -10,9 +10,11 @@ import coil.decode.DataSource
 import coil.fetch.DrawableResult
 import coil.fetch.FetchResult
 import coil.fetch.Fetcher
+import coil.request.Options
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.settings.PreferencesRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class AppEntryFetcher(

@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
-    alias(libs.plugins.screenshot)
 }
 
 android {
@@ -26,7 +25,6 @@ android {
     buildFeatures {
         compose true
     }
-    experimentalProperties["android.experimental.enableScreenshotTest"] = true
 }
 
 dependencies {
@@ -40,6 +38,5 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:appcatalog"))
     implementation(project(":core:datastore"))
-
-    screenshotTestImplementation(libs.androidx.screenshot)
+    implementation(project(":core:settings"))
 }

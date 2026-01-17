@@ -4,7 +4,7 @@ import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.model.ProfileType
 import com.longboilauncher.app.core.appcatalog.AppCatalogRepository
 import com.longboilauncher.app.core.datastore.FavoritesRepository
-import com.longboilauncher.app.feature.home.SearchViewModel
+import com.longboilauncher.app.feature.searchui.SearchResult
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -65,7 +65,8 @@ class SearchViewModelTest {
             viewModel.onEvent(SearchEvent.UpdateSearchQuery("you"))
             val state = awaitItem()
             assertThat(state.searchResults).hasSize(1)
-            assertThat(state.searchResults[0].label).isEqualTo("YouTube")
+            val result = state.searchResults[0] as SearchResult.AppResult
+            assertThat(result.app.label).isEqualTo("YouTube")
         }
     }
 
@@ -88,7 +89,8 @@ class SearchViewModelTest {
             viewModel.onEvent(SearchEvent.UpdateSearchQuery("youtub")) // missing 'e'
             val state = awaitItem()
             assertThat(state.searchResults).isNotEmpty()
-            assertThat(state.searchResults[0].label).isEqualTo("YouTube")
+            val result = state.searchResults[0] as SearchResult.AppResult
+            assertThat(result.app.label).isEqualTo("YouTube")
         }
     }
 
@@ -99,7 +101,60 @@ class SearchViewModelTest {
             viewModel.onEvent(SearchEvent.UpdateSearchQuery("yt")) // YouTube -> YT
             val state = awaitItem()
             assertThat(state.searchResults).isNotEmpty()
-            assertThat(state.searchResults[0].label).isEqualTo("YouTube")
+            val result = state.searchResults[0] as SearchResult.AppResult
+            assertThat(result.app.label).isEqualTo("YouTube")
+        }
+    }
+
+    @Test
+    fun `calculator evaluates simple expressions`() = runTest {
+        viewModel.uiState.test {
+            assertThat(awaitItem().searchResults).isEmpty()
+            viewModel.onEvent(SearchEvent.UpdateSearchQuery("123+456"))
+            val state = awaitItem()
+            assertThat(state.searchResults).hasSize(1)
+            val calc = state.searchResults[0] as SearchResult.CalculatorResult
+            assertThat(calc.expression).isEqualTo("123+456")
+            assertThat(calc.result).isEqualTo("579")
+        }
+    }
+
+    @Test
+    fun `calculator handles decimals`() = runTest {
+        viewModel.uiState.test {
+            assertThat(awaitItem().searchResults).isEmpty()
+            viewModel.onEvent(SearchEvent.UpdateSearchQuery("10.5+2.3"))
+            val state = awaitItem()
+            assertThat(state.searchResults).hasSize(1)
+            val calc = state.searchResults[0] as SearchResult.CalculatorResult
+            assertThat(calc.result).isEqualTo("12.8")
+        }
+    }
+
+    @Test
+    fun `settings shortcuts appear`() = runTest {
+        viewModel.uiState.test {
+            assertThat(awaitItem().searchResults).isEmpty()
+            viewModel.onEvent(SearchEvent.UpdateSearchQuery("wifi"))
+            val state = awaitItem()
+            assertThat(state.searchResults).isNotEmpty()
+            val settings = state.searchResults.filterIsInstance<SearchResult.SettingsShortcutResult>()
+            assertThat(settings).isNotEmpty()
+            assertThat(settings[0].title).isEqualTo("Wi-Fi")
+        }
+    }
+
+    @Test
+    fun `mixed results prioritize calculator then settings then apps`() = runTest {
+        viewModel.uiState.test {
+            assertThat(awaitItem().searchResults).isEmpty()
+            viewModel.onEvent(SearchEvent.UpdateSearchQuery("123"))
+            val state = awaitItem()
+            // Calculator first
+            assertThat(state.searchResults[0]).isInstanceOf(SearchResult.CalculatorResult::class.java)
+            // Then settings (none for "123")
+            // Then apps
+            assertThat(state.searchResults.filterIsInstance<SearchResult.AppResult>()).isNotEmpty()
         }
     }
 }

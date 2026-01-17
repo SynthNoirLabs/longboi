@@ -14,13 +14,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Brush
-import androidx.compose.material.icons.filled.Dashboard
-import androidx.compose.material.icons.filled.Gesture
+import androidx.compose.material.icons.filled.ColorLens
+import androidx.compose.material.icons.filled.GridView
+import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Restore
+import androidx.compose.material.icons.filled.SettingsBackupRestore
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -33,18 +33,11 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.longboilauncher.app.feature.home.SettingsViewModel
-
-import com.longboilauncher.app.feature.home.SettingsState
-import com.longboilauncher.app.feature.home.SettingsEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -81,13 +74,13 @@ fun SettingsScreen(
             // Appearance Section
             SettingsSection(title = "Appearance") {
                 SettingsItem(
-                    icon = Icons.Default.Brush,
+                    icon = Icons.Default.ColorLens,
                     title = "Theme",
                     subtitle = uiState.theme.replaceFirstChar { it.uppercase() },
                     onClick = { /* TODO: Show theme picker */ }
                 )
                 SettingsItem(
-                    icon = Icons.Default.Dashboard,
+                    icon = Icons.Default.GridView,
                     title = "Density",
                     subtitle = uiState.density.replaceFirstChar { it.uppercase() },
                     onClick = { /* TODO: Show density picker */ }
@@ -118,13 +111,13 @@ fun SettingsScreen(
             // Behavior Section
             SettingsSection(title = "Behavior") {
                 SettingsItem(
-                    icon = Icons.Default.Gesture,
+                    icon = Icons.Default.TouchApp,
                     title = "Gestures",
                     subtitle = "Customize swipe actions",
                     onClick = { /* TODO: Show gesture settings */ }
                 )
                 SettingsSwitchItem(
-                    icon = Icons.Default.Gesture,
+                    icon = Icons.Default.TouchApp,
                     title = "Haptic feedback",
                     subtitle = "Vibration on interactions",
                     checked = uiState.hapticsEnabled,
@@ -149,7 +142,7 @@ fun SettingsScreen(
             // Backup Section
             SettingsSection(title = "Backup") {
                 SettingsItem(
-                    icon = Icons.Default.Restore,
+                    icon = Icons.Default.SettingsBackupRestore,
                     title = "Backup & Restore",
                     subtitle = "Export or import settings",
                     onClick = { /* TODO: Show backup options */ }

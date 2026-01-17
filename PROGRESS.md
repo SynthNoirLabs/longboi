@@ -63,29 +63,29 @@ I have fully aligned the project with the [Master Plan](docs/plans/MASTER_PLAN.m
 
 ### 2.1 Wave Alphabet Scrubber
 
-- [ ] Wave animation on scrub
-- [ ] Haptic feedback per letter
-- [ ] Floating letter indicator
-- [ ] Smooth scroll-to-section
+- [x] Wave animation on scrub
+- [x] Haptic feedback per letter
+- [x] Floating letter indicator
+- [x] Smooth scroll-to-section
 
 ### 2.2 Haptics Tuning + Motion
 
-- [ ] HapticFeedbackManager
-- [ ] Motion preferences (reduce motion)
-- [ ] Scroll performance optimization
+- [x] HapticFeedbackManager
+- [x] Motion preferences (reduce motion)
+- [x] Scroll performance optimization
 
 ### 2.3 Search Upgrades
 
-- [ ] App shortcuts in search
-- [ ] Calculator/conversions
-- [ ] Settings shortcuts
+- [x] App shortcuts in search
+- [x] Calculator/conversions
+- [x] Settings shortcuts
 
 ### 2.4 Pop-ups v1 (Shortcuts Only)
 
-- [ ] PopupPanel composable
-- [ ] Swipe-right gesture detection
-- [ ] App shortcuts display
-- [ ] Quick actions
+- [x] PopupPanel composable
+- [x] Swipe-right gesture detection
+- [x] App shortcuts display
+- [x] Quick actions
 
 ---
 

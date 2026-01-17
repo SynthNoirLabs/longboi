@@ -3,16 +3,10 @@ package com.longboilauncher.app.feature.searchui
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performTextInput
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.model.ProfileType
-import com.longboilauncher.app.feature.home.SearchScreen
 import com.longboilauncher.app.core.designsystem.theme.LongboiLauncherTheme
-import com.longboilauncher.app.feature.home.SearchViewModel
-import io.mockk.every
-import io.mockk.mockk
-import kotlinx.coroutines.flow.MutableStateFlow
-import org.junit.Before
+import com.longboilauncher.app.feature.searchui.SearchResult
 import org.junit.Rule
 import org.junit.Test
 
@@ -21,48 +15,49 @@ class SearchScreenUITest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    private val viewModel = mockk<SearchViewModel>(relaxed = true)
-
     private val testResults = listOf(
-        AppEntry(
-            packageName = "com.test.youtube",
-            className = "MainActivity",
-            label = "YouTube",
-            userIdentifier = 0,
-            profile = ProfileType.PERSONAL
+        SearchResult.CalculatorResult("123+456", "579"),
+        SearchResult.SettingsShortcutResult("Wi-Fi", "wifi", "wifi"),
+        SearchResult.AppResult(
+            AppEntry(
+                packageName = "com.test.youtube",
+                className = "MainActivity",
+                label = "YouTube",
+                userIdentifier = 0,
+                profile = ProfileType.PERSONAL
+            )
         )
     )
-
-    @Before
-    fun setup() {
-        every { viewModel.searchQuery } returns MutableStateFlow("")
-        every { viewModel.searchResults } returns MutableStateFlow(emptyList())
-    }
 
     @Test
     fun searchScreen_displaysHint_whenQueryEmpty() {
         composeTestRule.setContent {
             LongboiLauncherTheme {
                 SearchScreen(
-                    viewModel = viewModel,
+                    uiState = SearchState(
+                        searchQuery = "",
+                        searchResults = emptyList()
+                    ),
+                    onEvent = {},
                     onAppSelected = {},
                     onDismiss = {}
                 )
             }
         }
 
-        composeTestRule.onNodeWithText("Type to search apps").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Type to search apps, settings, or calculate").assertIsDisplayed()
     }
 
     @Test
     fun searchScreen_displaysResults_whenQueryMatches() {
-        every { viewModel.searchQuery } returns MutableStateFlow("you")
-        every { viewModel.searchResults } returns MutableStateFlow(testResults)
-
         composeTestRule.setContent {
             LongboiLauncherTheme {
                 SearchScreen(
-                    viewModel = viewModel,
+                    uiState = SearchState(
+                        searchQuery = "you",
+                        searchResults = testResults
+                    ),
+                    onEvent = {},
                     onAppSelected = {},
                     onDismiss = {}
                 )
@@ -73,20 +68,59 @@ class SearchScreenUITest {
     }
 
     @Test
-    fun searchScreen_displaysNoResults_whenNoMatches() {
-        every { viewModel.searchQuery } returns MutableStateFlow("xyz")
-        every { viewModel.searchResults } returns MutableStateFlow(emptyList())
-
+    fun searchScreen_displaysCalculatorResult() {
         composeTestRule.setContent {
             LongboiLauncherTheme {
                 SearchScreen(
-                    viewModel = viewModel,
+                    uiState = SearchState(
+                        searchQuery = "123+456",
+                        searchResults = listOf(SearchResult.CalculatorResult("123+456", "579"))
+                    ),
+                    onEvent = {},
                     onAppSelected = {},
                     onDismiss = {}
                 )
             }
         }
 
-        composeTestRule.onNodeWithText("No apps found").assertIsDisplayed()
+        composeTestRule.onNodeWithText("= 579").assertIsDisplayed()
+    }
+
+    @Test
+    fun searchScreen_displaysSettingsShortcut() {
+        composeTestRule.setContent {
+            LongboiLauncherTheme {
+                SearchScreen(
+                    uiState = SearchState(
+                        searchQuery = "wifi",
+                        searchResults = listOf(SearchResult.SettingsShortcutResult("Wi-Fi", "wifi", "wifi"))
+                    ),
+                    onEvent = {},
+                    onAppSelected = {},
+                    onDismiss = {}
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText("Wi-Fi").assertIsDisplayed()
+    }
+
+    @Test
+    fun searchScreen_displaysNoResults_whenNoMatches() {
+        composeTestRule.setContent {
+            LongboiLauncherTheme {
+                SearchScreen(
+                    uiState = SearchState(
+                        searchQuery = "xyz",
+                        searchResults = emptyList()
+                    ),
+                    onEvent = {},
+                    onAppSelected = {},
+                    onDismiss = {}
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText("No results").assertIsDisplayed()
     }
 }

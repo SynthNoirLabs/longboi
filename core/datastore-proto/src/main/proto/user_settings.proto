@@ -22,4 +22,5 @@ message UserSettings {
   repeated FavoriteApp favorites = 8;
   string icon_pack_package_name = 9;
   map<string, string> per_app_icon_overrides = 10;
+  bool reduce_motion = 11;
 }

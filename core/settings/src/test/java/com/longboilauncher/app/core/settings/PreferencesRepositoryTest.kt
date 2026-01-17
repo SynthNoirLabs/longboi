@@ -61,4 +61,15 @@ class PreferencesRepositoryTest {
     fun `default swipe up gesture is all_apps`() = runTest {
         assertThat(repository.gestureSwipeUp.first()).isEqualTo("all_apps")
     }
+
+    @Test
+    fun `reduce motion is disabled by default`() = runTest {
+        assertThat(repository.reduceMotion.first()).isFalse()
+    }
+
+    @Test
+    fun `setReduceMotion updates value`() = runTest {
+        repository.setReduceMotion(true)
+        assertThat(repository.reduceMotion.first()).isTrue()
+    }
 }
