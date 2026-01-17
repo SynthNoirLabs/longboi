@@ -126,3 +126,16 @@ GoogleService-Info.plist
 
 # Room schema exports
 app/schemas/
+
+# Windsurf
+.windsurf/logs/
+.windsurf/temp/
+
+# Benchmark artifacts
+*.pb
+benchmark/build/
+
+# Screenshot testing artifacts (if not intended for repo)
+# Keep actual reference images, ignore diffs/results
+**/screenshotTest/diffs/
+**/screenshotTest/failures/

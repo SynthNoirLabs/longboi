@@ -1,0 +1,36 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.name = "LongboiLauncher"
+include ':app'
+include ':benchmark'
+
+// Core Modules
+include ':core:model'
+include ':core:common'
+include ':core:designsystem'
+include ':core:appcatalog'
+include ':core:datastore'
+include ':core:search'
+include ':core:settings'
+include ':core:icons'
+
+// Feature Modules
+include ':feature:home'
+include ':feature:allapps'
+include ':feature:searchui'
+include ':feature:settingsui'
+include ':feature:privatespace'
+include ':feature:backup'
