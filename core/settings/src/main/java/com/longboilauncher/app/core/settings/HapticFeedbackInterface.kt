@@ -7,6 +7,8 @@ import android.view.View
  */
 interface HapticFeedbackInterface {
     fun tick(view: View)
+
     fun confirm(view: View)
+
     fun heavy(view: View)
 }

@@ -1,32 +1,31 @@
 package com.longboilauncher.app.core.designsystem
 
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.longboilauncher.app.core.model.AppEntry
-import com.longboilauncher.app.core.model.ProfileType
 import com.longboilauncher.app.core.designsystem.components.ActionsSheet
 import com.longboilauncher.app.core.designsystem.theme.LongboiLauncherTheme
+import com.longboilauncher.app.core.model.AppEntry
+import com.longboilauncher.app.core.model.ProfileType
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Rule
 import org.junit.Test
 
 class ActionsSheetUITest {
-
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    private val testApp = AppEntry(
-        packageName = "com.test.app",
-        className = "MainActivity",
-        label = "Test App",
-        userIdentifier = 0,
-        profile = ProfileType.PERSONAL
-    )
+    private val testApp =
+        AppEntry(
+            packageName = "com.test.app",
+            className = "MainActivity",
+            label = "Test App",
+            userIdentifier = 0,
+            profile = ProfileType.PERSONAL,
+        )
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Test
@@ -42,7 +41,7 @@ class ActionsSheetUITest {
                     onDismiss = {},
                     onAddToFavorites = onAddToFavorites,
                     onRemoveFromFavorites = onRemoveFromFavorites,
-                    onHideApp = {}
+                    onHideApp = {},
                 )
             }
         }
@@ -68,7 +67,7 @@ class ActionsSheetUITest {
                     onDismiss = {},
                     onAddToFavorites = onAddToFavorites,
                     onRemoveFromFavorites = {},
-                    onHideApp = {}
+                    onHideApp = {},
                 )
             }
         }

@@ -10,7 +10,6 @@ import org.junit.Rule
 import org.junit.Test
 
 class SettingsScreenUITest {
-
     @get:Rule
     val composeTestRule = createComposeRule()
 
@@ -21,7 +20,7 @@ class SettingsScreenUITest {
                 SettingsScreen(
                     uiState = SettingsState(),
                     onEvent = {},
-                    onNavigateBack = {}
+                    onNavigateBack = {},
                 )
             }
         }
@@ -40,7 +39,7 @@ class SettingsScreenUITest {
                 SettingsScreen(
                     uiState = SettingsState(hapticsEnabled = true),
                     onEvent = { events.add(it) },
-                    onNavigateBack = {}
+                    onNavigateBack = {},
                 )
             }
         }

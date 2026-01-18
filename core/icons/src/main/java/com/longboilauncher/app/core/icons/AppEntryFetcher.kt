@@ -21,9 +21,8 @@ class AppEntryFetcher(
     private val appEntry: AppEntry,
     private val context: Context,
     private val options: Options,
-    private val preferencesRepository: PreferencesRepository
+    private val preferencesRepository: PreferencesRepository,
 ) : Fetcher {
-
     override suspend fun fetch(): FetchResult? {
         val launcherApps = context.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
 
@@ -43,13 +42,14 @@ class AppEntryFetcher(
         }
 
         // 3. Themed/Monochrome support (Android 13+)
-        var drawable: Drawable? = try {
-            val activities = launcherApps.getActivityList(appEntry.packageName, appEntry.user)
-            val activity = activities.find { it.name == appEntry.className }
-            activity?.getBadgedIcon(0)
-        } catch (e: Exception) {
-            null
-        }
+        var drawable: Drawable? =
+            try {
+                val activities = launcherApps.getActivityList(appEntry.packageName, appEntry.user)
+                val activity = activities.find { it.name == appEntry.className }
+                activity?.getBadgedIcon(0)
+            } catch (e: Exception) {
+                null
+            }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && drawable is AdaptiveIconDrawable) {
             val monochrome = drawable.monochrome
@@ -68,28 +68,33 @@ class AppEntryFetcher(
 
         // 5. Fallback: mask + background unify (if still null or generic)
         if (drawable == null) {
-            drawable = try {
-                context.packageManager.getApplicationIcon(appEntry.packageName)
-            } catch (e: Exception) {
-                null
-            }
+            drawable =
+                try {
+                    context.packageManager.getApplicationIcon(appEntry.packageName)
+                } catch (e: Exception) {
+                    null
+                }
         }
 
         return drawable?.let {
             DrawableResult(
                 drawable = it,
                 isSampled = false,
-                dataSource = DataSource.DISK
+                dataSource = DataSource.DISK,
             )
         }
     }
 
-    class Factory @Inject constructor(
-        @ApplicationContext private val context: Context,
-        private val preferencesRepository: PreferencesRepository
-    ) : Fetcher.Factory<AppEntry> {
-        override fun create(data: AppEntry, options: Options, imageLoader: ImageLoader): Fetcher {
-            return AppEntryFetcher(data, context, options, preferencesRepository)
+    class Factory
+        @Inject
+        constructor(
+            @ApplicationContext private val context: Context,
+            private val preferencesRepository: PreferencesRepository,
+        ) : Fetcher.Factory<AppEntry> {
+            override fun create(
+                data: AppEntry,
+                options: Options,
+                imageLoader: ImageLoader,
+            ): Fetcher = AppEntryFetcher(data, context, options, preferencesRepository)
         }
-    }
 }

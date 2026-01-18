@@ -9,4 +9,58 @@ plugins {
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.kotlin.compose) apply false
     alias(libs.plugins.protobuf) apply false
+    alias(libs.plugins.kover) apply true
+    alias(libs.plugins.spotless) apply true
+}
+
+subprojects {
+    apply plugin: "com.diffplug.spotless"
+    spotless {
+        kotlin {
+            target "**/*.kt"
+            targetExclude "**/build/**/*.kt"
+            ktlint("1.3.1")
+            trimTrailingWhitespace()
+            leadingTabsToSpaces()
+            endWithNewline()
+        }
+    }
+
+    // Apply kover to all subprojects
+    apply plugin: "org.jetbrains.kotlinx.kover"
+
+    kover {
+        reports {
+            filters {
+                excludes {
+                    classes(
+                        '*.BuildConfig',
+                        '*.R',
+                        '*.R$*',
+                        '*_Factory',
+                        '*_HiltModules*',
+                        '*_HiltModules_*',
+                        '*Hilt_*',
+                        '*_MembersInjector',
+                        '*_Provide*Factory',
+                        '*_ViewBinding',
+                        '*_ViewBinding$*'
+                    )
+                }
+            }
+        }
+    }
+}
+
+kover {
+    reports {
+        total {
+            xml {
+                onCheck = true
+            }
+            html {
+                onCheck = true
+            }
+        }
+    }
 }

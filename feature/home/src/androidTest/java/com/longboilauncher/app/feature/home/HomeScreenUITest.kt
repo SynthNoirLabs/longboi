@@ -1,56 +1,53 @@
 package com.longboilauncher.app.feature.home
 
+import android.content.pm.ShortcutInfo
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performTouchInput
-import androidx.compose.ui.test.swipeRight
+import com.longboilauncher.app.core.designsystem.theme.LongboiLauncherTheme
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.model.FavoriteEntry
 import com.longboilauncher.app.core.model.GlanceHeaderData
 import com.longboilauncher.app.core.model.ProfileType
-import com.longboilauncher.app.feature.home.HomeScreen
-import com.longboilauncher.app.core.designsystem.theme.LongboiLauncherTheme
-import com.longboilauncher.app.feature.home.HomeViewModel
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Rule
 import org.junit.Test
-import android.content.pm.ShortcutInfo
 
 class HomeScreenUITest {
-
     @get:Rule
     val composeTestRule = createComposeRule()
 
     private val viewModel = mockk<HomeViewModel>(relaxed = true)
 
-    private val testApp = AppEntry(
-        packageName = "com.test.app",
-        className = "MainActivity",
-        label = "Test App",
-        userIdentifier = 0,
-        profile = ProfileType.PERSONAL
-    )
-
-    private val testFavorites = listOf(
-        FavoriteEntry(
-            id = "fav_1",
-            appEntry = testApp,
-            position = 0
+    private val testApp =
+        AppEntry(
+            packageName = "com.test.app",
+            className = "MainActivity",
+            label = "Test App",
+            userIdentifier = 0,
+            profile = ProfileType.PERSONAL,
         )
-    )
 
-    private val testGlance = GlanceHeaderData(
-        currentTime = "12:00",
-        currentDate = "Monday, Jan 1",
-        nextEvent = null,
-        weather = null,
-        nextAlarm = null,
-        nowPlaying = null
-    )
+    private val testFavorites =
+        listOf(
+            FavoriteEntry(
+                id = "fav_1",
+                appEntry = testApp,
+                position = 0,
+            ),
+        )
+
+    private val testGlance =
+        GlanceHeaderData(
+            currentTime = "12:00",
+            currentDate = "Monday, Jan 1",
+            nextEvent = null,
+            weather = null,
+            nextAlarm = null,
+            nowPlaying = null,
+        )
 
     @Before
     fun setup() {

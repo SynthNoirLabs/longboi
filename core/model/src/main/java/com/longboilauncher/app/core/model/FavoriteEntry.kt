@@ -14,7 +14,7 @@ data class FavoriteEntry(
     val notificationCount: Int = 0,
     val hasNotifications: Boolean = false,
     val isPlaying: Boolean = false,
-    val groupId: String? = null
+    val groupId: String? = null,
 ) {
     @Transient
     val displayLabel: String = customLabel ?: appEntry.label
@@ -27,5 +27,5 @@ data class FavoriteGroup(
     val name: String,
     val emoji: String? = null,
     val isCollapsed: Boolean = false,
-    val position: Int
+    val position: Int,
 )

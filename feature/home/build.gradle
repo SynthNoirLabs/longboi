@@ -16,14 +16,21 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = "11"
     }
     buildFeatures {
         compose true
+    }
+    testOptions {
+        unitTests.returnDefaultValues = true
+        unitTests.all {
+            maxHeapSize = "4096m"
+            jvmArgs '-Xmx4096m', '-noverify', '-XX:+UseG1GC', '-XX:MaxGCPauseMillis=200'
+        }
     }
 }
 
@@ -47,4 +54,15 @@ dependencies {
     implementation(project(":core:appcatalog"))
     implementation(project(":core:common"))
     implementation(project(":core:icons"))
+
+    testImplementation(libs.junit)
+    testImplementation(libs.google.truth)
+    testImplementation(libs.mockk)
+    testImplementation(libs.mockk.android)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.androidx.test.core)
+    testImplementation(libs.androidx.junit)
+    testImplementation(libs.turbine)
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
 }

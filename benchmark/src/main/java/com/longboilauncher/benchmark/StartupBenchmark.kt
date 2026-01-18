@@ -14,14 +14,15 @@ class StartupBenchmark {
     val benchmarkRule = MacrobenchmarkRule()
 
     @Test
-    fun startup() = benchmarkRule.measureRepeated(
-        packageName = "com.longboilauncher.app",
-        metrics = listOf(androidx.benchmark.macro.StartupTimingMetric()),
-        compilationMode = CompilationMode.Full(),
-        iterations = 5,
-        startupMode = StartupMode.COLD
-    ) {
-        pressHome()
-        startActivityAndWait()
-    }
+    fun startup() =
+        benchmarkRule.measureRepeated(
+            packageName = "com.longboilauncher.app",
+            metrics = listOf(androidx.benchmark.macro.StartupTimingMetric()),
+            compilationMode = CompilationMode.Full(),
+            iterations = 5,
+            startupMode = StartupMode.COLD,
+        ) {
+            pressHome()
+            startActivityAndWait()
+        }
 }

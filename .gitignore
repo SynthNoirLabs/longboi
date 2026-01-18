@@ -37,17 +37,9 @@ captures/
 
 # IntelliJ
 *.iml
-.idea/workspace.xml
-.idea/tasks.xml
-.idea/gradle.xml
-.idea/assetWizardSettings.xml
-.idea/dictionaries
-.idea/libraries
-# Android Studio 3 in .gitignore file.
-.idea/caches
-.idea/modules.xml
-# Comment next line if keeping position of elements in Navigation Editor is relevant for you
-.idea/navEditor.xml
+.idea/
+# Android Studio captures folder
+captures/
 
 # Keystore files
 # Uncomment the following lines if you do not want to check your keystore files in.
@@ -139,3 +131,24 @@ benchmark/build/
 # Keep actual reference images, ignore diffs/results
 **/screenshotTest/diffs/
 **/screenshotTest/failures/
+
+# Windsurf additional patterns
+.windsurf/dist/
+.windsurf/cache/
+.windsurf/.temp/
+.windsurf/logs/*.log
+.windsurf/scripts/__pycache__/
+.windsurf/scripts/*.pyc
+.windsurf/hooks/*.log
+
+# Windsurf skill outputs
+docs/plans/*.tmp
+docs/bugs/*.tmp
+docs/performance/*.tmp
+docs/security/*.tmp
+docs/udf/*.tmp
+docs/build/*.tmp
+
+# Windsurf hook outputs
+.hook_output/
+.hook_cache/

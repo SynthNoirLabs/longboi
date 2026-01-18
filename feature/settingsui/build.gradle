@@ -16,14 +16,17 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = "11"
     }
     buildFeatures {
         compose true
+    }
+    testOptions {
+        unitTests.returnDefaultValues = true
     }
 }
 
@@ -40,4 +43,14 @@ dependencies {
 
     implementation(project(":core:designsystem"))
     implementation(project(":core:settings"))
+
+    testImplementation(libs.junit)
+    testImplementation(libs.google.truth)
+    testImplementation(libs.mockk)
+    testImplementation(libs.mockk.android)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.androidx.test.core)
+    testImplementation(libs.androidx.junit)
+    testImplementation(libs.turbine)
 }

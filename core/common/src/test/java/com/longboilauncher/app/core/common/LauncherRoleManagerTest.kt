@@ -6,8 +6,6 @@ import android.content.Intent
 import android.os.Build
 import com.google.common.truth.Truth.assertThat
 import com.longboilauncher.app.core.settings.PreferencesRepository
-import com.longboilauncher.app.core.common.LauncherRoleManager
-import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -22,13 +20,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import org.robolectric.shadows.ShadowRoleManager
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.Q])
 class LauncherRoleManagerTest {
-
     private val testDispatcher = StandardTestDispatcher()
     private val context = mockk<Context>(relaxed = true)
     private val preferencesRepository = mockk<PreferencesRepository>(relaxed = true)
@@ -50,26 +46,28 @@ class LauncherRoleManagerTest {
     }
 
     @Test
-    fun `isDefaultLauncher is true when role is held`() = runTest {
-        every { roleManager.isRoleHeld(RoleManager.ROLE_HOME) } returns true
+    fun `isDefaultLauncher is true when role is held`() =
+        runTest {
+            every { roleManager.isRoleHeld(RoleManager.ROLE_HOME) } returns true
 
-        launcherRoleManager.checkDefaultLauncher()
-        testDispatcher.scheduler.advanceUntilIdle()
+            launcherRoleManager.checkDefaultLauncher()
+            testDispatcher.scheduler.advanceUntilIdle()
 
-        assertThat(launcherRoleManager.isDefaultLauncher.value).isTrue()
-        assertThat(launcherRoleManager.shouldRequestRole.value).isFalse()
-    }
+            assertThat(launcherRoleManager.isDefaultLauncher.value).isTrue()
+            assertThat(launcherRoleManager.shouldRequestRole.value).isFalse()
+        }
 
     @Test
-    fun `isDefaultLauncher is false when role is not held`() = runTest {
-        every { roleManager.isRoleHeld(RoleManager.ROLE_HOME) } returns false
+    fun `isDefaultLauncher is false when role is not held`() =
+        runTest {
+            every { roleManager.isRoleHeld(RoleManager.ROLE_HOME) } returns false
 
-        launcherRoleManager.checkDefaultLauncher()
-        testDispatcher.scheduler.advanceUntilIdle()
+            launcherRoleManager.checkDefaultLauncher()
+            testDispatcher.scheduler.advanceUntilIdle()
 
-        assertThat(launcherRoleManager.isDefaultLauncher.value).isFalse()
-        assertThat(launcherRoleManager.shouldRequestRole.value).isTrue()
-    }
+            assertThat(launcherRoleManager.isDefaultLauncher.value).isFalse()
+            assertThat(launcherRoleManager.shouldRequestRole.value).isTrue()
+        }
 
     @Test
     fun `requestDefaultLauncher returns correct intent on API 29+`() {

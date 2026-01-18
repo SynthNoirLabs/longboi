@@ -12,15 +12,16 @@ class BaselineProfileGenerator {
     val baselineProfileRule = BaselineProfileRule()
 
     @Test
-    fun generate() = baselineProfileRule.collect(
-        packageName = "com.longboilauncher.app",
-        includeInStartupProfile = true
-    ) {
-        // Core journey for baseline profile
-        pressHome()
-        startActivityAndWait()
+    fun generate() =
+        baselineProfileRule.collect(
+            packageName = "com.longboilauncher.app",
+            includeInStartupProfile = true,
+        ) {
+            // Core journey for baseline profile
+            pressHome()
+            startActivityAndWait()
 
-        // TODO: Add more interactions like swiping up to all apps
-        // and opening search to optimize those paths too.
-    }
+            // TODO: Add more interactions like swiping up to all apps
+            // and opening search to optimize those paths too.
+        }
 }

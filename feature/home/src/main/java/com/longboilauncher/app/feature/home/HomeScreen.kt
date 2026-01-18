@@ -1,5 +1,6 @@
 package com.longboilauncher.app.feature.home
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -24,16 +26,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.designsystem.components.ActionsSheet
 import com.longboilauncher.app.core.designsystem.components.FavoriteAppItem
 import com.longboilauncher.app.core.designsystem.components.GlanceHeader
-import com.longboilauncher.app.feature.home.HomeEvent
-import com.longboilauncher.app.feature.home.HomeState
-import com.longboilauncher.app.feature.home.LauncherSurface
-
-import androidx.activity.compose.BackHandler
-import androidx.compose.material3.ExperimentalMaterial3Api
+import com.longboilauncher.app.core.model.AppEntry
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,7 +37,7 @@ fun HomeScreen(
     uiState: HomeState,
     onEvent: (HomeEvent) -> Unit,
     onNavigateToAllApps: () -> Unit = { onEvent(HomeEvent.NavigateTo(LauncherSurface.ALL_APPS)) },
-    onNavigateToSearch: () -> Unit = { onEvent(HomeEvent.NavigateTo(LauncherSurface.SEARCH)) }
+    onNavigateToSearch: () -> Unit = { onEvent(HomeEvent.NavigateTo(LauncherSurface.SEARCH)) },
 ) {
     var showActionsSheet by remember { mutableStateOf<AppEntry?>(null) }
     var dragOffset by remember { mutableFloatStateOf(0f) }
@@ -52,43 +48,45 @@ fun HomeScreen(
     }
 
     Surface(
-        modifier = Modifier
-            .fillMaxSize()
-            .pointerInput(Unit) {
-                detectVerticalDragGestures(
-                    onDragEnd = {
-                        if (dragOffset < -100) {
-                            onNavigateToAllApps()
-                        } else if (dragOffset > 100) {
-                            onNavigateToSearch()
-                        }
-                        dragOffset = 0f
-                    },
-                    onDragCancel = { dragOffset = 0f },
-                    onVerticalDrag = { _, dragAmount ->
-                        dragOffset += dragAmount
-                    }
-                )
-            },
-        color = MaterialTheme.colorScheme.background
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .pointerInput(Unit) {
+                    detectVerticalDragGestures(
+                        onDragEnd = {
+                            if (dragOffset < -100) {
+                                onNavigateToAllApps()
+                            } else if (dragOffset > 100) {
+                                onNavigateToSearch()
+                            }
+                            dragOffset = 0f
+                        },
+                        onDragCancel = { dragOffset = 0f },
+                        onVerticalDrag = { _, dragAmount ->
+                            dragOffset += dragAmount
+                        },
+                    )
+                },
+        color = MaterialTheme.colorScheme.background,
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             if (uiState.isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center),
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
                 )
             } else {
                 Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 16.dp)
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 16.dp),
                 ) {
                     Spacer(modifier = Modifier.height(80.dp))
 
                     GlanceHeader(
                         data = uiState.glanceData,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     )
 
                     Spacer(modifier = Modifier.height(48.dp))
@@ -96,21 +94,22 @@ fun HomeScreen(
                     // Favorites List
                     if (uiState.favorites.isEmpty()) {
                         EmptyFavoritesHint(
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f),
                         )
                     } else {
                         Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
                             uiState.favorites.forEach { favorite ->
                                 FavoriteAppItem(
                                     favorite = favorite,
                                     onClick = { onEvent(HomeEvent.LaunchFavorite(favorite)) },
                                     onSwipeRight = { onEvent(HomeEvent.ShowPopup(favorite.appEntry)) },
-                                    onLongClick = { showActionsSheet = favorite.appEntry }
+                                    onLongClick = { showActionsSheet = favorite.appEntry },
                                 )
                             }
                         }
@@ -122,9 +121,10 @@ fun HomeScreen(
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                         textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .padding(bottom = 32.dp)
+                        modifier =
+                            Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(bottom = 32.dp),
                     )
                 }
             }
@@ -146,7 +146,7 @@ fun HomeScreen(
                     },
                     onHideApp = {
                         showActionsSheet = null
-                    }
+                    },
                 )
             }
 
@@ -162,7 +162,7 @@ fun HomeScreen(
                     },
                     onAppInfo = { onEvent(HomeEvent.ShowAppInfo) },
                     onUninstall = { onEvent(HomeEvent.UninstallApp) },
-                    onHide = { onEvent(HomeEvent.HideApp) }
+                    onHide = { onEvent(HomeEvent.HideApp) },
                 )
             }
         }
@@ -170,18 +170,16 @@ fun HomeScreen(
 }
 
 @Composable
-private fun EmptyFavoritesHint(
-    modifier: Modifier = Modifier
-) {
+private fun EmptyFavoritesHint(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier.padding(32.dp),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = "Swipe up to add favorite apps",
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
     }
 }

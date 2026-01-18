@@ -20,47 +20,51 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.longboilauncher.app.core.icons.AppIcon
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.model.ProfileType
-import com.longboilauncher.app.core.icons.AppIcon
 
 @Composable
 fun AppListItem(
     app: AppEntry,
     modifier: Modifier = Modifier,
-    isPressed: Boolean = false
+    isPressed: Boolean = false,
 ) {
     val scale by animateFloatAsState(
         targetValue = if (isPressed) 0.95f else 1f,
-        label = "scale"
+        label = "scale",
     )
 
     val alpha = if (app.isArchived) 0.5f else 1f
 
     Card(
-        modifier = modifier
-            .scale(scale)
-            .alpha(alpha)
-            .fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
-        ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 0.dp,
-            pressedElevation = 2.dp
-        )
+        modifier =
+            modifier
+                .scale(scale)
+                .alpha(alpha)
+                .fillMaxWidth(),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+            ),
+        elevation =
+            CardDefaults.cardElevation(
+                defaultElevation = 0.dp,
+                pressedElevation = 2.dp,
+            ),
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             // App Icon
             AppIcon(
                 appEntry = app,
-                size = 48.dp
+                size = 48.dp,
             )
 
             // App Label
@@ -71,7 +75,7 @@ fun AppListItem(
                 color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
 
             // Profile Badge
@@ -88,22 +92,23 @@ fun AppListItem(
 @Composable
 private fun ProfileBadge(
     profile: ProfileType,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     when (profile) {
         ProfileType.WORK -> {
             Card(
                 modifier = modifier,
                 shape = CircleShape,
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFF4285F4)
-                )
+                colors =
+                    CardDefaults.cardColors(
+                        containerColor = Color(0xFF4285F4),
+                    ),
             ) {
                 Text(
                     text = "W",
                     style = MaterialTheme.typography.labelSmall,
                     color = Color.White,
-                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
                 )
             }
         }
@@ -111,15 +116,16 @@ private fun ProfileBadge(
             Card(
                 modifier = modifier,
                 shape = CircleShape,
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFFEA4335)
-                )
+                colors =
+                    CardDefaults.cardColors(
+                        containerColor = Color(0xFFEA4335),
+                    ),
             ) {
                 Text(
                     text = "P",
                     style = MaterialTheme.typography.labelSmall,
                     color = Color.White,
-                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
                 )
             }
         }
@@ -135,6 +141,6 @@ private fun ArchivedIndicator() {
         text = "Archived",
         style = MaterialTheme.typography.labelSmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
-        modifier = Modifier.padding(horizontal = 8.dp)
+        modifier = Modifier.padding(horizontal = 8.dp),
     )
 }

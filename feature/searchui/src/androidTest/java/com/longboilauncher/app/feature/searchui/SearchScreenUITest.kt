@@ -3,44 +3,44 @@ package com.longboilauncher.app.feature.searchui
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import com.longboilauncher.app.core.designsystem.theme.LongboiLauncherTheme
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.model.ProfileType
-import com.longboilauncher.app.core.designsystem.theme.LongboiLauncherTheme
-import com.longboilauncher.app.feature.searchui.SearchResult
 import org.junit.Rule
 import org.junit.Test
 
 class SearchScreenUITest {
-
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    private val testResults = listOf(
-        SearchResult.CalculatorResult("123+456", "579"),
-        SearchResult.SettingsShortcutResult("Wi-Fi", "wifi", "wifi"),
-        SearchResult.AppResult(
-            AppEntry(
-                packageName = "com.test.youtube",
-                className = "MainActivity",
-                label = "YouTube",
-                userIdentifier = 0,
-                profile = ProfileType.PERSONAL
-            )
+    private val testResults =
+        listOf(
+            SearchResult.CalculatorResult("123+456", "579"),
+            SearchResult.SettingsShortcutResult("Wi-Fi", "wifi", "wifi"),
+            SearchResult.AppResult(
+                AppEntry(
+                    packageName = "com.test.youtube",
+                    className = "MainActivity",
+                    label = "YouTube",
+                    userIdentifier = 0,
+                    profile = ProfileType.PERSONAL,
+                ),
+            ),
         )
-    )
 
     @Test
     fun searchScreen_displaysHint_whenQueryEmpty() {
         composeTestRule.setContent {
             LongboiLauncherTheme {
                 SearchScreen(
-                    uiState = SearchState(
-                        searchQuery = "",
-                        searchResults = emptyList()
-                    ),
+                    uiState =
+                        SearchState(
+                            searchQuery = "",
+                            searchResults = emptyList(),
+                        ),
                     onEvent = {},
                     onAppSelected = {},
-                    onDismiss = {}
+                    onDismiss = {},
                 )
             }
         }
@@ -53,13 +53,14 @@ class SearchScreenUITest {
         composeTestRule.setContent {
             LongboiLauncherTheme {
                 SearchScreen(
-                    uiState = SearchState(
-                        searchQuery = "you",
-                        searchResults = testResults
-                    ),
+                    uiState =
+                        SearchState(
+                            searchQuery = "you",
+                            searchResults = testResults,
+                        ),
                     onEvent = {},
                     onAppSelected = {},
-                    onDismiss = {}
+                    onDismiss = {},
                 )
             }
         }
@@ -72,13 +73,14 @@ class SearchScreenUITest {
         composeTestRule.setContent {
             LongboiLauncherTheme {
                 SearchScreen(
-                    uiState = SearchState(
-                        searchQuery = "123+456",
-                        searchResults = listOf(SearchResult.CalculatorResult("123+456", "579"))
-                    ),
+                    uiState =
+                        SearchState(
+                            searchQuery = "123+456",
+                            searchResults = listOf(SearchResult.CalculatorResult("123+456", "579")),
+                        ),
                     onEvent = {},
                     onAppSelected = {},
-                    onDismiss = {}
+                    onDismiss = {},
                 )
             }
         }
@@ -91,13 +93,14 @@ class SearchScreenUITest {
         composeTestRule.setContent {
             LongboiLauncherTheme {
                 SearchScreen(
-                    uiState = SearchState(
-                        searchQuery = "wifi",
-                        searchResults = listOf(SearchResult.SettingsShortcutResult("Wi-Fi", "wifi", "wifi"))
-                    ),
+                    uiState =
+                        SearchState(
+                            searchQuery = "wifi",
+                            searchResults = listOf(SearchResult.SettingsShortcutResult("Wi-Fi", "wifi", "wifi")),
+                        ),
                     onEvent = {},
                     onAppSelected = {},
-                    onDismiss = {}
+                    onDismiss = {},
                 )
             }
         }
@@ -110,13 +113,14 @@ class SearchScreenUITest {
         composeTestRule.setContent {
             LongboiLauncherTheme {
                 SearchScreen(
-                    uiState = SearchState(
-                        searchQuery = "xyz",
-                        searchResults = emptyList()
-                    ),
+                    uiState =
+                        SearchState(
+                            searchQuery = "xyz",
+                            searchResults = emptyList(),
+                        ),
                     onEvent = {},
                     onAppSelected = {},
-                    onDismiss = {}
+                    onDismiss = {},
                 )
             }
         }

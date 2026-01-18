@@ -40,20 +40,21 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
     @javax.inject.Inject
     lateinit var hapticFeedbackManager: HapticFeedbackManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val jankStats = remember {
-                JankStats.createAndTrack(window) { frameData ->
-                    if (frameData.isJank) {
-                        Log.v("JankStats", "Jank detected: ${frameData.frameDurationUiNanos}ns")
+            val jankStats =
+                remember {
+                    JankStats.createAndTrack(window) { frameData ->
+                        if (frameData.isJank) {
+                            Log.v("JankStats", "Jank detected: ${frameData.frameDurationUiNanos}ns")
+                        }
                     }
                 }
-            }
 
             DisposableEffect(Unit) {
                 jankStats.isTrackingEnabled = true
@@ -65,7 +66,7 @@ class MainActivity : ComponentActivity() {
             LongboiLauncherTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    color = MaterialTheme.colorScheme.background,
                 ) {
                     LauncherApp(hapticFeedbackManager = hapticFeedbackManager)
                 }
@@ -78,7 +79,7 @@ class MainActivity : ComponentActivity() {
 fun LauncherApp(
     hapticFeedbackManager: HapticFeedbackManager,
     homeViewModel: HomeViewModel = hiltViewModel(),
-    roleManager: LauncherRoleManager = hiltViewModel()
+    roleManager: LauncherRoleManager = hiltViewModel(),
 ) {
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
 
@@ -93,14 +94,14 @@ fun LauncherApp(
     // Home screen is always rendered as the base
     HomeScreen(
         uiState = uiState,
-        onEvent = homeViewModel::onEvent
+        onEvent = homeViewModel::onEvent,
     )
 
     // All Apps overlay
     AnimatedVisibility(
         visible = uiState.currentSurface == LauncherSurface.ALL_APPS,
         enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
-        exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
+        exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
     ) {
         val allAppsViewModel: AllAppsViewModel = hiltViewModel()
         val allAppsState by allAppsViewModel.uiState.collectAsStateWithLifecycle()
@@ -113,7 +114,7 @@ fun LauncherApp(
                 homeViewModel.onEvent(HomeEvent.NavigateTo(LauncherSurface.HOME))
             },
             onDismiss = { homeViewModel.onEvent(HomeEvent.NavigateTo(LauncherSurface.HOME)) },
-            hapticFeedbackManager = hapticFeedbackManager
+            hapticFeedbackManager = hapticFeedbackManager,
         )
     }
 
@@ -121,7 +122,7 @@ fun LauncherApp(
     AnimatedVisibility(
         visible = uiState.currentSurface == LauncherSurface.SEARCH,
         enter = fadeIn(),
-        exit = fadeOut()
+        exit = fadeOut(),
     ) {
         val searchViewModel: SearchViewModel = hiltViewModel()
         val searchState by searchViewModel.uiState.collectAsStateWithLifecycle()
@@ -133,7 +134,7 @@ fun LauncherApp(
                 homeViewModel.onEvent(HomeEvent.LaunchApp(appEntry))
                 homeViewModel.onEvent(HomeEvent.NavigateTo(LauncherSurface.HOME))
             },
-            onDismiss = { homeViewModel.onEvent(HomeEvent.NavigateTo(LauncherSurface.HOME)) }
+            onDismiss = { homeViewModel.onEvent(HomeEvent.NavigateTo(LauncherSurface.HOME)) },
         )
     }
 
@@ -141,7 +142,7 @@ fun LauncherApp(
     AnimatedVisibility(
         visible = uiState.currentSurface == LauncherSurface.SETTINGS,
         enter = fadeIn(),
-        exit = fadeOut()
+        exit = fadeOut(),
     ) {
         val settingsViewModel: SettingsViewModel = hiltViewModel()
         val settingsState by settingsViewModel.uiState.collectAsStateWithLifecycle()
@@ -149,7 +150,7 @@ fun LauncherApp(
         SettingsScreen(
             uiState = settingsState,
             onEvent = settingsViewModel::onEvent,
-            onNavigateBack = { homeViewModel.onEvent(HomeEvent.NavigateTo(LauncherSurface.HOME)) }
+            onNavigateBack = { homeViewModel.onEvent(HomeEvent.NavigateTo(LauncherSurface.HOME)) },
         )
     }
 }

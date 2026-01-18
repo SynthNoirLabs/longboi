@@ -3,7 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Required to query all apps on Android 11+ -->
-    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+    <uses-permission
+        android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
 
     <application
         android:name=".LauncherApplication"

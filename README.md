@@ -1,84 +1,60 @@
-# Longboi Launcher - Jetpack Compose
+# Longboi Launcher
 
-A minimalist Android launcher built with Jetpack Compose, inspired by Longboi Launcher's clean and efficient design.
+A modern, minimalist, and AI-ready Android launcher built with Jetpack Compose. Inspired by Niagara but evolving into its own unique "signature feel."
 
-## Features
+## 🚀 Architecture
 
-- **Minimalist UI**: Clean, distraction-free app list
-- **Fast Search**: Quickly find apps by name
-- **Gesture Support**: Scroll to reveal search bar
-- **Material You**: Dynamic color theming
-- **Performance Optimized**: Efficient lazy loading and state management
+The project follows a **modular, UDF-based architecture** designed for scalability and testability.
 
-## Architecture
+### Module Structure
 
-Built with modern Android architecture patterns:
+- **`:app`**: The main application entry point and dependency injection root.
+- **`:feature:*`**: Feature-specific modules (e.g., `:feature:home`, `:feature:allapps`, `:feature:settingsui`).
+- **`:core:*`**: Shared business logic, data, and design system modules (e.g., `:core:data`, `:core:designsystem`, `:core:common`).
+- **`:benchmark`**: Macrobenchmarks and performance tracking.
 
-- **MVVM** with Hilt for dependency injection
-- **Repository pattern** for app data management
-- **Jetpack Compose** for UI
-- **Kotlin Coroutines** for async operations
+### Core Stack
 
-## Key References
+- **UI**: Jetpack Compose with Material 3.
+- **DI**: Hilt (Dependency Injection).
+- **Async**: Kotlin Coroutines and Flow.
+- **Data**: Proto DataStore for settings and preferences.
+- **Image Loading**: Coil for optimized icon and image rendering.
 
-This project was developed with inspiration and guidance from:
+## 🛠 Quality Infrastructure
 
-### Official Android Resources
+We maintain high code quality standards through automated tooling:
 
-- [Android Compose Samples](https://github.com/android/compose-samples) - Official samples demonstrating Compose best practices
-- [Now in Android](https://github.com/android/nowinandroid) - Modern Android architecture showcase
+- **Testing**:
+  - **Unit Tests**: Full coverage for ViewModels and business logic (JVM/Robolectric).
+  - **Screenshot Tests**: Visual regression testing for UI components.
+  - **Macrobenchmarks**: Performance monitoring for startup and scroll.
+- **Static Analysis & Linting**:
+  - **Spotless + Ktlint**: Automated code formatting enforcement.
+  - **Android Lint**: Standard Android static analysis.
+- **Coverage**: **Kover** integration for project-wide coverage measurement.
 
-### Community Resources
+## 📈 Development Commands
 
-- [Compose CookBook](https://github.com/Gurupreet/ComposeCookBook) - Comprehensive Compose examples and patterns
-- [Longboi Launcher Feedback](https://feedback.longboilauncher.com/collections/8241110-sparkles-features) - Feature ideas and user feedback
+| Task | Command |
+| :--- | :--- |
+| **Run All Tests** | `./gradlew testDebugUnitTest` |
+| **Check Formatting** | `./gradlew spotlessCheck` |
+| **Fix Formatting** | `./gradlew spotlessApply` |
+| **Coverage Report** | `./gradlew koverHtmlReport` |
+| **Full Build** | `./gradlew assembleDebug` |
 
-## Project Structure
+## 📦 Getting Started
 
-```text
-app/
-├── src/main/java/com/longboilauncher/app/
-│   ├── data/
-│   │   ├── model/AppInfo.kt          # App data model
-│   │   └── repository/
-│   │       ├── AppRepository.kt      # App data management
-│   │       └── AppLauncher.kt        # App launching logic
-│   ├── ui/
-│   │   ├── screens/
-│   │   │   └── LauncherScreen.kt     # Main launcher UI
-│   │   ├── theme/
-│   │   │   ├── Theme.kt              # Material 3 theme
-│   │   │   └── Type.kt               # Typography definitions
-│   │   └── viewmodel/
-│   │       └── LauncherViewModel.kt  # UI state management
-│   ├── LauncherApplication.kt        # Application class
-│   └── MainActivity.kt               # Main launcher activity
-```
+1. Clone the repository.
+2. Open in Android Studio (Ladybug or later recommended).
+3. Build and run on a device or emulator.
+4. Set as the default home launcher when prompted.
 
-## Getting Started
+## 🛡 Permissions
 
-1. Clone the repository
-2. Open in Android Studio
-3. Build and run on device/emulator
-4. Set as home launcher when prompted
-
-## Requirements
-
-- Android Studio Hedgehog or later
-- Android SDK 26+ (minSdkVersion)
-- Kotlin 1.9.20+
-- Jetpack Compose BOM 2023.10.01
-
-## Permissions
-
-- `QUERY_ALL_PACKAGES` - Required to enumerate all installed apps on Android 11+
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
+- `QUERY_ALL_PACKAGES`: Essential for enumerating installed applications.
 
 ## License
 
-Copyright 2024 Longboi Launcher
-
-Licensed under the Apache License, Version 2.0
+Copyright 2025 Longboi Launcher. Licensed under the Apache License, Version 2.0.

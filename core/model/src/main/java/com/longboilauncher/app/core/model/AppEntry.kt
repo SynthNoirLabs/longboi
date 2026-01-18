@@ -20,14 +20,15 @@ data class AppEntry(
     val isEnabled: Boolean = true,
     val isSuspended: Boolean = false,
     val isArchived: Boolean = false,
-    val supportShortcuts: Boolean = false
+    val supportShortcuts: Boolean = false,
 ) {
     @Transient
-    val user: UserHandle = if (userIdentifier == 0) {
-        Process.myUserHandle()
-    } else {
-        UserHandle::class.java.getConstructor(Int::class.java).newInstance(userIdentifier)
-    }
+    val user: UserHandle =
+        if (userIdentifier == 0) {
+            Process.myUserHandle()
+        } else {
+            UserHandle::class.java.getConstructor(Int::class.java).newInstance(userIdentifier)
+        }
 
     override fun toString(): String = label
 
@@ -36,15 +37,14 @@ data class AppEntry(
         if (javaClass != other?.javaClass) return false
         other as AppEntry
         return packageName == other.packageName &&
-               className == other.className &&
-               userIdentifier == other.userIdentifier
+            className == other.className &&
+            userIdentifier == other.userIdentifier
     }
 
-    override fun hashCode(): Int {
-        return 31 * packageName.hashCode() +
-               31 * className.hashCode() +
-               userIdentifier
-    }
+    override fun hashCode(): Int =
+        31 * packageName.hashCode() +
+            31 * className.hashCode() +
+            userIdentifier
 
     val component: android.content.ComponentName
         get() = android.content.ComponentName(packageName, className)
@@ -62,21 +62,22 @@ data class AppEntry(
             isEnabled: Boolean = true,
             isSuspended: Boolean = false,
             isArchived: Boolean = false,
-            supportShortcuts: Boolean = false
-        ): AppEntry = AppEntry(
-            packageName = packageName,
-            className = className,
-            label = label,
-            userIdentifier = user.hashCode(),
-            profile = profile,
-            lastUpdateTime = lastUpdateTime,
-            firstInstallTime = firstInstallTime,
-            isSystemApp = isSystemApp,
-            isEnabled = isEnabled,
-            isSuspended = isSuspended,
-            isArchived = isArchived,
-            supportShortcuts = supportShortcuts
-        )
+            supportShortcuts: Boolean = false,
+        ): AppEntry =
+            AppEntry(
+                packageName = packageName,
+                className = className,
+                label = label,
+                userIdentifier = user.hashCode(),
+                profile = profile,
+                lastUpdateTime = lastUpdateTime,
+                firstInstallTime = firstInstallTime,
+                isSystemApp = isSystemApp,
+                isEnabled = isEnabled,
+                isSuspended = isSuspended,
+                isArchived = isArchived,
+                supportShortcuts = supportShortcuts,
+            )
     }
 }
 
@@ -85,5 +86,5 @@ data class AppEntry(
 enum class ProfileType {
     PERSONAL,
     WORK,
-    PRIVATE
+    PRIVATE,
 }

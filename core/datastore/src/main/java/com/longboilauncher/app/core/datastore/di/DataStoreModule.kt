@@ -5,7 +5,6 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
 import com.longboilauncher.app.UserSettings
-import com.longboilauncher.app.core.datastore.FavoritesRepository
 import com.longboilauncher.app.core.datastore.serializer.UserSettingsSerializer
 import dagger.Module
 import dagger.Provides
@@ -21,23 +20,22 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object DataStoreModule {
-
     @Provides
     @Singleton
-    fun provideUserSettingsDataStore(@ApplicationContext context: Context): DataStore<UserSettings> {
-        return DataStoreFactory.create(
+    fun provideUserSettingsDataStore(
+        @ApplicationContext context: Context,
+    ): DataStore<UserSettings> =
+        DataStoreFactory.create(
             serializer = UserSettingsSerializer,
             produceFile = { context.dataStoreFile("user_settings.pb") },
-            scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+            scope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
         )
-    }
 
     @Provides
     @Singleton
-    fun provideJson(): Json {
-        return Json {
+    fun provideJson(): Json =
+        Json {
             ignoreUnknownKeys = true
             coerceInputValues = true
         }
-    }
 }

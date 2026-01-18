@@ -28,8 +28,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.longboilauncher.app.core.model.FavoriteEntry
 import com.longboilauncher.app.core.icons.AppIcon
+import com.longboilauncher.app.core.model.FavoriteEntry
 
 @Composable
 fun FavoriteAppItem(
@@ -39,53 +39,56 @@ fun FavoriteAppItem(
     showNotifications: Boolean = true,
     onClick: () -> Unit = {},
     onSwipeRight: () -> Unit = {},
-    onLongClick: () -> Unit = {}
+    onLongClick: () -> Unit = {},
 ) {
     val scale by animateFloatAsState(
         targetValue = if (isPressed) 0.95f else 1f,
-        label = "scale"
+        label = "scale",
     )
     var dragOffset by remember { mutableFloatStateOf(0f) }
 
     Card(
-        modifier = modifier
-            .scale(scale)
-            .fillMaxWidth()
-            .pointerInput(Unit) {
-                detectHorizontalDragGestures(
-                    onDragEnd = {
-                        if (dragOffset > 100) {
-                            onSwipeRight()
-                        }
-                        dragOffset = 0f
-                    },
-                    onDragCancel = { dragOffset = 0f },
-                    onHorizontalDrag = { _, dragAmount ->
-                        dragOffset += dragAmount
-                    }
-                )
-            }
-            .clickable { onClick() },
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
-        ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 0.dp,
-            pressedElevation = 2.dp
-        ),
-        onClick = onClick
+        modifier =
+            modifier
+                .scale(scale)
+                .fillMaxWidth()
+                .pointerInput(Unit) {
+                    detectHorizontalDragGestures(
+                        onDragEnd = {
+                            if (dragOffset > 100) {
+                                onSwipeRight()
+                            }
+                            dragOffset = 0f
+                        },
+                        onDragCancel = { dragOffset = 0f },
+                        onHorizontalDrag = { _, dragAmount ->
+                            dragOffset += dragAmount
+                        },
+                    )
+                }.clickable { onClick() },
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+            ),
+        elevation =
+            CardDefaults.cardElevation(
+                defaultElevation = 0.dp,
+                pressedElevation = 2.dp,
+            ),
+        onClick = onClick,
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             // App Icon
             AppIcon(
                 appEntry = favorite.appEntry,
-                size = 48.dp
+                size = 48.dp,
             )
 
             // App Label
@@ -96,7 +99,7 @@ fun FavoriteAppItem(
                 color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
 
             // Status Indicators
@@ -115,14 +118,14 @@ fun FavoriteAppItem(
 private fun PlayingIndicator() {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         // Music note icon or animation
         Spacer(modifier = Modifier.width(4.dp))
         Text(
             text = "♪",
             style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.primary
+            color = MaterialTheme.colorScheme.primary,
         )
     }
 }
@@ -133,30 +136,32 @@ private fun NotificationDot(count: Int) {
         Card(
             modifier = Modifier.size(20.dp),
             shape = CircleShape,
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primary
-            )
+            colors =
+                CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                ),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = if (count > 99) "99+" else count.toString(),
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onPrimary
+                    color = MaterialTheme.colorScheme.onPrimary,
                 )
             }
         }
     } else {
         Spacer(
-            modifier = Modifier
-                .size(6.dp)
-                .background(
-                    color = MaterialTheme.colorScheme.primary,
-                    shape = CircleShape
-                )
+            modifier =
+                Modifier
+                    .size(6.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.primary,
+                        shape = CircleShape,
+                    ),
         )
     }
 }

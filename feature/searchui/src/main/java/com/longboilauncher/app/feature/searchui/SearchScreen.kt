@@ -18,9 +18,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Calculate
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Calculate
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -40,15 +40,15 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.designsystem.components.AppListItem
+import com.longboilauncher.app.core.model.AppEntry
 
 @Composable
 fun SearchScreen(
     uiState: SearchState,
     onEvent: (SearchEvent) -> Unit,
     onAppSelected: (AppEntry) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -59,12 +59,13 @@ fun SearchScreen(
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background.copy(alpha = 0.95f)
+        color = MaterialTheme.colorScheme.background.copy(alpha = 0.95f),
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .imePadding()
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .imePadding(),
         ) {
             Spacer(modifier = Modifier.height(48.dp))
 
@@ -72,21 +73,22 @@ fun SearchScreen(
             OutlinedTextField(
                 value = uiState.searchQuery,
                 onValueChange = { onEvent(SearchEvent.UpdateSearchQuery(it)) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .focusRequester(focusRequester),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .focusRequester(focusRequester),
                 placeholder = {
                     Text(
                         text = "Search apps...",
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyLarge,
                     )
                 },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = "Search",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 },
                 trailingIcon = {
@@ -95,32 +97,41 @@ fun SearchScreen(
                             Icon(
                                 imageVector = Icons.Default.Close,
                                 contentDescription = "Clear",
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
                     }
                 },
                 singleLine = true,
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Search
-                ),
-                keyboardActions = KeyboardActions(
-                    onSearch = {
-                        keyboardController?.hide()
-                        if (uiState.searchResults.isNotEmpty()) {
-                            when (val first = uiState.searchResults.first()) {
-                                is SearchResult.AppResult -> onAppSelected(first.app)
-                                is SearchResult.ShortcutResult -> onEvent(SearchEvent.LaunchShortcut(first.app, first.shortcutId))
-                                is SearchResult.CalculatorResult -> { /* No action on search */ }
-                                is SearchResult.SettingsShortcutResult -> onEvent(SearchEvent.OpenSettings(first.destination))
+                keyboardOptions =
+                    KeyboardOptions(
+                        imeAction = ImeAction.Search,
+                    ),
+                keyboardActions =
+                    KeyboardActions(
+                        onSearch = {
+                            keyboardController?.hide()
+                            if (uiState.searchResults.isNotEmpty()) {
+                                when (val first = uiState.searchResults.first()) {
+                                    is SearchResult.AppResult -> onAppSelected(first.app)
+                                    is SearchResult.ShortcutResult ->
+                                        onEvent(
+                                            SearchEvent.LaunchShortcut(first.app, first.shortcutId),
+                                        )
+                                    is SearchResult.CalculatorResult -> { /* No action on search */ }
+                                    is SearchResult.SettingsShortcutResult ->
+                                        onEvent(
+                                            SearchEvent.OpenSettings(first.destination),
+                                        )
+                                }
                             }
-                        }
-                    }
-                ),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    unfocusedBorderColor = MaterialTheme.colorScheme.outline
-                )
+                        },
+                    ),
+                colors =
+                    OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                    ),
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -129,45 +140,52 @@ fun SearchScreen(
             if (uiState.searchQuery.isNotEmpty()) {
                 if (uiState.searchResults.isEmpty()) {
                     Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(32.dp),
-                        contentAlignment = Alignment.Center
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(32.dp),
+                        contentAlignment = Alignment.Center,
                     ) {
                         Text(
                             text = "No results",
                             style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                 } else {
                     LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 8.dp),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
                     ) {
                         items(
                             items = uiState.searchResults,
                             key = { result ->
                                 when (result) {
-                                    is SearchResult.AppResult -> "app_${result.app.packageName}_${result.app.userIdentifier}"
-                                    is SearchResult.ShortcutResult -> "shortcut_${result.app.packageName}_${result.shortcutId}"
-                                    is SearchResult.CalculatorResult -> "calc_${result.expression}"
-                                    is SearchResult.SettingsShortcutResult -> "settings_${result.destination}"
+                                    is SearchResult.AppResult ->
+                                        "app_${result.app.packageName}_${result.app.userIdentifier}"
+                                    is SearchResult.ShortcutResult ->
+                                        "shortcut_${result.app.packageName}_${result.shortcutId}"
+                                    is SearchResult.CalculatorResult ->
+                                        "calc_${result.expression}"
+                                    is SearchResult.SettingsShortcutResult ->
+                                        "settings_${result.destination}"
                                 }
-                            }
+                            },
                         ) { result ->
                             when (result) {
                                 is SearchResult.AppResult -> {
                                     AppListItem(
                                         app = result.app,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .clickable {
-                                                keyboardController?.hide()
-                                                onAppSelected(result.app)
-                                            }
+                                        modifier =
+                                            Modifier
+                                                .fillMaxWidth()
+                                                .clickable {
+                                                    keyboardController?.hide()
+                                                    onAppSelected(result.app)
+                                                },
                                     )
                                 }
                                 is SearchResult.ShortcutResult -> {
@@ -177,7 +195,7 @@ fun SearchScreen(
                                     CalculatorResultItem(
                                         expression = result.expression,
                                         resultValue = result.result,
-                                        modifier = Modifier.fillMaxWidth()
+                                        modifier = Modifier.fillMaxWidth(),
                                     )
                                 }
                                 is SearchResult.SettingsShortcutResult -> {
@@ -187,7 +205,7 @@ fun SearchScreen(
                                             keyboardController?.hide()
                                             onEvent(SearchEvent.OpenSettings(result.destination))
                                         },
-                                        modifier = Modifier.fillMaxWidth()
+                                        modifier = Modifier.fillMaxWidth(),
                                     )
                                 }
                             }
@@ -197,15 +215,16 @@ fun SearchScreen(
             } else {
                 // Show hint when empty
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(32.dp),
-                    contentAlignment = Alignment.Center
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(32.dp),
+                    contentAlignment = Alignment.Center,
                 ) {
                     Text(
                         text = "Type to search apps, settings, or calculate",
                         style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
@@ -217,30 +236,31 @@ fun SearchScreen(
 private fun CalculatorResultItem(
     expression: String,
     resultValue: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     androidx.compose.foundation.layout.Row(
-        modifier = modifier
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            modifier
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             imageVector = Icons.Default.Calculate,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(24.dp),
         )
         Spacer(modifier = Modifier.width(16.dp))
         Column {
             Text(
                 text = expression,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Text(
                 text = "= $resultValue",
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
         }
     }
@@ -250,25 +270,26 @@ private fun CalculatorResultItem(
 private fun SettingsShortcutItem(
     title: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     androidx.compose.foundation.layout.Row(
-        modifier = modifier
-            .clickable { onClick() }
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            modifier
+                .clickable { onClick() }
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             imageVector = Icons.Default.Settings,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(24.dp),
         )
         Spacer(modifier = Modifier.width(16.dp))
         Text(
             text = title,
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
         )
     }
 }

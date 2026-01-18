@@ -8,16 +8,15 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
-fun LauncherRoleHandler(
-    roleManager: LauncherRoleManager
-) {
+fun LauncherRoleHandler(roleManager: LauncherRoleManager) {
     val shouldRequestRole by roleManager.shouldRequestRole.collectAsStateWithLifecycle()
 
-    val roleRequestLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { _ ->
-        roleManager.checkDefaultLauncher()
-    }
+    val roleRequestLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.StartActivityForResult(),
+        ) { _ ->
+            roleManager.checkDefaultLauncher()
+        }
 
     LaunchedEffect(shouldRequestRole) {
         if (shouldRequestRole) {

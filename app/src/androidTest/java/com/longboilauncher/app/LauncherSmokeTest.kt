@@ -1,22 +1,17 @@
 package com.longboilauncher.app
 
-import android.content.Context
-import android.content.Intent
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
 import org.junit.Before
 import org.junit.Test
-import org.junit.Assert.*
 
 /**
  * End-to-end smoke tests using UIAutomator.
  * These tests interact with the system UI and verified cross-app boundaries.
  */
 class LauncherSmokeTest {
-
     private lateinit var device: UiDevice
     private val packageName = "com.longboilauncher.app"
 
@@ -48,7 +43,7 @@ class LauncherSmokeTest {
             (displayHeight * 0.8).toInt(),
             displayWidth / 2,
             (displayHeight * 0.2).toInt(),
-            20
+            20,
         )
 
         // Wait for All Apps list (looking for 'A' header)

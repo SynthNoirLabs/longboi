@@ -1,0 +1,31 @@
+{
+    "version": "1.0",
+    "hooks": {
+        "pre_write_code": [
+            {
+                "command": "bash .windsurf/hooks/pre_write_code/security.sh",
+                "show_output": true,
+                "description": "Security check to block secrets and vulnerabilities"
+            }
+        ],
+        "post_write_code": [
+            {
+                "command": "bash .windsurf/hooks/post_write_code/format.sh",
+                "show_output": false,
+                "description": "Auto-format Kotlin, Gradle, XML, and JSON files"
+            }
+        ],
+        "pre_user_prompt": [
+            {
+                "command": "echo 'Prompt received for Longboi Launcher development'",
+                "show_output": false,
+                "description": "Log user prompts for analytics (optional)"
+            }
+        ]
+    },
+    "settings": {
+        "enable_hooks": true,
+        "hook_timeout_ms": 5000,
+        "fail_fast": true
+    }
+}

@@ -16,11 +16,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ColorLens
 import androidx.compose.material.icons.filled.GridView
-import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.SettingsBackupRestore
+import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.dp
 fun SettingsScreen(
     uiState: SettingsState,
     onEvent: (SettingsEvent) -> Unit,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
@@ -57,19 +57,20 @@ fun SettingsScreen(
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = "Back",
                         )
                     }
                 },
-                scrollBehavior = scrollBehavior
+                scrollBehavior = scrollBehavior,
             )
-        }
+        },
     ) { paddingValues ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .verticalScroll(rememberScrollState())
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .verticalScroll(rememberScrollState()),
         ) {
             // Appearance Section
             SettingsSection(title = "Appearance") {
@@ -77,13 +78,13 @@ fun SettingsScreen(
                     icon = Icons.Default.ColorLens,
                     title = "Theme",
                     subtitle = uiState.theme.replaceFirstChar { it.uppercase() },
-                    onClick = { /* TODO: Show theme picker */ }
+                    onClick = { /* TODO: Show theme picker */ },
                 )
                 SettingsItem(
                     icon = Icons.Default.GridView,
                     title = "Density",
                     subtitle = uiState.density.replaceFirstChar { it.uppercase() },
-                    onClick = { /* TODO: Show density picker */ }
+                    onClick = { /* TODO: Show density picker */ },
                 )
             }
 
@@ -95,14 +96,14 @@ fun SettingsScreen(
                     icon = Icons.Default.Home,
                     title = "Favorites",
                     subtitle = "Manage your favorite apps",
-                    onClick = { /* TODO: Show favorites editor */ }
+                    onClick = { /* TODO: Show favorites editor */ },
                 )
                 SettingsSwitchItem(
                     icon = Icons.Default.Notifications,
                     title = "Notification dots",
                     subtitle = "Show notification indicators",
                     checked = uiState.showNotifications,
-                    onCheckedChange = { onEvent(SettingsEvent.SetShowNotifications(it)) }
+                    onCheckedChange = { onEvent(SettingsEvent.SetShowNotifications(it)) },
                 )
             }
 
@@ -114,14 +115,14 @@ fun SettingsScreen(
                     icon = Icons.Default.TouchApp,
                     title = "Gestures",
                     subtitle = "Customize swipe actions",
-                    onClick = { /* TODO: Show gesture settings */ }
+                    onClick = { /* TODO: Show gesture settings */ },
                 )
                 SettingsSwitchItem(
                     icon = Icons.Default.TouchApp,
                     title = "Haptic feedback",
                     subtitle = "Vibration on interactions",
                     checked = uiState.hapticsEnabled,
-                    onCheckedChange = { onEvent(SettingsEvent.SetHapticsEnabled(it)) }
+                    onCheckedChange = { onEvent(SettingsEvent.SetHapticsEnabled(it)) },
                 )
             }
 
@@ -133,7 +134,7 @@ fun SettingsScreen(
                     icon = Icons.Default.VisibilityOff,
                     title = "Hidden apps",
                     subtitle = "Manage hidden applications",
-                    onClick = { /* TODO: Show hidden apps manager */ }
+                    onClick = { /* TODO: Show hidden apps manager */ },
                 )
             }
 
@@ -145,7 +146,7 @@ fun SettingsScreen(
                     icon = Icons.Default.SettingsBackupRestore,
                     title = "Backup & Restore",
                     subtitle = "Export or import settings",
-                    onClick = { /* TODO: Show backup options */ }
+                    onClick = { /* TODO: Show backup options */ },
                 )
             }
 
@@ -157,7 +158,7 @@ fun SettingsScreen(
                     icon = Icons.Default.Info,
                     title = "Version",
                     subtitle = "1.0.0",
-                    onClick = { }
+                    onClick = { },
                 )
             }
 
@@ -169,14 +170,14 @@ fun SettingsScreen(
 @Composable
 private fun SettingsSection(
     title: String,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = title,
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
         )
         content()
     }
@@ -187,32 +188,33 @@ private fun SettingsItem(
     icon: ImageVector,
     title: String,
     subtitle: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 14.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Icon(
             imageVector = icon,
             contentDescription = null,
             modifier = Modifier.size(24.dp),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
                 text = subtitle,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
@@ -224,37 +226,38 @@ private fun SettingsSwitchItem(
     title: String,
     subtitle: String,
     checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
+    onCheckedChange: (Boolean) -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onCheckedChange(!checked) }
-            .padding(horizontal = 16.dp, vertical = 14.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable { onCheckedChange(!checked) }
+                .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Icon(
             imageVector = icon,
             contentDescription = null,
             modifier = Modifier.size(24.dp),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
                 text = subtitle,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
         Switch(
             checked = checked,
-            onCheckedChange = onCheckedChange
+            onCheckedChange = onCheckedChange,
         )
     }
 }
