@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="popup_quick_actions">Quick Actions</string>
+    <string name="popup_shortcuts">Shortcuts</string>
+    <string name="popup_app_info">App Info</string>
+    <string name="popup_uninstall">Uninstall</string>
+    <string name="popup_hide">Hide</string>
+    <string name="popup_close">Close</string>
+    <string name="popup_shortcut_default_label">Shortcut</string>
+    <string name="home_swipe_up_hint">Swipe up for all apps</string>
+    <string name="home_empty_favorites_hint">Swipe up to add favorite apps</string>
+</resources>

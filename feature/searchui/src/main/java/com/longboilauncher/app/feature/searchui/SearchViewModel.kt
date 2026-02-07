@@ -2,14 +2,18 @@ package com.longboilauncher.app.feature.searchui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import android.util.Log
+import androidx.compose.runtime.Immutable
 import com.longboilauncher.app.core.appcatalog.AppCatalogRepository
 import com.longboilauncher.app.core.datastore.FavoritesRepository
 import com.longboilauncher.app.core.model.AppEntry
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -40,6 +44,7 @@ sealed class SearchResult {
     ) : SearchResult()
 }
 
+@Immutable
 data class SearchState(
     val searchQuery: String = "",
     val searchResults: List<SearchResult> = emptyList(),
@@ -75,11 +80,12 @@ class SearchViewModel
         val uiState: StateFlow<SearchState> = _uiState.asStateFlow()
 
         init {
+            @OptIn(FlowPreview::class)
             combine(
                 appCatalogRepository.apps,
                 favoritesRepository.hiddenApps,
                 favoritesRepository.favorites,
-                _uiState.map { it.searchQuery }.distinctUntilChanged(),
+                _uiState.map { it.searchQuery }.distinctUntilChanged().debounce(150),
             ) { apps, hiddenApps, favorites, query ->
                 if (query.isBlank()) {
                     emptyList<SearchResult>()

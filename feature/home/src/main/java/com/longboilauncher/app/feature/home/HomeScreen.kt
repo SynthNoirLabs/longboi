@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -24,12 +26,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.longboilauncher.app.core.designsystem.components.ActionsSheet
 import com.longboilauncher.app.core.designsystem.components.FavoriteAppItem
 import com.longboilauncher.app.core.designsystem.components.GlanceHeader
 import com.longboilauncher.app.core.model.AppEntry
+import com.longboilauncher.feature.home.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -97,27 +101,20 @@ fun HomeScreen(
                             modifier = Modifier.weight(1f),
                         )
                     } else {
-                        Column(
+                        FavoritesList(
+                            uiState = uiState,
+                            onEvent = onEvent,
+                            onShowActions = { showActionsSheet = it },
                             modifier =
                                 Modifier
                                     .fillMaxWidth()
                                     .weight(1f),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                        ) {
-                            uiState.favorites.forEach { favorite ->
-                                FavoriteAppItem(
-                                    favorite = favorite,
-                                    onClick = { onEvent(HomeEvent.LaunchFavorite(favorite)) },
-                                    onSwipeRight = { onEvent(HomeEvent.ShowPopup(favorite.appEntry)) },
-                                    onLongClick = { showActionsSheet = favorite.appEntry },
-                                )
-                            }
-                        }
+                        )
                     }
 
                     // Bottom hint
                     Text(
-                        text = "Swipe up for all apps",
+                        text = stringResource(R.string.home_swipe_up_hint),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                         textAlign = TextAlign.Center,
@@ -170,13 +167,38 @@ fun HomeScreen(
 }
 
 @Composable
+private fun FavoritesList(
+    uiState: HomeState,
+    onEvent: (HomeEvent) -> Unit,
+    onShowActions: (AppEntry) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    LazyColumn(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        itemsIndexed(
+            items = uiState.favorites,
+            key = { _, fav -> fav.id },
+        ) { _, favorite ->
+            FavoriteAppItem(
+                favorite = favorite,
+                onClick = { onEvent(HomeEvent.LaunchFavorite(favorite)) },
+                onSwipeRight = { onEvent(HomeEvent.ShowPopup(favorite.appEntry)) },
+                onLongClick = { onShowActions(favorite.appEntry) },
+            )
+        }
+    }
+}
+
+@Composable
 private fun EmptyFavoritesHint(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier.padding(32.dp),
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            text = "Swipe up to add favorite apps",
+            text = stringResource(R.string.home_empty_favorites_hint),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
             textAlign = TextAlign.Center,

@@ -194,7 +194,12 @@ class HomeViewModelTest {
     fun `showPopup sets popupApp and fetches shortcuts`() =
         runTest(testDispatcher) {
             createMocks()
-            val shortcut = mockk<ShortcutInfo>()
+            val shortcut = mockk<ShortcutInfo> {
+                every { id } returns "test_shortcut"
+                every { shortLabel } returns "Test Shortcut"
+                every { iconUri } returns null
+                every { intent } returns null
+            }
             coEvery { appCatalogRepository.getAppShortcuts(testApp) } returns listOf(shortcut)
             val viewModel = createViewModel()
 
@@ -204,6 +209,8 @@ class HomeViewModelTest {
 
             assertThat(viewModel.uiState.value.popupApp).isEqualTo(testApp)
             assertThat(viewModel.uiState.value.popupShortcuts).hasSize(1)
+            assertThat(viewModel.uiState.value.popupShortcuts[0].id).isEqualTo("test_shortcut")
+            assertThat(viewModel.uiState.value.popupShortcuts[0].label).isEqualTo("Test Shortcut")
             coVerify { appCatalogRepository.getAppShortcuts(testApp) }
         }
 

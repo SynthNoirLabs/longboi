@@ -1,5 +1,7 @@
 package com.longboilauncher.app.feature.settingsui
 
+import android.util.Log
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.longboilauncher.app.core.settings.PreferencesRepository
@@ -11,6 +13,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@Immutable
 data class SettingsState(
     val theme: String = "system",
     val hapticsEnabled: Boolean = true,
@@ -76,14 +79,22 @@ class SettingsViewModel
 
         fun onEvent(event: SettingsEvent) {
             viewModelScope.launch {
-                when (event) {
-                    is SettingsEvent.SetTheme -> preferencesRepository.setTheme(event.theme)
-                    is SettingsEvent.SetHapticsEnabled -> preferencesRepository.setHapticsEnabled(event.enabled)
-                    is SettingsEvent.SetShowNotifications -> preferencesRepository.setShowNotifications(event.show)
-                    is SettingsEvent.SetGestureSwipeUp -> preferencesRepository.setGestureSwipeUp(event.action)
-                    is SettingsEvent.SetGestureSwipeDown -> preferencesRepository.setGestureSwipeDown(event.action)
-                    is SettingsEvent.SetDensity -> preferencesRepository.setDensity(event.density)
+                try {
+                    when (event) {
+                        is SettingsEvent.SetTheme -> preferencesRepository.setTheme(event.theme)
+                        is SettingsEvent.SetHapticsEnabled -> preferencesRepository.setHapticsEnabled(event.enabled)
+                        is SettingsEvent.SetShowNotifications -> preferencesRepository.setShowNotifications(event.show)
+                        is SettingsEvent.SetGestureSwipeUp -> preferencesRepository.setGestureSwipeUp(event.action)
+                        is SettingsEvent.SetGestureSwipeDown -> preferencesRepository.setGestureSwipeDown(event.action)
+                        is SettingsEvent.SetDensity -> preferencesRepository.setDensity(event.density)
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to update setting", e)
                 }
             }
+        }
+
+        companion object {
+            private const val TAG = "SettingsViewModel"
         }
     }

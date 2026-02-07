@@ -1,5 +1,7 @@
 package com.longboilauncher.app.feature.allapps
 
+import android.util.Log
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.longboilauncher.app.core.appcatalog.AppCatalogRepository
@@ -19,6 +21,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@Immutable
 data class AllAppsState(
     val searchQuery: String = "",
     val selectedProfile: ProfileFilter = ProfileFilter.ALL,
@@ -117,14 +120,26 @@ class AllAppsViewModel
                 is AllAppsEvent.SelectProfile -> _uiState.update { it.copy(selectedProfile = event.profile) }
                 is AllAppsEvent.AddToFavorites ->
                     viewModelScope.launch {
-                        favoritesRepository.addFavorite(event.app)
+                        try {
+                            favoritesRepository.addFavorite(event.app)
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Failed to add favorite", e)
+                        }
                     }
                 is AllAppsEvent.HideApp ->
                     viewModelScope.launch {
-                        favoritesRepository.hideApp(event.packageName)
+                        try {
+                            favoritesRepository.hideApp(event.packageName)
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Failed to hide app", e)
+                        }
                     }
                 is AllAppsEvent.LaunchApp -> appCatalogRepository.launchApp(event.app)
             }
+        }
+
+        companion object {
+            private const val TAG = "AllAppsViewModel"
         }
     }
 

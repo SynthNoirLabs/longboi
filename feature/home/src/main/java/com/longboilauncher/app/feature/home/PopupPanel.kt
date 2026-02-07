@@ -1,6 +1,5 @@
 package com.longboilauncher.app.feature.home
 
-import android.content.pm.ShortcutInfo
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -40,11 +39,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.longboilauncher.app.core.icons.AppIcon
 import com.longboilauncher.app.core.model.AppEntry
+import com.longboilauncher.app.core.model.ShortcutUiModel
+import com.longboilauncher.feature.home.R
 
 data class PopupAction(
     val title: String,
@@ -56,9 +58,9 @@ data class PopupAction(
 fun PopupPanel(
     isVisible: Boolean,
     app: AppEntry,
-    shortcuts: List<ShortcutInfo>,
+    shortcuts: List<ShortcutUiModel>,
     onDismiss: () -> Unit,
-    onLaunchShortcut: (ShortcutInfo) -> Unit,
+    onLaunchShortcut: (ShortcutUiModel) -> Unit,
     onAppInfo: () -> Unit,
     onUninstall: () -> Unit,
     onHide: () -> Unit,
@@ -126,7 +128,7 @@ fun PopupPanel(
                             IconButton(onClick = onDismiss) {
                                 Icon(
                                     imageVector = Icons.Default.Close,
-                                    contentDescription = "Close",
+                                    contentDescription = stringResource(R.string.popup_close),
                                 )
                             }
                         }
@@ -135,7 +137,7 @@ fun PopupPanel(
 
                         // Quick Actions
                         Text(
-                            text = "Quick Actions",
+                            text = stringResource(R.string.popup_quick_actions),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Medium,
                             color = MaterialTheme.colorScheme.primary,
@@ -150,7 +152,7 @@ fun PopupPanel(
                         if (shortcuts.isNotEmpty()) {
                             Spacer(modifier = Modifier.height(24.dp))
                             Text(
-                                text = "Shortcuts",
+                                text = stringResource(R.string.popup_shortcuts),
                                 style = MaterialTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Medium,
                                 color = MaterialTheme.colorScheme.primary,
@@ -177,17 +179,17 @@ private fun QuickActionsGrid(
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         ActionRow(
             icon = Icons.Default.Info,
-            title = "App Info",
+            title = stringResource(R.string.popup_app_info),
             onClick = onAppInfo,
         )
         ActionRow(
             icon = Icons.Default.Delete,
-            title = "Uninstall",
+            title = stringResource(R.string.popup_uninstall),
             onClick = onUninstall,
         )
         ActionRow(
             icon = Icons.Default.VisibilityOff,
-            title = "Hide",
+            title = stringResource(R.string.popup_hide),
             onClick = onHide,
         )
     }
@@ -225,8 +227,8 @@ private fun ActionRow(
 
 @Composable
 private fun ShortcutsList(
-    shortcuts: List<ShortcutInfo>,
-    onLaunchShortcut: (ShortcutInfo) -> Unit,
+    shortcuts: List<ShortcutUiModel>,
+    onLaunchShortcut: (ShortcutUiModel) -> Unit,
 ) {
     LazyColumn(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         items(shortcuts, key = { it.id }) { shortcut ->
@@ -239,7 +241,6 @@ private fun ShortcutsList(
                         .padding(horizontal = 12.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                // TODO: Load shortcut icon
                 Box(
                     modifier =
                         Modifier
@@ -252,9 +253,8 @@ private fun ShortcutsList(
                 ) {
                     Text(
                         text =
-                            shortcut.shortLabel
-                                ?.toString()
-                                ?.firstOrNull()
+                            shortcut.label
+                                .firstOrNull()
                                 ?.uppercaseChar()
                                 ?.toString() ?: "?",
                         style = MaterialTheme.typography.labelLarge,
@@ -263,7 +263,7 @@ private fun ShortcutsList(
                 }
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
-                    text = shortcut.shortLabel?.toString() ?: "Shortcut",
+                    text = shortcut.label.ifEmpty { stringResource(R.string.popup_shortcut_default_label) },
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,

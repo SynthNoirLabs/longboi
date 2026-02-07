@@ -1,6 +1,7 @@
 package com.longboilauncher.app.feature.home
 
-import android.content.pm.ShortcutInfo
+import android.util.Log
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.longboilauncher.app.core.appcatalog.AppCatalogRepository
@@ -10,6 +11,7 @@ import com.longboilauncher.app.core.datastore.FavoritesRepository
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.model.FavoriteEntry
 import com.longboilauncher.app.core.model.GlanceHeaderData
+import com.longboilauncher.app.core.model.ShortcutUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,6 +31,7 @@ enum class LauncherSurface {
     SETTINGS,
 }
 
+@Immutable
 data class HomeState(
     val isLoading: Boolean = true,
     val currentSurface: LauncherSurface = LauncherSurface.HOME,
@@ -44,7 +47,8 @@ data class HomeState(
             nowPlaying = null,
         ),
     val popupApp: AppEntry? = null,
-    val popupShortcuts: List<ShortcutInfo> = emptyList(),
+    val popupShortcuts: List<ShortcutUiModel> = emptyList(),
+    val error: String? = null,
 )
 
 sealed class HomeEvent {
@@ -72,24 +76,24 @@ sealed class HomeEvent {
         val favoriteIds: List<String>,
     ) : HomeEvent()
 
-    object RefreshCatalog : HomeEvent()
+    data object RefreshCatalog : HomeEvent()
 
     data class ShowPopup(
         val app: AppEntry,
     ) : HomeEvent()
 
-    object HidePopup : HomeEvent()
+    data object HidePopup : HomeEvent()
 
     data class LaunchShortcut(
         val app: AppEntry,
         val shortcutId: String,
     ) : HomeEvent()
 
-    object ShowAppInfo : HomeEvent()
+    data object ShowAppInfo : HomeEvent()
 
-    object UninstallApp : HomeEvent()
+    data object UninstallApp : HomeEvent()
 
-    object HideApp : HomeEvent()
+    data object HideApp : HomeEvent()
 }
 
 @HiltViewModel
@@ -144,27 +148,60 @@ class HomeViewModel
                 is HomeEvent.LaunchFavorite -> appCatalogRepository.launchApp(event.favorite.appEntry)
                 is HomeEvent.AddToFavorites ->
                     viewModelScope.launch {
-                        favoritesRepository.addFavorite(event.app)
+                        try {
+                            favoritesRepository.addFavorite(event.app)
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Failed to add favorite", e)
+                        }
                     }
                 is HomeEvent.RemoveFromFavorites ->
                     viewModelScope.launch {
-                        favoritesRepository.removeFavorite(event.favoriteId)
+                        try {
+                            favoritesRepository.removeFavorite(event.favoriteId)
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Failed to remove favorite", e)
+                        }
                     }
                 is HomeEvent.ReorderFavorites ->
                     viewModelScope.launch {
-                        favoritesRepository.reorderFavorites(event.favoriteIds)
+                        try {
+                            favoritesRepository.reorderFavorites(event.favoriteIds)
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Failed to reorder favorites", e)
+                        }
                     }
                 HomeEvent.RefreshCatalog ->
                     viewModelScope.launch {
                         _uiState.update { it.copy(isLoading = true) }
-                        appCatalogRepository.refreshAppCatalog()
-                        _uiState.update { it.copy(isLoading = false) }
+                        try {
+                            appCatalogRepository.refreshAppCatalog()
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Failed to refresh catalog", e)
+                            _uiState.update { it.copy(error = e.message) }
+                        } finally {
+                            _uiState.update { it.copy(isLoading = false) }
+                        }
                     }
                 is HomeEvent.ShowPopup -> {
                     _uiState.update { it.copy(popupApp = event.app) }
                     viewModelScope.launch {
-                        val shortcuts = appCatalogRepository.getAppShortcuts(event.app)
-                        _uiState.update { it.copy(popupShortcuts = shortcuts) }
+                        try {
+                            val shortcuts = appCatalogRepository.getAppShortcuts(event.app)
+                            _uiState.update {
+                                it.copy(
+                                    popupShortcuts = shortcuts.map { s ->
+                                        ShortcutUiModel(
+                                            id = s.id,
+                                            label = s.shortLabel?.toString() ?: "",
+                                            iconUri = s.iconUri,
+                                            intent = s.intent,
+                                        )
+                                    },
+                                )
+                            }
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Failed to load shortcuts", e)
+                        }
                     }
                 }
                 HomeEvent.HidePopup -> {
@@ -180,11 +217,19 @@ class HomeViewModel
                 HomeEvent.HideApp -> {
                     _uiState.value.popupApp?.let { app ->
                         viewModelScope.launch {
-                            favoritesRepository.hideApp(app.packageName)
-                            _uiState.update { it.copy(popupApp = null, popupShortcuts = emptyList()) }
+                            try {
+                                favoritesRepository.hideApp(app.packageName)
+                                _uiState.update { it.copy(popupApp = null, popupShortcuts = emptyList()) }
+                            } catch (e: Exception) {
+                                Log.e(TAG, "Failed to hide app", e)
+                            }
                         }
                     }
                 }
             }
+        }
+
+        companion object {
+            private const val TAG = "HomeViewModel"
         }
     }
