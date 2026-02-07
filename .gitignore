@@ -120,8 +120,7 @@ GoogleService-Info.plist
 app/schemas/
 
 # Windsurf
-.windsurf/logs/
-.windsurf/temp/
+.windsurf/
 
 # Benchmark artifacts
 *.pb
@@ -132,16 +131,7 @@ benchmark/build/
 **/screenshotTest/diffs/
 **/screenshotTest/failures/
 
-# Windsurf additional patterns
-.windsurf/dist/
-.windsurf/cache/
-.windsurf/.temp/
-.windsurf/logs/*.log
-.windsurf/scripts/__pycache__/
-.windsurf/scripts/*.pyc
-.windsurf/hooks/*.log
-
-# Windsurf skill outputs
+# Temp plan artifacts
 docs/plans/*.tmp
 docs/bugs/*.tmp
 docs/performance/*.tmp
@@ -149,6 +139,7 @@ docs/security/*.tmp
 docs/udf/*.tmp
 docs/build/*.tmp
 
-# Windsurf hook outputs
+# Hook outputs
 .hook_output/
 .hook_cache/
+.cursor/rules/do-not-edit-these-rules-from-mcp-gateway/
