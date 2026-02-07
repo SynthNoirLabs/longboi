@@ -6,6 +6,7 @@ import androidx.datastore.core.DataStoreFactory
 import com.google.common.truth.Truth.assertThat
 import com.longboilauncher.app.UserSettings
 import com.longboilauncher.app.core.datastore.serializer.UserSettingsSerializer
+import com.longboilauncher.app.core.model.ThemeMode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -56,7 +57,7 @@ class PreferencesRepositoryTest {
             repository = PreferencesRepository(dataStore)
             advanceUntilIdle()
 
-            assertThat(repository.theme.first()).isEqualTo("system")
+            assertThat(repository.theme.first()).isEqualTo(ThemeMode.SYSTEM)
         }
 
     @Test
@@ -71,10 +72,10 @@ class PreferencesRepositoryTest {
             repository = PreferencesRepository(dataStore)
             advanceUntilIdle()
 
-            repository.setTheme("dark")
+            repository.setTheme(ThemeMode.DARK)
             advanceUntilIdle()
 
-            assertThat(repository.theme.first()).isEqualTo("dark")
+            assertThat(repository.theme.first()).isEqualTo(ThemeMode.DARK)
         }
 
     @Test

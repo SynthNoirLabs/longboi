@@ -2,6 +2,8 @@ package com.longboilauncher.app.core.settings
 
 import androidx.datastore.core.DataStore
 import com.longboilauncher.app.UserSettings
+import com.longboilauncher.app.core.model.Density
+import com.longboilauncher.app.core.model.ThemeMode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
@@ -21,18 +23,18 @@ class PreferencesRepository
                 if (exception is IOException) emit(UserSettings.getDefaultInstance()) else throw exception
             }
 
-        val theme: Flow<String> = safeData.map { it.theme.ifBlank { "system" } }
+        val theme: Flow<ThemeMode> = safeData.map { ThemeMode.fromValue(it.theme) }
         val showNotifications: Flow<Boolean> = safeData.map { it.showNotifications }
         val gestureSwipeUp: Flow<String> = safeData.map { it.gestureSwipeUp.ifBlank { "all_apps" } }
         val gestureSwipeDown: Flow<String> = safeData.map { it.gestureSwipeDown }
         val hapticsEnabled: Flow<Boolean> = safeData.map { it.hapticsEnabled }
-        val density: Flow<String> = safeData.map { it.density.ifBlank { "default" } }
+        val density: Flow<Density> = safeData.map { Density.fromValue(it.density) }
         val iconPackPackageName: Flow<String> = safeData.map { it.iconPackPackageName }
         val perAppIconOverrides: Flow<Map<String, String>> = safeData.map { it.perAppIconOverridesMap }
         val reduceMotion: Flow<Boolean> = safeData.map { it.reduceMotion }
 
-        suspend fun setTheme(theme: String) {
-            dataStore.updateData { it.toBuilder().setTheme(theme).build() }
+        suspend fun setTheme(theme: ThemeMode) {
+            dataStore.updateData { it.toBuilder().setTheme(theme.value).build() }
         }
 
         suspend fun setShowNotifications(show: Boolean) {
@@ -55,8 +57,8 @@ class PreferencesRepository
             dataStore.updateData { it.toBuilder().setReduceMotion(reduce).build() }
         }
 
-        suspend fun setDensity(density: String) {
-            dataStore.updateData { it.toBuilder().setDensity(density).build() }
+        suspend fun setDensity(density: Density) {
+            dataStore.updateData { it.toBuilder().setDensity(density.value).build() }
         }
 
         suspend fun getSerializedSettings(): ByteArray = dataStore.data.first().toByteArray()

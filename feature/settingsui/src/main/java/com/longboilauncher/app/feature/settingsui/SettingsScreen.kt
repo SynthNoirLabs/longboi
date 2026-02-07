@@ -79,13 +79,13 @@ fun SettingsScreen(
                 SettingsItem(
                     icon = Icons.Default.ColorLens,
                     title = stringResource(R.string.settings_theme),
-                    subtitle = uiState.theme.replaceFirstChar { it.uppercase() },
+                    subtitle = uiState.theme.value.replaceFirstChar { it.uppercase() },
                     onClick = { /* TODO: Show theme picker */ },
                 )
                 SettingsItem(
                     icon = Icons.Default.GridView,
                     title = stringResource(R.string.settings_density),
-                    subtitle = uiState.density.replaceFirstChar { it.uppercase() },
+                    subtitle = uiState.density.value.replaceFirstChar { it.uppercase() },
                     onClick = { /* TODO: Show density picker */ },
                 )
             }

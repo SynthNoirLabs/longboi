@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.longboilauncher.app.core.model.Density
+import com.longboilauncher.app.core.model.ThemeMode
 import com.longboilauncher.app.core.settings.PreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -15,17 +17,17 @@ import javax.inject.Inject
 
 @Immutable
 data class SettingsState(
-    val theme: String = "system",
+    val theme: ThemeMode = ThemeMode.SYSTEM,
     val hapticsEnabled: Boolean = true,
     val showNotifications: Boolean = true,
     val gestureSwipeUp: String = "all_apps",
     val gestureSwipeDown: String = "notifications",
-    val density: String = "default",
+    val density: Density = Density.DEFAULT,
 )
 
 sealed class SettingsEvent {
     data class SetTheme(
-        val theme: String,
+        val theme: ThemeMode,
     ) : SettingsEvent()
 
     data class SetHapticsEnabled(
@@ -45,7 +47,7 @@ sealed class SettingsEvent {
     ) : SettingsEvent()
 
     data class SetDensity(
-        val density: String,
+        val density: Density,
     ) : SettingsEvent()
 }
 
@@ -57,20 +59,24 @@ class SettingsViewModel
     ) : ViewModel() {
         val uiState: StateFlow<SettingsState> =
             combine(
-                preferencesRepository.theme,
-                preferencesRepository.hapticsEnabled,
-                preferencesRepository.showNotifications,
-                preferencesRepository.gestureSwipeUp,
-                preferencesRepository.gestureSwipeDown,
-            ) { theme, haptics, notifications, swipeUp, swipeDown ->
-                SettingsState(
-                    theme = theme,
-                    hapticsEnabled = haptics,
-                    showNotifications = notifications,
-                    gestureSwipeUp = swipeUp,
-                    gestureSwipeDown = swipeDown,
-                    density = "default", // TODO: Add density when fixed
-                )
+                combine(
+                    preferencesRepository.theme,
+                    preferencesRepository.hapticsEnabled,
+                    preferencesRepository.showNotifications,
+                    preferencesRepository.gestureSwipeUp,
+                    preferencesRepository.gestureSwipeDown,
+                ) { theme, haptics, notifications, swipeUp, swipeDown ->
+                    SettingsState(
+                        theme = theme,
+                        hapticsEnabled = haptics,
+                        showNotifications = notifications,
+                        gestureSwipeUp = swipeUp,
+                        gestureSwipeDown = swipeDown,
+                    )
+                },
+                preferencesRepository.density,
+            ) { state, density ->
+                state.copy(density = density)
             }.stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
