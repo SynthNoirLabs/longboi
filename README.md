@@ -1,6 +1,6 @@
 # Longboi Launcher
 
-It's Niagara Launcher but open source and worse. You're welcome.
+It's Niagara Launcher but open source and probably worse. You're welcome.
 
 A vertical-list Android launcher built from scratch with Jetpack Compose. Heavily inspired by [Niagara Launcher](https://niagaralauncher.app/) because it's genuinely great and the Android ecosystem deserves an open source take on that idea.
 
