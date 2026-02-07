@@ -2,6 +2,7 @@ package com.longboilauncher.app.core.settings
 
 import android.view.HapticFeedbackConstants
 import android.view.View
+import com.longboilauncher.app.core.model.di.ApplicationScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
@@ -18,7 +19,7 @@ class HapticFeedbackManager
     @Inject
     constructor(
         preferencesRepository: PreferencesRepository,
-        private val scope: CoroutineScope,
+        @ApplicationScope private val scope: CoroutineScope,
     ) : HapticFeedbackInterface {
         @Volatile
         private var shouldProvideHaptics: Boolean = true // Default to true until settings load

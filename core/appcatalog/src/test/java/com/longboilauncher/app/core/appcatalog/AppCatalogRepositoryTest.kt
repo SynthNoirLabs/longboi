@@ -10,7 +10,10 @@ import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.longboilauncher.app.core.model.AppEntry
 import io.mockk.mockk
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
@@ -23,6 +26,8 @@ import org.robolectric.shadows.ShadowUserManager
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
 class AppCatalogRepositoryTest {
+    private val testDispatcher = StandardTestDispatcher()
+    private lateinit var testScope: CoroutineScope
     private lateinit var context: Context
     private lateinit var repository: AppCatalogRepository
     private lateinit var launcherApps: LauncherApps
@@ -39,7 +44,8 @@ class AppCatalogRepositoryTest {
         shadowLauncherApps = shadowOf(launcherApps)
         shadowUserManager = shadowOf(userManager)
 
-        repository = AppCatalogRepository(context)
+        testScope = CoroutineScope(SupervisorJob() + testDispatcher)
+        repository = AppCatalogRepository(context, testScope)
     }
 
     @Test

@@ -5,16 +5,24 @@ import android.content.Context
 import android.content.pm.LauncherApps
 import android.content.pm.ShortcutInfo
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Process
 import android.os.UserHandle
 import android.os.UserManager
+import android.util.Log
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.model.ProfileType
+import com.longboilauncher.app.core.model.di.ApplicationScope
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -24,6 +32,7 @@ class AppCatalogRepository
     @Inject
     constructor(
         @ApplicationContext private val context: Context,
+        @ApplicationScope private val scope: CoroutineScope,
     ) {
         private val launcherApps = context.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
         private val userManager = context.getSystemService(Context.USER_SERVICE) as UserManager
@@ -34,29 +43,75 @@ class AppCatalogRepository
         private val _isLoading = MutableStateFlow(false)
         val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
+        private val refreshTrigger = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+
+        init {
+            val callback = object : LauncherApps.Callback() {
+                override fun onPackageAdded(packageName: String, user: UserHandle) {
+                    refreshTrigger.tryEmit(Unit)
+                }
+
+                override fun onPackageChanged(packageName: String, user: UserHandle) {
+                    refreshTrigger.tryEmit(Unit)
+                }
+
+                override fun onPackageRemoved(packageName: String, user: UserHandle) {
+                    refreshTrigger.tryEmit(Unit)
+                }
+
+                override fun onPackagesAvailable(
+                    packageNames: Array<out String>,
+                    user: UserHandle,
+                    replacing: Boolean,
+                ) {
+                    refreshTrigger.tryEmit(Unit)
+                }
+
+                override fun onPackagesUnavailable(
+                    packageNames: Array<out String>,
+                    user: UserHandle,
+                    replacing: Boolean,
+                ) {
+                    refreshTrigger.tryEmit(Unit)
+                }
+            }
+            launcherApps.registerCallback(callback)
+
+            @OptIn(kotlinx.coroutines.FlowPreview::class)
+            refreshTrigger
+                .debounce(500)
+                .onEach { refreshAppCatalog() }
+                .launchIn(scope)
+        }
+
         suspend fun refreshAppCatalog() =
             withContext(Dispatchers.IO) {
                 _isLoading.value = true
-                val allApps = mutableListOf<AppEntry>()
+                try {
+                    val allApps = mutableListOf<AppEntry>()
 
-                // Get personal profile apps
-                allApps.addAll(getAppsForUser(Process.myUserHandle(), ProfileType.PERSONAL))
+                    // Get personal profile apps
+                    allApps.addAll(getAppsForUser(Process.myUserHandle(), ProfileType.PERSONAL))
 
-                // Get work profile apps if available
-                userManager.userProfiles.forEach { userHandle ->
-                    if (userHandle != Process.myUserHandle()) {
-                        val profileType =
-                            if (isPrivateSpace(userHandle)) {
-                                ProfileType.PRIVATE
-                            } else {
-                                ProfileType.WORK
-                            }
-                        allApps.addAll(getAppsForUser(userHandle, profileType))
+                    // Get work profile apps if available
+                    userManager.userProfiles.forEach { userHandle ->
+                        if (userHandle != Process.myUserHandle()) {
+                            val profileType =
+                                if (isPrivateSpace(userHandle)) {
+                                    ProfileType.PRIVATE
+                                } else {
+                                    ProfileType.WORK
+                                }
+                            allApps.addAll(getAppsForUser(userHandle, profileType))
+                        }
                     }
-                }
 
-                _apps.value = allApps.sortedBy { it.label.lowercase() }
-                _isLoading.value = false
+                    _apps.value = allApps.sortedBy { it.label.lowercase() }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to refresh app catalog", e)
+                } finally {
+                    _isLoading.value = false
+                }
             }
 
         private fun getAppsForUser(
@@ -75,21 +130,6 @@ class AppCatalogRepository
                                 null
                             }
 
-                        val hasShortcuts =
-                            try {
-                                val query =
-                                    LauncherApps.ShortcutQuery().apply {
-                                        setQueryFlags(
-                                            LauncherApps.ShortcutQuery.FLAG_MATCH_DYNAMIC or
-                                                LauncherApps.ShortcutQuery.FLAG_MATCH_MANIFEST,
-                                        )
-                                        setPackage(appInfo.packageName)
-                                    }
-                                launcherApps.getShortcuts(query, user)?.isNotEmpty() ?: false
-                            } catch (e: Exception) {
-                                false
-                            }
-
                         AppEntry.create(
                             packageName = appInfo.packageName,
                             className = launcherActivityInfo.name,
@@ -102,28 +142,33 @@ class AppCatalogRepository
                             isEnabled = appInfo.enabled,
                             isSuspended =
                                 try {
-                                    // Check if app is suspended via ApplicationInfo flags
                                     (appInfo.flags and android.content.pm.ApplicationInfo.FLAG_SUSPENDED) != 0
                                 } catch (e: Exception) {
                                     false
                                 },
-                            supportShortcuts = hasShortcuts,
+                            supportShortcuts = false,
                         )
                     } catch (e: Exception) {
+                        Log.w(TAG, "Failed to process app: ${launcherActivityInfo.name}", e)
                         null
                     }
                 }
             } catch (e: SecurityException) {
+                Log.e(TAG, "Security exception getting apps for user", e)
                 emptyList()
             }
 
         private fun isPrivateSpace(user: UserHandle): Boolean =
             try {
-                // Private Space detection is complex and requires Android 15+
-                // For now, treat non-main users that aren't managed profiles as potential private space
-                // This is a simplified heuristic
-                false
+                if (Build.VERSION.SDK_INT >= 35) {
+                    val userContext = context.createContextAsUser(user, 0)
+                    val um = userContext.getSystemService(UserManager::class.java)
+                    um?.isPrivateProfile ?: false
+                } else {
+                    false
+                }
             } catch (e: Exception) {
+                Log.w(TAG, "Failed to check private space status", e)
                 false
             }
 
@@ -133,6 +178,7 @@ class AppCatalogRepository
                 val activity = activities.find { it.name == appEntry.className }
                 activity?.getBadgedIcon(0)
             } catch (e: Exception) {
+                Log.w(TAG, "Failed to get app icon for ${appEntry.packageName}", e)
                 null
             }
 
@@ -146,6 +192,7 @@ class AppCatalogRepository
                 val activity = activities.find { it.name == className }
                 activity?.getBadgedIcon(0)
             } catch (e: Exception) {
+                Log.w(TAG, "Failed to get app icon for $packageName", e)
                 null
             }
 
@@ -154,8 +201,7 @@ class AppCatalogRepository
                 val component = ComponentName(appEntry.packageName, appEntry.className)
                 launcherApps.startMainActivity(component, appEntry.user, null, null)
             } catch (e: Exception) {
-                // Handle launch failure - could show toast or log
-                e.printStackTrace()
+                Log.e(TAG, "Failed to launch app ${appEntry.packageName}", e)
             }
         }
 
@@ -168,7 +214,7 @@ class AppCatalogRepository
                 val component = ComponentName(packageName, className)
                 launcherApps.startMainActivity(component, user, null, null)
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e(TAG, "Failed to launch app $packageName", e)
             }
         }
 
@@ -196,14 +242,11 @@ class AppCatalogRepository
                     }
                 launcherApps.getShortcuts(query, appEntry.user) ?: emptyList()
             } catch (e: Exception) {
+                Log.w(TAG, "Failed to get shortcuts for ${appEntry.packageName}", e)
                 emptyList()
             }
 
-        fun registerPackageListener(callback: LauncherApps.Callback) {
-            launcherApps.registerCallback(callback)
-        }
-
-        fun unregisterPackageListener(callback: LauncherApps.Callback) {
-            launcherApps.unregisterCallback(callback)
+        companion object {
+            private const val TAG = "AppCatalogRepository"
         }
     }
