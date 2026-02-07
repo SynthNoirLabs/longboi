@@ -37,7 +37,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.longboilauncher.feature.settingsui.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,12 +54,12 @@ fun SettingsScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             LargeTopAppBar(
-                title = { Text("Settings") },
+                title = { Text(stringResource(R.string.settings_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.settings_back),
                         )
                     }
                 },
@@ -73,16 +75,16 @@ fun SettingsScreen(
                     .verticalScroll(rememberScrollState()),
         ) {
             // Appearance Section
-            SettingsSection(title = "Appearance") {
+            SettingsSection(title = stringResource(R.string.settings_section_appearance)) {
                 SettingsItem(
                     icon = Icons.Default.ColorLens,
-                    title = "Theme",
+                    title = stringResource(R.string.settings_theme),
                     subtitle = uiState.theme.replaceFirstChar { it.uppercase() },
                     onClick = { /* TODO: Show theme picker */ },
                 )
                 SettingsItem(
                     icon = Icons.Default.GridView,
-                    title = "Density",
+                    title = stringResource(R.string.settings_density),
                     subtitle = uiState.density.replaceFirstChar { it.uppercase() },
                     onClick = { /* TODO: Show density picker */ },
                 )
@@ -91,17 +93,17 @@ fun SettingsScreen(
             HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
             // Home Section
-            SettingsSection(title = "Home") {
+            SettingsSection(title = stringResource(R.string.settings_section_home)) {
                 SettingsItem(
                     icon = Icons.Default.Home,
-                    title = "Favorites",
-                    subtitle = "Manage your favorite apps",
+                    title = stringResource(R.string.settings_favorites),
+                    subtitle = stringResource(R.string.settings_favorites_subtitle),
                     onClick = { /* TODO: Show favorites editor */ },
                 )
                 SettingsSwitchItem(
                     icon = Icons.Default.Notifications,
-                    title = "Notification dots",
-                    subtitle = "Show notification indicators",
+                    title = stringResource(R.string.settings_notification_dots),
+                    subtitle = stringResource(R.string.settings_notification_dots_subtitle),
                     checked = uiState.showNotifications,
                     onCheckedChange = { onEvent(SettingsEvent.SetShowNotifications(it)) },
                 )
@@ -110,17 +112,17 @@ fun SettingsScreen(
             HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
             // Behavior Section
-            SettingsSection(title = "Behavior") {
+            SettingsSection(title = stringResource(R.string.settings_section_behavior)) {
                 SettingsItem(
                     icon = Icons.Default.TouchApp,
-                    title = "Gestures",
-                    subtitle = "Customize swipe actions",
+                    title = stringResource(R.string.settings_gestures),
+                    subtitle = stringResource(R.string.settings_gestures_subtitle),
                     onClick = { /* TODO: Show gesture settings */ },
                 )
                 SettingsSwitchItem(
                     icon = Icons.Default.TouchApp,
-                    title = "Haptic feedback",
-                    subtitle = "Vibration on interactions",
+                    title = stringResource(R.string.settings_haptic_feedback),
+                    subtitle = stringResource(R.string.settings_haptic_feedback_subtitle),
                     checked = uiState.hapticsEnabled,
                     onCheckedChange = { onEvent(SettingsEvent.SetHapticsEnabled(it)) },
                 )
@@ -129,11 +131,11 @@ fun SettingsScreen(
             HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
             // Apps Section
-            SettingsSection(title = "Apps") {
+            SettingsSection(title = stringResource(R.string.settings_section_apps)) {
                 SettingsItem(
                     icon = Icons.Default.VisibilityOff,
-                    title = "Hidden apps",
-                    subtitle = "Manage hidden applications",
+                    title = stringResource(R.string.settings_hidden_apps),
+                    subtitle = stringResource(R.string.settings_hidden_apps_subtitle),
                     onClick = { /* TODO: Show hidden apps manager */ },
                 )
             }
@@ -141,11 +143,11 @@ fun SettingsScreen(
             HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
             // Backup Section
-            SettingsSection(title = "Backup") {
+            SettingsSection(title = stringResource(R.string.settings_section_backup)) {
                 SettingsItem(
                     icon = Icons.Default.SettingsBackupRestore,
-                    title = "Backup & Restore",
-                    subtitle = "Export or import settings",
+                    title = stringResource(R.string.settings_backup_restore),
+                    subtitle = stringResource(R.string.settings_backup_restore_subtitle),
                     onClick = { /* TODO: Show backup options */ },
                 )
             }
@@ -153,11 +155,11 @@ fun SettingsScreen(
             HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
             // About Section
-            SettingsSection(title = "About") {
+            SettingsSection(title = stringResource(R.string.settings_section_about)) {
                 SettingsItem(
                     icon = Icons.Default.Info,
-                    title = "Version",
-                    subtitle = "1.0.0",
+                    title = stringResource(R.string.settings_version),
+                    subtitle = stringResource(R.string.settings_version_number),
                     onClick = { },
                 )
             }

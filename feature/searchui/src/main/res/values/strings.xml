@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="search_placeholder">Search apps…</string>
+    <string name="search_icon_description">Search</string>
+    <string name="search_clear_description">Clear</string>
+    <string name="search_no_results">No results</string>
+    <string name="search_hint">Type to search apps, settings, or calculate</string>
+    <string name="search_calculator_result">= %s</string>
+</resources>

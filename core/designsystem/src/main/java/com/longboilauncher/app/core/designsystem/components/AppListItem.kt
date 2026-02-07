@@ -20,9 +20,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import com.longboilauncher.app.core.icons.AppIcon
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.model.ProfileType
+import com.longboilauncher.core.designsystem.R
 
 @Composable
 fun AppListItem(
@@ -105,7 +107,7 @@ private fun ProfileBadge(
                     ),
             ) {
                 Text(
-                    text = "W",
+                    text = stringResource(R.string.profile_badge_work),
                     style = MaterialTheme.typography.labelSmall,
                     color = Color.White,
                     modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
@@ -122,7 +124,7 @@ private fun ProfileBadge(
                     ),
             ) {
                 Text(
-                    text = "P",
+                    text = stringResource(R.string.profile_badge_private),
                     style = MaterialTheme.typography.labelSmall,
                     color = Color.White,
                     modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
@@ -138,7 +140,7 @@ private fun ProfileBadge(
 @Composable
 private fun ArchivedIndicator() {
     Text(
-        text = "Archived",
+        text = stringResource(R.string.app_archived),
         style = MaterialTheme.typography.labelSmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = Modifier.padding(horizontal = 8.dp),

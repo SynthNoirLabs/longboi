@@ -12,7 +12,7 @@ import androidx.compose.ui.test.swipe
 import com.longboilauncher.app.core.designsystem.theme.LongboiLauncherTheme
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.model.ProfileType
-import com.longboilauncher.app.core.settings.NoOpHapticFeedbackManager
+import com.longboilauncher.app.core.testing.NoOpHapticFeedbackManager
 import org.junit.Rule
 import org.junit.Test
 

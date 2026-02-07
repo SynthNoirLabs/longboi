@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.longboilauncher.app.core.designsystem.theme.LongboiLauncherTheme
 import com.longboilauncher.app.core.model.AppEntry
-import com.longboilauncher.app.core.settings.NoOpHapticFeedbackManager
+import com.longboilauncher.app.core.testing.NoOpHapticFeedbackManager
 import com.longboilauncher.app.feature.allapps.AllAppsScreen
 import com.longboilauncher.app.feature.allapps.AllAppsState
 

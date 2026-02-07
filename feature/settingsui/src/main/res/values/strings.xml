@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">Settings</string>
+    <string name="settings_back">Back</string>
+    <string name="settings_section_appearance">Appearance</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_density">Density</string>
+    <string name="settings_section_home">Home</string>
+    <string name="settings_favorites">Favorites</string>
+    <string name="settings_favorites_subtitle">Manage your favorite apps</string>
+    <string name="settings_notification_dots">Notification dots</string>
+    <string name="settings_notification_dots_subtitle">Show notification indicators</string>
+    <string name="settings_section_behavior">Behavior</string>
+    <string name="settings_gestures">Gestures</string>
+    <string name="settings_gestures_subtitle">Customize swipe actions</string>
+    <string name="settings_haptic_feedback">Haptic feedback</string>
+    <string name="settings_haptic_feedback_subtitle">Vibration on interactions</string>
+    <string name="settings_section_apps">Apps</string>
+    <string name="settings_hidden_apps">Hidden apps</string>
+    <string name="settings_hidden_apps_subtitle">Manage hidden applications</string>
+    <string name="settings_section_backup">Backup</string>
+    <string name="settings_backup_restore">Backup &amp; Restore</string>
+    <string name="settings_backup_restore_subtitle">Export or import settings</string>
+    <string name="settings_section_about">About</string>
+    <string name="settings_version">Version</string>
+    <string name="settings_version_number">1.0.0</string>
+</resources>

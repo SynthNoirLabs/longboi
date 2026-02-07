@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="profile_badge_work">W</string>
+    <string name="profile_badge_private">P</string>
+    <string name="app_archived">Archived</string>
+    <string name="glance_next_prefix">Next: </string>
+    <string name="glance_separator"> \u2022 %s</string>
+    <string name="glance_alarm_prefix">Alarm: </string>
+    <string name="playing_indicator">\u266A</string>
+</resources>

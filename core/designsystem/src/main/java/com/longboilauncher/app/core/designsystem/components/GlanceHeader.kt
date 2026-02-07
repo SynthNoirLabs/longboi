@@ -15,7 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import com.longboilauncher.app.core.model.GlanceHeaderData
+import com.longboilauncher.core.designsystem.R
 
 @Composable
 fun GlanceHeader(
@@ -57,7 +59,7 @@ fun GlanceHeader(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = "Next: ",
+                    text = stringResource(R.string.glance_next_prefix),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                 )
@@ -68,7 +70,7 @@ fun GlanceHeader(
                     color = MaterialTheme.colorScheme.onBackground,
                 )
                 Text(
-                    text = " • ${event.time}",
+                    text = stringResource(R.string.glance_separator, event.time),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                 )
@@ -88,7 +90,7 @@ fun GlanceHeader(
                     color = MaterialTheme.colorScheme.onBackground,
                 )
                 Text(
-                    text = " • ${weather.condition}",
+                    text = stringResource(R.string.glance_separator, weather.condition),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                 )
@@ -103,7 +105,7 @@ fun GlanceHeader(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = "Alarm: ",
+                    text = stringResource(R.string.glance_alarm_prefix),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                 )
@@ -115,7 +117,7 @@ fun GlanceHeader(
                 )
                 alarm.label?.let { label ->
                     Text(
-                        text = " • $label",
+                        text = stringResource(R.string.glance_separator, label),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                     )

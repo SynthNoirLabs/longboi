@@ -52,4 +52,6 @@ dependencies {
     testImplementation(libs.androidx.test.core)
     testImplementation(libs.androidx.junit)
     testImplementation(libs.turbine)
+    testImplementation(project(":core:testing"))
+    androidTestImplementation(project(":core:testing"))
 }

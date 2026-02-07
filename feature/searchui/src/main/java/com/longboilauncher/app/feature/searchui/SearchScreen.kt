@@ -38,10 +38,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.longboilauncher.app.core.designsystem.components.AppListItem
 import com.longboilauncher.app.core.model.AppEntry
+import com.longboilauncher.feature.searchui.R
 
 @Composable
 fun SearchScreen(
@@ -80,14 +82,14 @@ fun SearchScreen(
                         .focusRequester(focusRequester),
                 placeholder = {
                     Text(
-                        text = "Search apps...",
+                        text = stringResource(R.string.search_placeholder),
                         style = MaterialTheme.typography.bodyLarge,
                     )
                 },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Search,
-                        contentDescription = "Search",
+                        contentDescription = stringResource(R.string.search_icon_description),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 },
@@ -96,7 +98,7 @@ fun SearchScreen(
                         IconButton(onClick = { onEvent(SearchEvent.UpdateSearchQuery("")) }) {
                             Icon(
                                 imageVector = Icons.Default.Close,
-                                contentDescription = "Clear",
+                                contentDescription = stringResource(R.string.search_clear_description),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
@@ -147,7 +149,7 @@ fun SearchScreen(
                         contentAlignment = Alignment.Center,
                     ) {
                         Text(
-                            text = "No results",
+                            text = stringResource(R.string.search_no_results),
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -222,7 +224,7 @@ fun SearchScreen(
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
-                        text = "Type to search apps, settings, or calculate",
+                        text = stringResource(R.string.search_hint),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -258,7 +260,7 @@ private fun CalculatorResultItem(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Text(
-                text = "= $resultValue",
+                text = stringResource(R.string.search_calculator_result, resultValue),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface,
             )

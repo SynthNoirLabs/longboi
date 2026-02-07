@@ -28,8 +28,10 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import com.longboilauncher.app.core.icons.AppIcon
 import com.longboilauncher.app.core.model.FavoriteEntry
+import com.longboilauncher.core.designsystem.R
 
 @Composable
 fun FavoriteAppItem(
@@ -123,7 +125,7 @@ private fun PlayingIndicator() {
         // Music note icon or animation
         Spacer(modifier = Modifier.width(4.dp))
         Text(
-            text = "♪",
+            text = stringResource(R.string.playing_indicator),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.primary,
         )

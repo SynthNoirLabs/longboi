@@ -29,6 +29,7 @@ include ':core:datastore-proto'
 include ':core:datastore'
 include ':core:settings'
 include ':core:icons'
+include ':core:testing'
 
 // Feature Modules
 include ':feature:home'

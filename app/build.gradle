@@ -5,7 +5,6 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.protobuf)
 }
 
 android {
@@ -44,21 +43,6 @@ android {
     packagingOptions {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
-        }
-    }
-}
-
-protobuf {
-    protoc {
-        artifact = "com.google.protobuf:protoc:3.25.1"
-    }
-    generateProtoTasks {
-        all().each { task ->
-            task.builtins {
-                java {
-                    option 'lite'
-                }
-            }
         }
     }
 }
@@ -105,11 +89,6 @@ dependencies {
     implementation(project(":feature:settingsui"))
     implementation(project(":feature:privatespace"))
     implementation(project(":feature:backup"))
-
-    // Room
-    implementation(libs.room.runtime)
-    implementation(libs.room.ktx)
-    ksp(libs.room.compiler)
 
     // DataStore
     implementation(libs.datastore)
