@@ -10,6 +10,7 @@ import com.longboilauncher.app.core.datastore.FavoritesRepository
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.model.FavoriteEntry
 import com.longboilauncher.app.core.model.GlanceHeaderData
+import com.longboilauncher.app.core.model.ThemeType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -34,6 +35,7 @@ data class HomeState(
     val currentSurface: LauncherSurface = LauncherSurface.HOME,
     val favorites: List<FavoriteEntry> = emptyList(),
     val apps: List<AppEntry> = emptyList(),
+    val theme: ThemeType = ThemeType.MATERIAL_YOU,
     val glanceData: GlanceHeaderData =
         GlanceHeaderData(
             currentTime = "",
@@ -100,6 +102,7 @@ class HomeViewModel
         private val favoritesRepository: FavoritesRepository,
         private val nowProvider: NowProvider,
         private val clockTicker: ClockTicker,
+        private val preferencesRepository: PreferencesRepository,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(HomeState())
         val uiState: StateFlow<HomeState> = _uiState.asStateFlow()
@@ -135,6 +138,10 @@ class HomeViewModel
                 }.launchIn(viewModelScope)
 
             onEvent(HomeEvent.RefreshCatalog)
+
+            preferencesRepository.themeType
+                .onEach { theme -> _uiState.update { it.copy(theme = theme) } }
+                .launchIn(viewModelScope)
         }
 
         fun onEvent(event: HomeEvent) {
