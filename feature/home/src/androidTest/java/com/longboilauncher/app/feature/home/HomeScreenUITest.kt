@@ -11,15 +11,12 @@ import com.longboilauncher.app.core.model.GlanceHeaderData
 import com.longboilauncher.app.core.model.ProfileType
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Rule
 import org.junit.Test
 
 class HomeScreenUITest {
     @get:Rule
     val composeTestRule = createComposeRule()
-
-    private val viewModel = mockk<HomeViewModel>(relaxed = true)
 
     private val testApp =
         AppEntry(
@@ -49,18 +46,21 @@ class HomeScreenUITest {
             nowPlaying = null,
         )
 
-    @Before
-    fun setup() {
-        every { viewModel.isLoading } returns MutableStateFlow(false)
-        every { viewModel.glanceData } returns MutableStateFlow(testGlance)
-        every { viewModel.favorites } returns MutableStateFlow(testFavorites)
-    }
+    private fun defaultState() =
+        HomeState(
+            isLoading = false,
+            favorites = testFavorites,
+            glanceData = testGlance,
+        )
 
     @Test
     fun homeScreen_displaysGlanceAndFavorites() {
         composeTestRule.setContent {
             LongboiLauncherTheme {
-                HomeScreen(viewModel = viewModel)
+                HomeScreen(
+                    uiState = defaultState(),
+                    onEvent = {},
+                )
             }
         }
 
@@ -74,11 +74,12 @@ class HomeScreenUITest {
 
     @Test
     fun homeScreen_showsLoading() {
-        every { viewModel.isLoading } returns MutableStateFlow(true)
-
         composeTestRule.setContent {
             LongboiLauncherTheme {
-                HomeScreen(viewModel = viewModel)
+                HomeScreen(
+                    uiState = defaultState().copy(isLoading = true),
+                    onEvent = {},
+                )
             }
         }
 
@@ -92,12 +93,16 @@ class HomeScreenUITest {
         every { shortcut.shortLabel } returns "Test Shortcut"
         every { shortcut.id } returns "shortcut_1"
 
-        every { viewModel.popupApp } returns MutableStateFlow(testApp)
-        every { viewModel.popupShortcuts } returns MutableStateFlow(listOf(shortcut))
-
         composeTestRule.setContent {
             LongboiLauncherTheme {
-                HomeScreen(viewModel = viewModel)
+                HomeScreen(
+                    uiState =
+                        defaultState().copy(
+                            popupApp = testApp,
+                            popupShortcuts = listOf(shortcut),
+                        ),
+                    onEvent = {},
+                )
             }
         }
 
@@ -110,5 +115,32 @@ class HomeScreenUITest {
         composeTestRule.onNodeWithText("App Info").assertIsDisplayed()
         composeTestRule.onNodeWithText("Uninstall").assertIsDisplayed()
         composeTestRule.onNodeWithText("Hide").assertIsDisplayed()
+    }
+
+    @Test
+    fun homeScreen_showsNotificationBadge_whenFavoriteHasNotifications() {
+        val favWithNotifs =
+            listOf(
+                FavoriteEntry(
+                    id = "fav_1",
+                    appEntry = testApp,
+                    position = 0,
+                    notificationCount = 5,
+                    hasNotifications = true,
+                ),
+            )
+
+        composeTestRule.setContent {
+            LongboiLauncherTheme {
+                HomeScreen(
+                    uiState = defaultState().copy(favorites = favWithNotifs),
+                    onEvent = {},
+                )
+            }
+        }
+
+        // Verify notification count is displayed
+        composeTestRule.onNodeWithText("5").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Test App").assertIsDisplayed()
     }
 }

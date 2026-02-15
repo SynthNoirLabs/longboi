@@ -5,6 +5,7 @@ import android.os.Build
 import com.google.common.truth.Truth.assertThat
 import com.longboilauncher.app.core.appcatalog.AppCatalogRepository
 import com.longboilauncher.app.core.common.ClockTicker
+import com.longboilauncher.app.core.common.NotificationState
 import com.longboilauncher.app.core.common.NowProvider
 import com.longboilauncher.app.core.datastore.FavoritesRepository
 import com.longboilauncher.app.core.model.AppEntry
@@ -96,6 +97,7 @@ class HomeViewModelTest {
     fun tearDown() {
         Dispatchers.resetMain()
         unmockkAll()
+        NotificationState.updateCounts(emptyMap())
     }
 
     @Test
@@ -247,5 +249,70 @@ class HomeViewModelTest {
 
             coVerify { favoritesRepository.hideApp(testApp.packageName) }
             assertThat(viewModel.uiState.value.popupApp).isNull()
+        }
+
+    // ─── Notification enrichment tests ──────────────────────────────
+
+    @Test
+    fun `favorites are enriched with notification counts on init`() =
+        runTest(testDispatcher) {
+            // Pre-populate notification counts before creating the VM
+            NotificationState.updateCounts(mapOf("com.test.app" to 5))
+
+            createMocks()
+            val viewModel = createViewModel()
+
+            val fav = viewModel.uiState.value.favorites[0]
+            assertThat(fav.hasNotifications).isTrue()
+            assertThat(fav.notificationCount).isEqualTo(5)
+        }
+
+    @Test
+    fun `favorites update when notification counts change`() =
+        runTest(testDispatcher) {
+            createMocks()
+            val viewModel = createViewModel()
+
+            // Initially no notifications
+            assertThat(viewModel.uiState.value.favorites[0].hasNotifications).isFalse()
+
+            // Simulate notification arriving
+            NotificationState.updateCounts(mapOf("com.test.app" to 3))
+
+            val fav = viewModel.uiState.value.favorites[0]
+            assertThat(fav.hasNotifications).isTrue()
+            assertThat(fav.notificationCount).isEqualTo(3)
+        }
+
+    @Test
+    fun `notification counts clear when notifications are dismissed`() =
+        runTest(testDispatcher) {
+            NotificationState.updateCounts(mapOf("com.test.app" to 2))
+
+            createMocks()
+            val viewModel = createViewModel()
+
+            assertThat(viewModel.uiState.value.favorites[0].hasNotifications).isTrue()
+
+            // All notifications dismissed
+            NotificationState.updateCounts(emptyMap())
+
+            val fav = viewModel.uiState.value.favorites[0]
+            assertThat(fav.hasNotifications).isFalse()
+            assertThat(fav.notificationCount).isEqualTo(0)
+        }
+
+    @Test
+    fun `notification counts only apply to matching packages`() =
+        runTest(testDispatcher) {
+            // Notifications for a different package
+            NotificationState.updateCounts(mapOf("com.other.app" to 10))
+
+            createMocks()
+            val viewModel = createViewModel()
+
+            val fav = viewModel.uiState.value.favorites[0]
+            assertThat(fav.hasNotifications).isFalse()
+            assertThat(fav.notificationCount).isEqualTo(0)
         }
 }
