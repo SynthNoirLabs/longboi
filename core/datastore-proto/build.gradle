@@ -39,8 +39,3 @@ protobuf {
 dependencies {
     api("com.google.protobuf:protobuf-javalite:3.25.1")
 }
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
-}
