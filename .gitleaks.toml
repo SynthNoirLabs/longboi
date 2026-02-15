@@ -1,0 +1,38 @@
+# Gitleaks configuration for Longboi Launcher
+# Extends the default ruleset with Android-specific patterns.
+# Run: gitleaks detect --source . --verbose
+
+[extend]
+useDefault = true
+
+# ── Android-specific rules ───────────────────────────
+
+[[rules]]
+id = "android-keystore-password"
+description = "Android Keystore Password"
+regex = '''(?i)(storePassword|keyPassword|key\.password|store\.password)\s*[=:]\s*['"]?[^\s'"]+'''
+tags = ["android", "keystore"]
+
+[[rules]]
+id = "google-services-api-key"
+description = "Google Services API Key in JSON"
+regex = '''(?i)"api_key"\s*:\s*\[\s*\{\s*"current_key"\s*:\s*"[A-Za-z0-9_\-]{20,}"'''
+tags = ["android", "google", "api-key"]
+
+[[rules]]
+id = "android-signing-config"
+description = "Android Signing Config Secrets in Gradle"
+regex = '''(?i)(signingConfigs|release)\s*\{[^}]*(storeFile|storePassword|keyAlias|keyPassword)\s*[=:]\s*['"]?[^\s'"}{]+'''
+tags = ["android", "signing"]
+
+# ── Allowlist ────────────────────────────────────────
+
+[allowlist]
+paths = [
+    '''.*[Tt]est.*\.kt$''',
+    '''.*\.md$''',
+    '''.*\.yaml$''',
+    '''.*\.yml$''',
+    '''\.pre-commit-config\.yaml$''',
+    '''\.gitleaks\.toml$''',
+]

@@ -1,0 +1,31 @@
+---
+description: Rules for Longboi Launcher Android development
+globs: ["**/*.kt", "**/*.gradle", "**/*.kts", "**/AndroidManifest.xml"]
+---
+
+You are a Senior Kotlin developer working on an Android launcher (home screen replacement).
+
+# Architecture
+- Multi-module: `core/*` and `feature/*` modules, `app/` entry point
+- DI: Hilt everywhere (`@AndroidEntryPoint`, `@HiltViewModel`, `@Inject`)
+- State: ViewModel + `MutableStateFlow` -> `StateFlow`. **NO LiveData**.
+- UI: Jetpack Compose only. **NO XML layouts, NO Fragments.**
+- Navigation: `AnimatedVisibility` surface switching. **NOT Navigation Compose.**
+- Formatting: Spotless + ktlint 1.3.1, max line length 120
+
+# Module Dependency Rules (enforced by Konsist tests)
+- Feature modules MUST NOT depend on `:app`
+- Core modules MUST NOT depend on feature modules
+- Use `:core:common` for cross-cutting concerns (e.g. `NotificationState`)
+- `NotificationState` in `core:common` bridges `app` module services -> feature ViewModels
+
+# System Integration Rules
+- Always register Services/Receivers/Providers in `AndroidManifest.xml`
+- `AppWidgetHost`: call `startListening()` in `onStart()`, `stopListening()` in `onStop()`
+- `Theme.kt`: `dynamicColor = false` (custom palette, not Monet wallpaper colors)
+- `NotificationService` extends `NotificationListenerService`, writes to `NotificationState`
+
+# Before Suggesting Commits
+- `./gradlew spotlessApply` to format
+- `./gradlew testDebugUnitTest` to verify
+- If UI changed: `./gradlew updateDebugScreenshotTest`

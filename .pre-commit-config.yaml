@@ -1,0 +1,37 @@
+# Pre-commit hooks for Longboi Launcher
+# Install: pip install pre-commit && pre-commit install && pre-commit install --hook-type commit-msg
+# Run all: pre-commit run --all-files
+#
+# These hooks catch common LLM-agent mistakes BEFORE code enters the repo.
+
+repos:
+  # ── Secrets Detection ──────────────────────────────
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.21.2
+    hooks:
+      - id: gitleaks
+
+  # ── General Code Quality ───────────────────────────
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: '\.golden$|\.png$'
+      - id: end-of-file-fixer
+        exclude: '\.golden$|\.png$'
+      - id: check-yaml
+      - id: check-xml                    # catches broken AndroidManifest.xml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: ['--maxkb=500']             # prevent accidental binary/APK commits
+      - id: detect-private-key
+      - id: check-case-conflict          # catches files that differ only in case
+      - id: check-symlinks
+
+  # ── Conventional Commits ───────────────────────────
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v3.6.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+        args: ['fix', 'feat', 'chore', 'docs', 'test', 'refactor', 'perf', 'ci', 'build', 'style']

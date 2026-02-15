@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "command": "bash -c 'input=$(cat); cmd=$(echo \"$input\" | jq -r \".input.command // empty\"); if echo \"$cmd\" | grep -qE \"rm -rf /|git push --force|git reset --hard|chmod 777|DROP TABLE|truncate\"; then echo \"BLOCKED: Dangerous command detected: $cmd\" >&2; exit 2; fi'"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "command": "bash -c 'input=$(cat); file=$(echo \"$input\" | jq -r \".input.file_path // empty\"); if [ -n \"$file\" ] && echo \"$file\" | grep -qE \"AndroidManifest\\.xml$\"; then echo \"\\n[guardrail] AndroidManifest.xml was modified. Verify: services declared, permissions correct, intent-filters valid.\" >&2; fi; if [ -n \"$file\" ] && echo \"$file\" | grep -qE \"\\.(jks|keystore|env|credentials|secret)$\"; then echo \"BLOCKED: Attempt to write a secrets/keystore file.\" >&2; exit 2; fi; exit 0'"
+      }
+    ]
+  }
+}
