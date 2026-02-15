@@ -42,7 +42,7 @@ private val LightColorScheme =
 @Composable
 fun LongboiLauncherTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val colorScheme =

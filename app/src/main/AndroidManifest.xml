@@ -2,10 +2,26 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Required to query all apps on Android 11+ -->
+    <!-- ════════════════════════════════════════════════════════════════
+         PERMISSIONS
+         ════════════════════════════════════════════════════════════════ -->
+
+    <!-- Required to query all installed apps on Android 11+ (Package Visibility) -->
     <uses-permission
         android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
+
+    <!-- Required to programmatically expand the notification shade (swipe-down gesture) -->
+    <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
+
+    <!-- Required to host home-screen widgets via AppWidgetHost -->
+    <uses-permission android:name="android.permission.BIND_APPWIDGET" />
+
+    <!-- Android 15 (API 35): Required to discover apps inside Private Space profiles -->
+    <uses-permission android:name="android.permission.ACCESS_HIDDEN_PROFILES" />
+
+    <!-- Android 15 (API 35): Required for note-taking shortcut / capture content -->
+    <uses-permission android:name="android.permission.LAUNCH_CAPTURE_CONTENT_ACTIVITY_FOR_NOTE" />
 
     <application
         android:name=".LauncherApplication"
@@ -17,9 +33,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.LongboiLauncher"
-        tools:targetApi="31">
+        tools:targetApi="35">
 
-        <!-- Home screen launcher activity -->
+        <!-- ════════════════════════════════════════════════════════════
+             LAUNCHER ACTIVITY
+             ════════════════════════════════════════════════════════════ -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -31,8 +49,23 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- ════════════════════════════════════════════════════════════
+             NOTIFICATION LISTENER SERVICE
+             Provides notification badge counts to the launcher UI.
+             The user must grant "Notification access" in system settings.
+             ════════════════════════════════════════════════════════════ -->
+        <service
+            android:name=".NotificationService"
+            android:exported="true"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
 
     </application>
 

@@ -1,5 +1,7 @@
 package com.longboilauncher.app
 
+import android.appwidget.AppWidgetHost
+import android.appwidget.AppWidgetManager
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -43,8 +45,20 @@ class MainActivity : ComponentActivity() {
     @javax.inject.Inject
     lateinit var hapticFeedbackManager: HapticFeedbackManager
 
+    /**
+     * AppWidgetHost manages the lifecycle of hosted widgets on the launcher surface.
+     * HOST_ID is an arbitrary but stable identifier unique to this host within the app.
+     */
+    private lateinit var appWidgetHost: AppWidgetHost
+    private lateinit var appWidgetManager: AppWidgetManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Initialize widget hosting infrastructure
+        appWidgetManager = AppWidgetManager.getInstance(this)
+        appWidgetHost = AppWidgetHost(this, APPWIDGET_HOST_ID)
+
         enableEdgeToEdge()
         setContent {
             val jankStats =
@@ -72,6 +86,40 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    /**
+     * Start listening for widget updates. Without this, AppWidgetHostView instances
+     * will render empty/frozen content because the host never receives RemoteViews updates
+     * from the AppWidgetProvider broadcast cycle.
+     */
+    override fun onStart() {
+        super.onStart()
+        try {
+            appWidgetHost.startListening()
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to start widget host listening", e)
+        }
+    }
+
+    /**
+     * Stop listening when the launcher is no longer visible to conserve resources
+     * and avoid holding stale RemoteViews references.
+     */
+    override fun onStop() {
+        super.onStop()
+        try {
+            appWidgetHost.stopListening()
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to stop widget host listening", e)
+        }
+    }
+
+    companion object {
+        private const val TAG = "MainActivity"
+
+        /** Stable host ID for the AppWidgetHost. Must remain constant across process restarts. */
+        private const val APPWIDGET_HOST_ID = 1024
     }
 }
 

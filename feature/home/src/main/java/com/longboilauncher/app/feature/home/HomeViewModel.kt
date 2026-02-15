@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.longboilauncher.app.core.appcatalog.AppCatalogRepository
 import com.longboilauncher.app.core.common.ClockTicker
+import com.longboilauncher.app.core.common.NotificationState
 import com.longboilauncher.app.core.common.NowProvider
 import com.longboilauncher.app.core.datastore.FavoritesRepository
 import com.longboilauncher.app.core.model.AppEntry
@@ -108,9 +109,30 @@ class HomeViewModel
         private val dateFormatter = DateTimeFormatter.ofPattern("EEEE, MMMM d")
 
         init {
-            // Collect favorites
+            // Collect favorites and enrich with notification badge counts
             favoritesRepository.favorites
-                .onEach { favs -> _uiState.update { it.copy(favorites = favs) } }
+                .onEach { favs ->
+                    val counts = NotificationState.counts.value
+                    val enriched = favs.map { fav ->
+                        val count = counts[fav.appEntry.packageName] ?: 0
+                        fav.copy(notificationCount = count, hasNotifications = count > 0)
+                    }
+                    _uiState.update { it.copy(favorites = enriched) }
+                }
+                .launchIn(viewModelScope)
+
+            // When notification counts change, re-enrich the current favorites list
+            NotificationState.counts
+                .onEach { counts ->
+                    _uiState.update { state ->
+                        state.copy(
+                            favorites = state.favorites.map { fav ->
+                                val count = counts[fav.appEntry.packageName] ?: 0
+                                fav.copy(notificationCount = count, hasNotifications = count > 0)
+                            },
+                        )
+                    }
+                }
                 .launchIn(viewModelScope)
 
             // Collect apps
