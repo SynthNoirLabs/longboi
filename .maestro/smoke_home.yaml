@@ -1,0 +1,18 @@
+appId: com.longboilauncher.app
+name: "Smoke: Home screen loads"
+tags:
+  - smoke
+  - home
+---
+# Verify the launcher home screen renders with core elements
+- launchApp
+
+- assertVisible: "Swipe up for all apps"
+
+# Verify the GlanceHeader shows time (any HH:MM pattern)
+- assertVisible:
+    text: ".*\\d{1,2}:\\d{2}.*"
+    regex: true
+
+# Take a screenshot for visual review
+- takeScreenshot: home_screen

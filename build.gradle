@@ -62,5 +62,12 @@ kover {
                 onCheck = true
             }
         }
+
+        // Coverage verification — CI will fail if coverage drops below thresholds
+        verify {
+            rule("Minimum line coverage") {
+                minBound(50) // Start conservative, ratchet up over time
+            }
+        }
     }
 }

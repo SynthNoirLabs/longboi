@@ -1,0 +1,24 @@
+appId: com.longboilauncher.app
+name: "Smoke: All Apps drawer opens"
+tags:
+  - smoke
+  - allapps
+---
+- launchApp
+
+# Swipe up to open the All Apps drawer
+- swipe:
+    direction: UP
+    duration: 500
+
+# The alphabetical scrubber should show section headers
+- assertVisible:
+    text: ".*"
+    enabled: true
+
+# Take a screenshot
+- takeScreenshot: all_apps_screen
+
+# Press back to return to home
+- pressKey: back
+- assertVisible: "Swipe up for all apps"

@@ -1,0 +1,26 @@
+appId: com.longboilauncher.app
+name: "Verify: Notification badges appear on favorites"
+tags:
+  - notifications
+  - visual
+---
+# This flow verifies that when an app has notifications,
+# the badge dot/count appears next to its favorite entry.
+#
+# PREREQUISITE: The user must have:
+#   1. At least one app added to favorites
+#   2. Notification Access granted to Longboi in system settings
+#   3. A pending notification from that app
+#
+# Run manually:
+#   maestro test .maestro/verify_notification_badge.yaml
+
+- launchApp
+- assertVisible: "Swipe up for all apps"
+
+# Take a screenshot to visually inspect notification badges
+- takeScreenshot: notification_badges
+
+# The test operator reviews the screenshot for badge presence.
+# For full automation, use Maestro MCP with an LLM to analyze the screenshot:
+#   "Does the screenshot show any notification badge dots next to app names?"

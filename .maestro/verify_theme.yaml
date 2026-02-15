@@ -1,0 +1,30 @@
+appId: com.longboilauncher.app
+name: "Verify: Custom theme is applied (not Monet)"
+tags:
+  - theme
+  - visual
+---
+# Verify that the launcher uses the project's custom color palette
+# instead of Material You / Monet wallpaper colors.
+#
+# After changing dynamicColor to false, the launcher should use
+# the DarkColorScheme or LightColorScheme defined in Theme.kt.
+#
+# Run: maestro test .maestro/verify_theme.yaml
+
+- launchApp
+- assertVisible: "Swipe up for all apps"
+- takeScreenshot: theme_light_or_dark
+
+# Toggle to All Apps to see more themed surfaces
+- swipe:
+    direction: UP
+    duration: 500
+- takeScreenshot: theme_all_apps
+
+- pressKey: back
+
+# Review screenshots to confirm:
+#   1. Colors are NOT dynamic wallpaper colors
+#   2. Purple80/Purple40 palette is visible
+#   3. Consistent across home and all-apps surfaces

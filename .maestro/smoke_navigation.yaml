@@ -1,0 +1,32 @@
+appId: com.longboilauncher.app
+name: "Smoke: Full navigation circuit"
+tags:
+  - smoke
+  - navigation
+---
+# Verify the user can navigate through all launcher surfaces and return home
+
+- launchApp
+- assertVisible: "Swipe up for all apps"
+- takeScreenshot: 01_home
+
+# Home -> All Apps (swipe up)
+- swipe:
+    direction: UP
+    duration: 500
+- takeScreenshot: 02_all_apps
+
+# All Apps -> Home (back)
+- pressKey: back
+- assertVisible: "Swipe up for all apps"
+
+# Home -> Search (swipe down)
+- swipe:
+    direction: DOWN
+    duration: 500
+- takeScreenshot: 03_search
+
+# Search -> Home (back)
+- pressKey: back
+- assertVisible: "Swipe up for all apps"
+- takeScreenshot: 04_back_home
