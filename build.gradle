@@ -27,6 +27,26 @@ subprojects {
         }
     }
 
+    // Configure Robolectric offline mode when deps are pre-cached
+    // (session-start hook downloads jars to ~/.robolectric-deps)
+    def robolectricDepsDir = new File(System.getProperty("user.home"), ".robolectric-deps")
+    pluginManager.withPlugin("com.android.library") {
+        tasks.withType(Test).configureEach {
+            if (robolectricDepsDir.exists()) {
+                systemProperty "robolectric.offline", "true"
+                systemProperty "robolectric.dependency.dir", robolectricDepsDir.absolutePath
+            }
+        }
+    }
+    pluginManager.withPlugin("com.android.application") {
+        tasks.withType(Test).configureEach {
+            if (robolectricDepsDir.exists()) {
+                systemProperty "robolectric.offline", "true"
+                systemProperty "robolectric.dependency.dir", robolectricDepsDir.absolutePath
+            }
+        }
+    }
+
     // Apply kover to all subprojects
     apply plugin: "org.jetbrains.kotlinx.kover"
 

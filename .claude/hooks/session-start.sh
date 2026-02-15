@@ -204,6 +204,29 @@ if [ -n "${CLAUDE_PROJECT_DIR:-}" ] && [ ! -f "${CLAUDE_PROJECT_DIR}/gradle/wrap
     "https://raw.githubusercontent.com/gradle/gradle/v${GRADLE_VERSION}.0/gradle/wrapper/gradle-wrapper.jar"
 fi
 
+# ── Robolectric Offline Dependencies ────────────────────────────────
+# Robolectric downloads Android framework JARs at test-time via Java HTTP,
+# which fails through the proxy. Pre-download them via curl.
+ROBO_DIR="${HOME}/.robolectric-deps"
+ROBO_BASE="https://repo1.maven.org/maven2/org/robolectric/android-all-instrumented"
+
+if [ ! -f "${ROBO_DIR}/android-all-instrumented-10-robolectric-5803371-i7.jar" ]; then
+  echo "Pre-caching Robolectric instrumented JARs..."
+  mkdir -p "${ROBO_DIR}"
+  # API 29 (Q) — used by most tests via @Config(sdk = [Q])
+  curl -fsSL -o "${ROBO_DIR}/android-all-instrumented-10-robolectric-5803371-i7.jar" \
+    "${ROBO_BASE}/10-robolectric-5803371-i7/android-all-instrumented-10-robolectric-5803371-i7.jar"
+  # API 35 (Android 15) — matches compileSdk 36, Robolectric resolves to this
+  curl -fsSL -o "${ROBO_DIR}/android-all-instrumented-15-robolectric-12650502-i7.jar" \
+    "${ROBO_BASE}/15-robolectric-12650502-i7/android-all-instrumented-15-robolectric-12650502-i7.jar"
+  # API 21 (Lollipop) — Robolectric default for some modules
+  curl -fsSL -o "${ROBO_DIR}/android-all-instrumented-5.0.2_r3-robolectric-r0-i7.jar" \
+    "${ROBO_BASE}/5.0.2_r3-robolectric-r0-i7/android-all-instrumented-5.0.2_r3-robolectric-r0-i7.jar"
+  echo "Robolectric JARs cached."
+else
+  echo "Robolectric JARs already cached, skipping."
+fi
+
 # ── Export environment variables for the session ────────────────────
 cat >> "${CLAUDE_ENV_FILE}" <<ENVEOF
 export ANDROID_HOME="${ANDROID_HOME}"

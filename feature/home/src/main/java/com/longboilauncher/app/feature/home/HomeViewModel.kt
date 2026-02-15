@@ -113,27 +113,27 @@ class HomeViewModel
             favoritesRepository.favorites
                 .onEach { favs ->
                     val counts = NotificationState.counts.value
-                    val enriched = favs.map { fav ->
-                        val count = counts[fav.appEntry.packageName] ?: 0
-                        fav.copy(notificationCount = count, hasNotifications = count > 0)
-                    }
+                    val enriched =
+                        favs.map { fav ->
+                            val count = counts[fav.appEntry.packageName] ?: 0
+                            fav.copy(notificationCount = count, hasNotifications = count > 0)
+                        }
                     _uiState.update { it.copy(favorites = enriched) }
-                }
-                .launchIn(viewModelScope)
+                }.launchIn(viewModelScope)
 
             // When notification counts change, re-enrich the current favorites list
             NotificationState.counts
                 .onEach { counts ->
                     _uiState.update { state ->
                         state.copy(
-                            favorites = state.favorites.map { fav ->
-                                val count = counts[fav.appEntry.packageName] ?: 0
-                                fav.copy(notificationCount = count, hasNotifications = count > 0)
-                            },
+                            favorites =
+                                state.favorites.map { fav ->
+                                    val count = counts[fav.appEntry.packageName] ?: 0
+                                    fav.copy(notificationCount = count, hasNotifications = count > 0)
+                                },
                         )
                     }
-                }
-                .launchIn(viewModelScope)
+                }.launchIn(viewModelScope)
 
             // Collect apps
             appCatalogRepository.apps

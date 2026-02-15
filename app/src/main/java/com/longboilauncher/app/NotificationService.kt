@@ -14,7 +14,6 @@ import com.longboilauncher.app.core.common.NotificationState
  * collect them without depending on the app module.
  */
 class NotificationService : NotificationListenerService() {
-
     override fun onListenerConnected() {
         super.onListenerConnected()
         rebuildCounts()

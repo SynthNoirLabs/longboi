@@ -1,10 +1,7 @@
 package com.longboilauncher.architecture
 
 import com.lemonappdev.konsist.api.Konsist
-import com.lemonappdev.konsist.api.ext.list.withAllAnnotationsOf
-import com.lemonappdev.konsist.api.ext.list.withImport
 import com.lemonappdev.konsist.api.ext.list.withNameEndingWith
-import com.lemonappdev.konsist.api.ext.list.withParentOf
 import com.lemonappdev.konsist.api.verify.assertFalse
 import com.lemonappdev.konsist.api.verify.assertTrue
 import org.junit.Test
@@ -17,7 +14,6 @@ import org.junit.Test
  * Run: ./gradlew :architecture-tests:test
  */
 class ModuleBoundaryTest {
-
     // ── Module Boundary Rules ───────────────────────────────────────
 
     @Test
@@ -95,8 +91,7 @@ class ModuleBoundaryTest {
             .filter { it.path.contains("/feature/") }
             .filter { cls ->
                 cls.constructors.any { c -> c.hasAnnotationWithName("Inject") }
-            }
-            .assertTrue {
+            }.assertTrue {
                 it.hasAnnotationWithName("HiltViewModel") ||
                     it.hasAnnotationWithName("AndroidEntryPoint")
             }
@@ -129,8 +124,7 @@ class ModuleBoundaryTest {
                     !it.name.contains("Fake") &&
                     !it.name.contains("Mock") &&
                     it.path.contains("src/main/")
-            }
-            .assertTrue {
+            }.assertTrue {
                 it.hasParentWithName("Service") ||
                     it.hasParentWithName("NotificationListenerService") ||
                     it.hasParentWithName("LifecycleService") ||

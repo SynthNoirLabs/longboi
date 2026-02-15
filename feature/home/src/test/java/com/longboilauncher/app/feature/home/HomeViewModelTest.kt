@@ -274,7 +274,10 @@ class HomeViewModelTest {
             val viewModel = createViewModel()
 
             // Initially no notifications
-            assertThat(viewModel.uiState.value.favorites[0].hasNotifications).isFalse()
+            assertThat(
+                viewModel.uiState.value.favorites[0]
+                    .hasNotifications,
+            ).isFalse()
 
             // Simulate notification arriving
             NotificationState.updateCounts(mapOf("com.test.app" to 3))
@@ -292,7 +295,10 @@ class HomeViewModelTest {
             createMocks()
             val viewModel = createViewModel()
 
-            assertThat(viewModel.uiState.value.favorites[0].hasNotifications).isTrue()
+            assertThat(
+                viewModel.uiState.value.favorites[0]
+                    .hasNotifications,
+            ).isTrue()
 
             // All notifications dismissed
             NotificationState.updateCounts(emptyMap())
