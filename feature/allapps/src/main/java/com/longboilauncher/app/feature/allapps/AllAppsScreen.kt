@@ -130,10 +130,10 @@ fun AllAppsScreen(
                         is ListItem.App -> {
                             AppListItem(
                                 app = item.app,
+                                onClick = { onAppSelected(item.app) },
                                 modifier =
                                     Modifier
                                         .fillMaxWidth()
-                                        .clickable { onAppSelected(item.app) }
                                         .padding(horizontal = 8.dp, vertical = 2.dp),
                             )
                         }

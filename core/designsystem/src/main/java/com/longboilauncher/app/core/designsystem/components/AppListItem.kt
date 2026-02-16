@@ -29,6 +29,7 @@ fun AppListItem(
     app: AppEntry,
     modifier: Modifier = Modifier,
     isPressed: Boolean = false,
+    onClick: () -> Unit = {},
 ) {
     val scale by animateFloatAsState(
         targetValue = if (isPressed) 0.95f else 1f,
@@ -38,6 +39,7 @@ fun AppListItem(
     val alpha = if (app.isArchived) 0.5f else 1f
 
     Card(
+        onClick = onClick,
         modifier =
             modifier
                 .scale(scale)

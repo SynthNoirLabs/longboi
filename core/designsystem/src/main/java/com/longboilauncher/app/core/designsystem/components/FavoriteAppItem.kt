@@ -2,7 +2,6 @@ package com.longboilauncher.app.core.designsystem.components
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -65,7 +64,7 @@ fun FavoriteAppItem(
                             dragOffset += dragAmount
                         },
                     )
-                }.clickable { onClick() },
+                },
         colors =
             CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
