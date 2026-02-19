@@ -26,10 +26,11 @@ class LauncherGestureHandlerTest {
 
         composeTestRule.setContent {
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .testTag("gesture_box")
-                    .handleGestures(onSwipeUp = onSwipeUp),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .testTag("gesture_box")
+                        .handleGestures(onSwipeUp = onSwipeUp),
             )
         }
 
@@ -46,10 +47,11 @@ class LauncherGestureHandlerTest {
 
         composeTestRule.setContent {
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .testTag("gesture_box")
-                    .handleGestures(onSwipeDown = onSwipeDown),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .testTag("gesture_box")
+                        .handleGestures(onSwipeDown = onSwipeDown),
             )
         }
 
@@ -66,10 +68,11 @@ class LauncherGestureHandlerTest {
 
         composeTestRule.setContent {
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .testTag("gesture_box")
-                    .handleGestures(onDoubleTap = onDoubleTap),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .testTag("gesture_box")
+                        .handleGestures(onDoubleTap = onDoubleTap),
             )
         }
 
@@ -86,10 +89,11 @@ class LauncherGestureHandlerTest {
 
         composeTestRule.setContent {
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .testTag("gesture_box")
-                    .handleGestures(onLongPress = onLongPress),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .testTag("gesture_box")
+                        .handleGestures(onLongPress = onLongPress),
             )
         }
 

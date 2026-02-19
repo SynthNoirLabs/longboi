@@ -2,6 +2,7 @@ package com.longboilauncher.app.core.designsystem.components
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -24,12 +26,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.longboilauncher.app.core.designsystem.theme.LocalThemeType
 import com.longboilauncher.app.core.icons.AppIcon
 import com.longboilauncher.app.core.model.FavoriteEntry
+import com.longboilauncher.app.core.model.ThemeType
 
 @Composable
 fun FavoriteAppItem(
@@ -47,11 +52,50 @@ fun FavoriteAppItem(
     )
     var dragOffset by remember { mutableFloatStateOf(0f) }
 
+    val themeType = LocalThemeType.current
+    val playfulColors =
+        listOf(
+            Color(0xFFA5D6A7), // Green
+            Color(0xFFFFAB91), // Orange
+            Color(0xFF81D4FA), // Blue
+            Color(0xFFF48FB1), // Pink
+            Color(0xFFCE93D8), // Purple
+        )
+    val appColorIndex = Math.abs(favorite.appEntry.packageName.hashCode()) % playfulColors.size
+
+    val containerColor =
+        when (themeType) {
+            ThemeType.GLASSMORPHISM -> Color.White.copy(alpha = 0.15f)
+            ThemeType.VIBRANT_PLAYFUL -> playfulColors[appColorIndex]
+            ThemeType.SOPHISTICATED_SLEEK -> Color(0xFF1A1A1A)
+            ThemeType.MODERN_MINIMALIST -> Color.Transparent
+            else -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+        }
+    val contentColor =
+        when (themeType) {
+            ThemeType.VIBRANT_PLAYFUL -> Color.White
+            ThemeType.SOPHISTICATED_SLEEK -> Color(0xFFF2CC0D)
+            else -> MaterialTheme.colorScheme.onSurface
+        }
+    val shape =
+        when (themeType) {
+            ThemeType.VIBRANT_PLAYFUL -> RoundedCornerShape(32.dp)
+            ThemeType.MODERN_MINIMALIST -> RoundedCornerShape(0.dp)
+            else -> RoundedCornerShape(16.dp)
+        }
+    val borderStroke =
+        when (themeType) {
+            ThemeType.GLASSMORPHISM -> Modifier.border(1.dp, Color.White.copy(alpha = 0.3f), shape)
+            ThemeType.SOPHISTICATED_SLEEK -> Modifier.border(0.5.dp, Color(0xFFF2CC0D).copy(alpha = 0.3f), shape)
+            else -> Modifier
+        }
+
     Card(
         modifier =
             modifier
                 .scale(scale)
                 .fillMaxWidth()
+                .then(borderStroke)
                 .pointerInput(Unit) {
                     detectHorizontalDragGestures(
                         onDragEnd = {
@@ -66,9 +110,11 @@ fun FavoriteAppItem(
                         },
                     )
                 }.clickable { onClick() },
+        shape = shape,
         colors =
             CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+                containerColor = containerColor,
+                contentColor = contentColor,
             ),
         elevation =
             CardDefaults.cardElevation(

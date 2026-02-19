@@ -2,6 +2,7 @@ package com.longboilauncher.app.core.settings
 
 import androidx.datastore.core.DataStore
 import com.longboilauncher.app.UserSettings
+import com.longboilauncher.app.core.model.ThemeType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
@@ -24,7 +25,8 @@ class PreferencesRepository
                     } else {
                         throw exception
                     }
-                }.map { it.theme.ifBlank { "system" } }
+                }.map { it.theme.ifBlank { "material_you" } }
+        val themeType: Flow<ThemeType> = theme.map { ThemeType.fromKey(it) }
 
         val showNotifications: Flow<Boolean> =
             dataStore.data

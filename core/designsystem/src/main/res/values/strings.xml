@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">Longboi Launcher</string>
     <string name="search_apps_placeholder">Search apps...</string>
     <string name="swipe_up_hint">Swipe up for apps &amp; search</string>
     <string name="theme_material_you">Material You</string>
@@ -7,8 +6,4 @@
     <string name="theme_minimalist">Modern Minimalist</string>
     <string name="theme_playful">Vibrant &amp; Playful</string>
     <string name="theme_sleek">Sophisticated &amp; Sleek</string>
-    <string name="settings_theme">Theme</string>
-    <string name="settings_favorites">Favorites</string>
-    <string name="settings_gestures">Gestures</string>
-    <string name="settings_hidden_apps">Hidden apps</string>
 </resources>

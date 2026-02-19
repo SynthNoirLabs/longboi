@@ -12,10 +12,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.longboilauncher.app.core.designsystem.theme.LocalThemeType
 import com.longboilauncher.app.core.model.GlanceHeaderData
+import com.longboilauncher.app.core.model.ThemeType
 
 @Composable
 fun GlanceHeader(
@@ -31,11 +35,25 @@ fun GlanceHeader(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         // Time
+        val themeType = LocalThemeType.current
         Text(
             text = data.currentTime,
-            style = MaterialTheme.typography.displayLarge,
-            fontWeight = FontWeight.Light,
-            color = MaterialTheme.colorScheme.onBackground,
+            style =
+                when (themeType) {
+                    ThemeType.SOPHISTICATED_SLEEK ->
+                        MaterialTheme.typography.displayLarge.copy(fontFamily = FontFamily.Serif)
+                    ThemeType.MODERN_MINIMALIST ->
+                        MaterialTheme.typography.displayLarge.copy(fontWeight = FontWeight.Bold)
+                    else -> MaterialTheme.typography.displayLarge
+                },
+            fontWeight = if (themeType == ThemeType.MODERN_MINIMALIST) FontWeight.Bold else FontWeight.Light,
+            color =
+                when (themeType) {
+                    ThemeType.SOPHISTICATED_SLEEK -> Color(0xFFF2CC0D)
+                    ThemeType.GLASSMORPHISM -> Color.White
+                    ThemeType.MODERN_MINIMALIST -> Color.Black
+                    else -> MaterialTheme.colorScheme.onBackground
+                },
             textAlign = TextAlign.Center,
         )
 
@@ -43,7 +61,14 @@ fun GlanceHeader(
         Text(
             text = data.currentDate,
             style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+            color =
+                when (themeType) {
+                    ThemeType.SOPHISTICATED_SLEEK ->
+                        Color(0xFFF2CC0D).copy(alpha = 0.8f)
+                    ThemeType.GLASSMORPHISM -> Color.White.copy(alpha = 0.8f)
+                    ThemeType.MODERN_MINIMALIST -> Color.Black.copy(alpha = 0.6f)
+                    else -> MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+                },
             textAlign = TextAlign.Center,
         )
 

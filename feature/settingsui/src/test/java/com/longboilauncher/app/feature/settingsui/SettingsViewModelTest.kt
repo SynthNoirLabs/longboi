@@ -3,6 +3,7 @@ package com.longboilauncher.app.feature.settingsui
 import android.os.Build
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import com.longboilauncher.app.core.model.ThemeType
 import com.longboilauncher.app.core.settings.PreferencesRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -34,7 +35,7 @@ class SettingsViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        every { preferencesRepository.theme } returns MutableStateFlow("system")
+        every { preferencesRepository.themeType } returns MutableStateFlow(ThemeType.MATERIAL_YOU)
         every { preferencesRepository.hapticsEnabled } returns MutableStateFlow(true)
         every { preferencesRepository.showNotifications } returns MutableStateFlow(true)
 
@@ -51,7 +52,7 @@ class SettingsViewModelTest {
         runTest {
             viewModel.uiState.test {
                 val state = awaitItem()
-                assertThat(state.theme).isEqualTo("system")
+                assertThat(state.theme).isEqualTo(ThemeType.MATERIAL_YOU)
                 assertThat(state.hapticsEnabled).isTrue()
             }
         }
@@ -60,9 +61,9 @@ class SettingsViewModelTest {
     fun `setTheme calls repository`() =
         runTest {
             coEvery { preferencesRepository.setTheme(any()) } returns Unit
-            viewModel.onEvent(SettingsEvent.SetTheme("dark"))
+            viewModel.onEvent(SettingsEvent.SetTheme(ThemeType.SOPHISTICATED_SLEEK))
             advanceUntilIdle()
-            coVerify { preferencesRepository.setTheme("dark") }
+            coVerify { preferencesRepository.setTheme("sophisticated_sleek") }
         }
 
     @Test

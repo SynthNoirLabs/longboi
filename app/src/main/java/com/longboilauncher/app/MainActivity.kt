@@ -63,7 +63,8 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            LongboiLauncherTheme {
+            val theme by homeViewModel.uiState.collectAsStateWithLifecycle()
+            LongboiLauncherTheme(themeType = theme.theme) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
