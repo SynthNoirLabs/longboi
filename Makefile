@@ -1,7 +1,7 @@
 # Makefile for Longboi Launcher - Windsurf Automation
 # Provides convenient commands for common development tasks
 
-.PHONY: help generate validate test format deploy clean skills hooks test-unit test-instrumented test-screenshot test-benchmark coverage lint
+.PHONY: help generate validate test format deploy clean skills hooks test-unit test-instrumented test-screenshot test-screenshot-record test-screenshot-verify test-benchmark test-accessibility test-all coverage lint
 
 # Default target
 help:
@@ -14,7 +14,11 @@ help:
 	@echo "  test-unit    - Run unit tests only"
 	@echo "  test-instrumented - Run instrumentation tests"
 	@echo "  test-screenshot - Run screenshot tests"
+	@echo "  test-screenshot-record - Record new screenshot baselines"
+	@echo "  test-screenshot-verify - Verify screenshots against baselines"
+	@echo "  test-accessibility - Run accessibility tests"
 	@echo "  test-benchmark - Run performance benchmarks"
+	@echo "  test-all     - Run all test types (unit + instrumented + screenshot)"
 	@echo "  coverage     - Generate test coverage report"
 	@echo "  format       - Format code and documentation"
 	@echo "  deploy       - Build and deploy release version"
@@ -72,7 +76,27 @@ test-instrumented:
 # Run screenshot tests
 test-screenshot:
 	@echo "📸 Running screenshot tests..."
-	./gradlew screenshotTest
+	./gradlew validateDebugScreenshotTest
+
+# Record new screenshot baselines
+test-screenshot-record:
+	@echo "📸 Recording screenshot baselines..."
+	./gradlew updateDebugScreenshotTest
+	@echo "✅ Screenshot baselines updated"
+
+# Verify screenshots against baselines
+test-screenshot-verify:
+	@echo "📸 Verifying screenshots against baselines..."
+	./gradlew validateDebugScreenshotTest
+
+# Run accessibility tests (requires connected device/emulator)
+test-accessibility:
+	@echo "♿ Running accessibility tests..."
+	./gradlew :app:connectedAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.longboilauncher.app.accessibility.HomeScreenAccessibilityTest,com.longboilauncher.app.accessibility.SearchScreenAccessibilityTest,com.longboilauncher.app.accessibility.SettingsScreenAccessibilityTest,com.longboilauncher.app.accessibility.AllAppsScreenAccessibilityTest
+
+# Run all test types
+test-all: test-unit test-screenshot
+	@echo "✅ All test types completed"
 
 # Run performance benchmarks
 test-benchmark:
@@ -139,5 +163,5 @@ setup: hooks generate
 	@echo "3. Start developing!"
 
 # CI/CD pipeline
-ci: validate test-unit lint coverage
+ci: validate test-unit lint test-screenshot coverage
 	@echo "✅ CI pipeline completed successfully"
