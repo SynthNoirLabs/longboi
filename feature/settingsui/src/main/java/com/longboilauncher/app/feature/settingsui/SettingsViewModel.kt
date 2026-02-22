@@ -2,6 +2,7 @@ package com.longboilauncher.app.feature.settingsui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.longboilauncher.app.core.model.ThemeType
 import com.longboilauncher.app.core.settings.PreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -12,7 +13,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class SettingsState(
-    val theme: String = "system",
+    val theme: ThemeType = ThemeType.MATERIAL_YOU,
     val hapticsEnabled: Boolean = true,
     val showNotifications: Boolean = true,
     val gestureSwipeUp: String = "all_apps",
@@ -22,7 +23,7 @@ data class SettingsState(
 
 sealed class SettingsEvent {
     data class SetTheme(
-        val theme: String,
+        val theme: ThemeType,
     ) : SettingsEvent()
 
     data class SetHapticsEnabled(
@@ -54,7 +55,7 @@ class SettingsViewModel
     ) : ViewModel() {
         val uiState: StateFlow<SettingsState> =
             combine(
-                preferencesRepository.theme,
+                preferencesRepository.themeType,
                 preferencesRepository.hapticsEnabled,
                 preferencesRepository.showNotifications,
                 preferencesRepository.gestureSwipeUp,
@@ -77,7 +78,7 @@ class SettingsViewModel
         fun onEvent(event: SettingsEvent) {
             viewModelScope.launch {
                 when (event) {
-                    is SettingsEvent.SetTheme -> preferencesRepository.setTheme(event.theme)
+                    is SettingsEvent.SetTheme -> preferencesRepository.setTheme(event.theme.key)
                     is SettingsEvent.SetHapticsEnabled -> preferencesRepository.setHapticsEnabled(event.enabled)
                     is SettingsEvent.SetShowNotifications -> preferencesRepository.setShowNotifications(event.show)
                     is SettingsEvent.SetGestureSwipeUp -> preferencesRepository.setGestureSwipeUp(event.action)
