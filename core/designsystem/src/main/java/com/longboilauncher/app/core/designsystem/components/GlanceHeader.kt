@@ -31,7 +31,7 @@ fun GlanceHeader(
             modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         // Time
@@ -54,7 +54,7 @@ fun GlanceHeader(
                     ThemeType.MODERN_MINIMALIST -> Color.Black
                     else -> MaterialTheme.colorScheme.onBackground
                 },
-            textAlign = TextAlign.Center,
+            textAlign = TextAlign.Start,
         )
 
         // Date
@@ -69,7 +69,7 @@ fun GlanceHeader(
                     ThemeType.MODERN_MINIMALIST -> Color.Black.copy(alpha = 0.6f)
                     else -> MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
                 },
-            textAlign = TextAlign.Center,
+            textAlign = TextAlign.Start,
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -78,7 +78,7 @@ fun GlanceHeader(
         data.nextEvent?.let { event ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
+                horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
@@ -104,7 +104,7 @@ fun GlanceHeader(
         data.weather?.let { weather ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
+                horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
@@ -124,7 +124,7 @@ fun GlanceHeader(
         data.nextAlarm?.let { alarm ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
+                horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(

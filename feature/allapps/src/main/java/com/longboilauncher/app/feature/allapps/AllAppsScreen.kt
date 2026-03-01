@@ -105,9 +105,7 @@ fun AllAppsScreen(
         Surface(
             modifier = Modifier.fillMaxSize(),
             color =
-                if (LocalThemeType.current ==
-                    ThemeType.MATERIAL_YOU
-                ) {
+                if (LocalThemeType.current == ThemeType.MATERIAL_YOU) {
                     MaterialTheme.colorScheme.background
                 } else {
                     Color.Transparent
@@ -153,33 +151,25 @@ fun AllAppsScreen(
                     colors =
                         OutlinedTextFieldDefaults.colors(
                             focusedBorderColor =
-                                if (LocalThemeType.current ==
-                                    ThemeType.GLASSMORPHISM
-                                ) {
+                                if (LocalThemeType.current == ThemeType.GLASSMORPHISM) {
                                     Color.White
                                 } else {
                                     MaterialTheme.colorScheme.primary
                                 },
                             unfocusedBorderColor =
-                                if (LocalThemeType.current ==
-                                    ThemeType.GLASSMORPHISM
-                                ) {
+                                if (LocalThemeType.current == ThemeType.GLASSMORPHISM) {
                                     Color.White.copy(alpha = 0.3f)
                                 } else {
                                     MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
                                 },
                             focusedContainerColor =
-                                if (LocalThemeType.current ==
-                                    ThemeType.GLASSMORPHISM
-                                ) {
+                                if (LocalThemeType.current == ThemeType.GLASSMORPHISM) {
                                     Color.White.copy(alpha = 0.1f)
                                 } else {
                                     Color.Transparent
                                 },
                             unfocusedContainerColor =
-                                if (LocalThemeType.current ==
-                                    ThemeType.GLASSMORPHISM
-                                ) {
+                                if (LocalThemeType.current == ThemeType.GLASSMORPHISM) {
                                     Color.White.copy(alpha = 0.05f)
                                 } else {
                                     Color.Transparent
@@ -200,75 +190,75 @@ fun AllAppsScreen(
                                 .fillMaxSize()
                                 .padding(end = 36.dp),
                     ) {
-                        items(
-                            items = flatList,
-                            key = { item ->
-                                when (item) {
-                                    is ListItem.Header -> "header_${item.letter}"
-                                    is ListItem.App -> "${item.app.packageName}_${item.app.userIdentifier}"
-                                }
-                            },
-                            contentType = { item ->
-                                when (item) {
-                                    is ListItem.Header -> "header"
-                                    is ListItem.App -> "app"
-                                }
-                            },
-                        ) { item ->
-                            when (item) {
-                                is ListItem.Header -> {
-                                    SectionHeader(
-                                        letter = item.letter,
-                                        modifier =
-                                            Modifier
-                                                .fillMaxWidth()
-                                                .padding(horizontal = 16.dp, vertical = 8.dp),
-                                    )
-                                }
-                                is ListItem.App -> {
-                                    AppListItem(
-                                        app = item.app,
-                                        modifier =
-                                            Modifier
-                                                .fillMaxWidth()
-                                                .clickable { onAppSelected(item.app) }
-                                                .padding(horizontal = 8.dp, vertical = 2.dp),
-                                    )
-                                }
-                            }
+                items(
+                    items = flatList,
+                    key = { item ->
+                        when (item) {
+                            is ListItem.Header -> "header_${item.letter}"
+                            is ListItem.App -> "${item.app.packageName}_${item.app.userIdentifier}"
+                        }
+                    },
+                    contentType = { item ->
+                        when (item) {
+                            is ListItem.Header -> "header"
+                            is ListItem.App -> "app"
+                        }
+                    },
+                ) { item ->
+                    when (item) {
+                        is ListItem.Header -> {
+                            SectionHeader(
+                                letter = item.letter,
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                            )
+                        }
+                        is ListItem.App -> {
+                            AppListItem(
+                                app = item.app,
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .clickable { onAppSelected(item.app) }
+                                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                            )
                         }
                     }
+                }
+            }
 
-                    // Alphabet Scrubber
-                    AlphabetScrubber(
-                        letters = uiState.sectionIndices.keys.toList(),
-                        currentLetter = currentLetter,
-                        hapticFeedbackManager = hapticFeedbackManager,
-                        onScrubStateChanged = { active, letter ->
-                            isScrubbing = active
-                            scrubbingLetter = letter
-                        },
-                        onLetterSelected = { letter ->
-                            currentLetter = letter
-                            val index = uiState.sectionIndices[letter] ?: return@AlphabetScrubber
-                            scrollJob?.cancel()
-                            scrollJob =
-                                coroutineScope.launch {
-                                    if (isScrubbing) {
-                                        listState.scrollToItem(index)
-                                    } else {
-                                        listState.animateScrollToItem(index)
-                                    }
-                                }
-                        },
-                        modifier =
-                            Modifier
-                                .align(Alignment.CenterEnd)
-                                .fillMaxHeight()
-                                .width(32.dp)
-                                .padding(vertical = 48.dp)
-                                .testTag("alphabet_scrubber"),
-                    )
+            // Alphabet Scrubber
+            AlphabetScrubber(
+                letters = uiState.sectionIndices.keys.toList(),
+                currentLetter = currentLetter,
+                hapticFeedbackManager = hapticFeedbackManager,
+                onScrubStateChanged = { active, letter ->
+                    isScrubbing = active
+                    scrubbingLetter = letter
+                },
+                onLetterSelected = { letter ->
+                    currentLetter = letter
+                    val index = uiState.sectionIndices[letter] ?: return@AlphabetScrubber
+                    scrollJob?.cancel()
+                    scrollJob =
+                        coroutineScope.launch {
+                            if (isScrubbing) {
+                                listState.scrollToItem(index)
+                            } else {
+                                listState.animateScrollToItem(index)
+                            }
+                        }
+                },
+                modifier =
+                    Modifier
+                        .align(Alignment.CenterEnd)
+                        .fillMaxHeight()
+                        .width(32.dp)
+                        .padding(vertical = 48.dp)
+                        .testTag("alphabet_scrubber"),
+            )
 
                     if (isScrubbing) {
                         scrubbingLetter?.let { letter ->
@@ -286,130 +276,130 @@ fun AllAppsScreen(
             }
         }
     }
+}
 
-    private sealed class ListItem {
-        data class Header(
-            val letter: String,
-        ) : ListItem()
+private sealed class ListItem {
+    data class Header(
+        val letter: String,
+    ) : ListItem()
 
-        data class App(
-            val app: AppEntry,
-        ) : ListItem()
-    }
+    data class App(
+        val app: AppEntry,
+    ) : ListItem()
+}
 
-    @Composable
-    private fun SectionHeader(
-        letter: String,
-        modifier: Modifier = Modifier,
-    ) {
-        Text(
-            text = letter,
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = modifier,
-        )
-    }
+@Composable
+private fun SectionHeader(
+    letter: String,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        text = letter,
+        style = MaterialTheme.typography.titleLarge,
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.primary,
+        modifier = modifier,
+    )
+}
 
-    @Composable
-    private fun AlphabetScrubber(
-        letters: List<String>,
-        currentLetter: String,
-        hapticFeedbackManager: HapticFeedbackManager,
-        onScrubStateChanged: (active: Boolean, letter: String?) -> Unit,
-        onLetterSelected: (String) -> Unit,
-        modifier: Modifier = Modifier,
-    ) {
-        val view = LocalView.current
+@Composable
+fun AlphabetScrubber(
+    letters: List<String>,
+    currentLetter: String,
+    hapticFeedbackManager: HapticFeedbackManager,
+    onScrubStateChanged: (active: Boolean, letter: String?) -> Unit,
+    onLetterSelected: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val view = LocalView.current
 
-        Box(
-            modifier =
-                modifier
-                    .background(
-                        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-                        shape = RoundedCornerShape(16.dp),
-                    ).padding(horizontal = 4.dp, vertical = 8.dp)
-                    .pointerInput(letters) {
-                        if (letters.isEmpty()) return@pointerInput
+    Box(
+        modifier =
+            modifier
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                    shape = RoundedCornerShape(16.dp),
+                ).padding(horizontal = 4.dp, vertical = 8.dp)
+                .pointerInput(letters) {
+                    if (letters.isEmpty()) return@pointerInput
 
-                        var lastIndex = -1
+                    var lastIndex = -1
 
-                        fun selectIndex(index: Int) {
-                            if (index == lastIndex) return
-                            lastIndex = index
-                            val letter = letters[index]
-                            onScrubStateChanged(true, letter)
-                            hapticFeedbackManager.tick(view)
-                            onLetterSelected(letter)
-                        }
+                    fun selectIndex(index: Int) {
+                        if (index == lastIndex) return
+                        lastIndex = index
+                        val letter = letters[index]
+                        onScrubStateChanged(true, letter)
+                        hapticFeedbackManager.tick(view)
+                        onLetterSelected(letter)
+                    }
 
-                        fun yToIndex(y: Float): Int =
-                            scrubberIndexForY(
-                                y = y,
-                                height = size.height.toFloat(),
-                                itemCount = letters.size,
-                            )
-
-                        detectDragGestures(
-                            onDragStart = { offset ->
-                                selectIndex(yToIndex(offset.y))
-                            },
-                            onDragCancel = {
-                                onScrubStateChanged(false, null)
-                            },
-                            onDragEnd = {
-                                onScrubStateChanged(false, null)
-                            },
-                            onDrag = { change, _ ->
-                                selectIndex(yToIndex(change.position.y))
-                            },
+                    fun yToIndex(y: Float): Int =
+                        scrubberIndexForY(
+                            y = y,
+                            height = size.height.toFloat(),
+                            itemCount = letters.size,
                         )
-                    },
+
+                    detectDragGestures(
+                        onDragStart = { offset ->
+                            selectIndex(yToIndex(offset.y))
+                        },
+                        onDragCancel = {
+                            onScrubStateChanged(false, null)
+                        },
+                        onDragEnd = {
+                            onScrubStateChanged(false, null)
+                        },
+                        onDrag = { change, _ ->
+                            selectIndex(yToIndex(change.position.y))
+                        },
+                    )
+                },
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceEvenly,
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.SpaceEvenly,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                val activeIndex = letters.indexOf(currentLetter).takeIf { it >= 0 } ?: 0
+            val activeIndex = letters.indexOf(currentLetter).takeIf { it >= 0 } ?: 0
 
-                letters.forEachIndexed { index, letter ->
-                    val distance = kotlin.math.abs(index - activeIndex)
-                    val waveStrength = (1f - (distance / 6f)).coerceIn(0f, 1f)
-                    val offsetX by animateDpAsState(
-                        targetValue = (-10f * waveStrength).dp,
-                        label = "scrubberWaveOffset",
-                    )
+            letters.forEachIndexed { index, letter ->
+                val distance = kotlin.math.abs(index - activeIndex)
+                val waveStrength = (1f - (distance / 6f)).coerceIn(0f, 1f)
+                val offsetX by animateDpAsState(
+                    targetValue = (-10f * waveStrength).dp,
+                    label = "scrubberWaveOffset",
+                )
 
-                    Text(
-                        text = letter,
-                        fontSize = (10f + (2f * waveStrength)).sp,
-                        fontWeight = if (letter == currentLetter) FontWeight.Bold else FontWeight.Normal,
-                        color =
-                            if (letter == currentLetter) {
-                                MaterialTheme.colorScheme.primary
-                            } else {
-                                MaterialTheme.colorScheme.onSurfaceVariant
+                Text(
+                    text = letter,
+                    fontSize = (10f + (2f * waveStrength)).sp,
+                    fontWeight = if (letter == currentLetter) FontWeight.Bold else FontWeight.Normal,
+                    color =
+                        if (letter == currentLetter) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        },
+                    textAlign = TextAlign.Center,
+                    modifier =
+                        Modifier
+                            .offset(x = offsetX)
+                            .clickable {
+                                onScrubStateChanged(true, letter)
+                                hapticFeedbackManager.tick(view)
+                                onLetterSelected(letter)
+                                onScrubStateChanged(false, null)
                             },
-                        textAlign = TextAlign.Center,
-                        modifier =
-                            Modifier
-                                .offset(x = offsetX)
-                                .clickable {
-                                    onScrubStateChanged(true, letter)
-                                    hapticFeedbackManager.tick(view)
-                                    onLetterSelected(letter)
-                                    onScrubStateChanged(false, null)
-                                },
-                    )
-                }
+                )
             }
         }
     }
 }
 
 @Composable
-private fun FloatingLetterIndicator(
+fun FloatingLetterIndicator(
     letter: String,
     modifier: Modifier = Modifier,
 ) {

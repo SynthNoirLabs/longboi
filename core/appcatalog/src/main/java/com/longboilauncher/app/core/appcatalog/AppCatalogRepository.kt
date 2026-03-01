@@ -2,19 +2,24 @@ package com.longboilauncher.app.core.appcatalog
 
 import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.content.pm.LauncherApps
 import android.content.pm.ShortcutInfo
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Process
 import android.os.UserHandle
 import android.os.UserManager
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.model.ProfileType
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -27,12 +32,67 @@ class AppCatalogRepository
     ) {
         private val launcherApps = context.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
         private val userManager = context.getSystemService(Context.USER_SERVICE) as UserManager
+        private val repositoryScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
         private val _apps = MutableStateFlow<List<AppEntry>>(emptyList())
         val apps: StateFlow<List<AppEntry>> = _apps.asStateFlow()
 
         private val _isLoading = MutableStateFlow(false)
         val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
+        private val packageCallback =
+            object : LauncherApps.Callback() {
+                override fun onPackageRemoved(
+                    packageName: String,
+                    user: UserHandle,
+                ) {
+                    repositoryScope.launch { refreshAppCatalog() }
+                }
+
+                override fun onPackageAdded(
+                    packageName: String,
+                    user: UserHandle,
+                ) {
+                    repositoryScope.launch { refreshAppCatalog() }
+                }
+
+                override fun onPackageChanged(
+                    packageName: String,
+                    user: UserHandle,
+                ) {
+                    repositoryScope.launch { refreshAppCatalog() }
+                }
+
+                override fun onPackagesAvailable(
+                    packageNames: Array<out String>,
+                    user: UserHandle,
+                    replacing: Boolean,
+                ) {
+                    repositoryScope.launch { refreshAppCatalog() }
+                }
+
+                override fun onPackagesUnavailable(
+                    packageNames: Array<out String>,
+                    user: UserHandle,
+                    replacing: Boolean,
+                ) {
+                    repositoryScope.launch { refreshAppCatalog() }
+                }
+
+                override fun onShortcutsChanged(
+                    packageName: String,
+                    shortcuts: MutableList<ShortcutInfo>,
+                    user: UserHandle,
+                ) {
+                    // We might not need a full refresh for shortcuts, but for now it's safest
+                    repositoryScope.launch { refreshAppCatalog() }
+                }
+            }
+
+        init {
+            launcherApps.registerCallback(packageCallback)
+            repositoryScope.launch { refreshAppCatalog() }
+        }
 
         suspend fun refreshAppCatalog() =
             withContext(Dispatchers.IO) {
@@ -176,7 +236,32 @@ class AppCatalogRepository
             appEntry: AppEntry,
             shortcutId: String,
         ) {
-            // TODO: Implement shortcut launching via LauncherApps.startShortcut
+            try {
+                launcherApps.startShortcut(appEntry.packageName, shortcutId, null, null, appEntry.user)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+        fun showAppInfo(appEntry: AppEntry) {
+            try {
+                val component = ComponentName(appEntry.packageName, appEntry.className)
+                launcherApps.startAppDetailsActivity(component, appEntry.user, null, null)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+        fun uninstallApp(appEntry: AppEntry) {
+            try {
+                val intent = Intent(Intent.ACTION_DELETE).apply {
+                    data = Uri.parse("package:${appEntry.packageName}")
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+                context.startActivity(intent)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
         fun openSettings(destination: String) {

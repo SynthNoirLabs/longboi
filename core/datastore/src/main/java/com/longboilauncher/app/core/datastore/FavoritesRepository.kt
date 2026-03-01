@@ -1,8 +1,8 @@
 package com.longboilauncher.app.core.datastore
 
 import androidx.datastore.core.DataStore
-import com.longboilauncher.app.FavoriteApp
-import com.longboilauncher.app.UserSettings
+import com.longboilauncher.core.datastore_proto.FavoriteApp
+import com.longboilauncher.core.datastore_proto.UserSettings
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.model.FavoriteEntry
 import com.longboilauncher.app.core.model.ProfileType

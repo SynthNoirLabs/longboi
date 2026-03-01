@@ -3,7 +3,7 @@ package com.longboilauncher.app.core.datastore.serializer
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer
 import com.google.protobuf.InvalidProtocolBufferException
-import com.longboilauncher.app.UserSettings
+import com.longboilauncher.core.datastore_proto.UserSettings
 import java.io.InputStream
 import java.io.OutputStream
 

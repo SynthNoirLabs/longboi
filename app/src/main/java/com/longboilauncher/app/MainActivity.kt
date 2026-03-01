@@ -19,6 +19,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.metrics.performance.JankStats
@@ -63,13 +64,17 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
+            val homeViewModel: HomeViewModel = hiltViewModel()
             val theme by homeViewModel.uiState.collectAsStateWithLifecycle()
             LongboiLauncherTheme(themeType = theme.theme) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background,
+                    color = Color.Transparent,
                 ) {
-                    LauncherApp(hapticFeedbackManager = hapticFeedbackManager)
+                    LauncherApp(
+                        hapticFeedbackManager = hapticFeedbackManager,
+                        homeViewModel = homeViewModel,
+                    )
                 }
             }
         }
@@ -79,7 +84,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun LauncherApp(
     hapticFeedbackManager: HapticFeedbackManager,
-    homeViewModel: HomeViewModel = hiltViewModel(),
+    homeViewModel: HomeViewModel,
     roleManager: LauncherRoleManager = hiltViewModel(),
 ) {
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
@@ -92,32 +97,12 @@ fun LauncherApp(
         homeViewModel.onEvent(HomeEvent.NavigateTo(LauncherSurface.HOME))
     }
 
-    // Home screen is always rendered as the base
+    // Unified Home + All Apps screen
     HomeScreen(
         uiState = uiState,
         onEvent = homeViewModel::onEvent,
+        hapticFeedbackManager = hapticFeedbackManager,
     )
-
-    // All Apps overlay
-    AnimatedVisibility(
-        visible = uiState.currentSurface == LauncherSurface.ALL_APPS,
-        enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
-        exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
-    ) {
-        val allAppsViewModel: AllAppsViewModel = hiltViewModel()
-        val allAppsState by allAppsViewModel.uiState.collectAsStateWithLifecycle()
-
-        AllAppsScreen(
-            uiState = allAppsState,
-            onEvent = allAppsViewModel::onEvent,
-            onAppSelected = { appEntry ->
-                homeViewModel.onEvent(HomeEvent.LaunchApp(appEntry))
-                homeViewModel.onEvent(HomeEvent.NavigateTo(LauncherSurface.HOME))
-            },
-            onDismiss = { homeViewModel.onEvent(HomeEvent.NavigateTo(LauncherSurface.HOME)) },
-            hapticFeedbackManager = hapticFeedbackManager,
-        )
-    }
 
     // Search overlay
     AnimatedVisibility(

@@ -22,6 +22,7 @@ class AppEntryFetcher(
     private val context: Context,
     private val options: Options,
     private val preferencesRepository: PreferencesRepository,
+    private val iconPackManager: IconPackManager,
 ) : Fetcher {
     override suspend fun fetch(): FetchResult? {
         val launcherApps = context.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
@@ -31,14 +32,20 @@ class AppEntryFetcher(
         val overrideKey = "${appEntry.packageName}_${appEntry.userIdentifier}"
         val overridePath = overrides[overrideKey]
         if (overridePath != null) {
-            // Logic to load from path (e.g. URI or file)
-            // For now, continue to system icons if override logic not fully implemented
+            // TODO: Logic to load from path (e.g. URI or file)
         }
 
         // 2. Icon pack override
         val iconPack = preferencesRepository.iconPackPackageName.first()
         if (iconPack.isNotBlank()) {
-            // Logic to load from icon pack
+            val iconPackDrawable = iconPackManager.getIconDrawable(iconPack, appEntry)
+            if (iconPackDrawable != null) {
+                return DrawableResult(
+                    drawable = iconPackDrawable,
+                    isSampled = false,
+                    dataSource = DataSource.DISK,
+                )
+            }
         }
 
         // 3. Themed/Monochrome support (Android 13+)
@@ -90,11 +97,12 @@ class AppEntryFetcher(
         constructor(
             @ApplicationContext private val context: Context,
             private val preferencesRepository: PreferencesRepository,
+            private val iconPackManager: IconPackManager,
         ) : Fetcher.Factory<AppEntry> {
             override fun create(
                 data: AppEntry,
                 options: Options,
                 imageLoader: ImageLoader,
-            ): Fetcher = AppEntryFetcher(data, context, options, preferencesRepository)
+            ): Fetcher = AppEntryFetcher(data, context, options, preferencesRepository, iconPackManager)
         }
 }

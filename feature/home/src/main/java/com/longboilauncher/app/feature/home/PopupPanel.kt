@@ -40,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -135,7 +136,7 @@ fun PopupPanel(
 
                         // Quick Actions
                         Text(
-                            text = "Quick Actions",
+                            text = stringResource(id = com.longboilauncher.core.designsystem.R.string.quick_actions),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Medium,
                             color = MaterialTheme.colorScheme.primary,
@@ -150,7 +151,7 @@ fun PopupPanel(
                         if (shortcuts.isNotEmpty()) {
                             Spacer(modifier = Modifier.height(24.dp))
                             Text(
-                                text = "Shortcuts",
+                                text = stringResource(id = com.longboilauncher.core.designsystem.R.string.shortcuts),
                                 style = MaterialTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Medium,
                                 color = MaterialTheme.colorScheme.primary,
@@ -177,17 +178,17 @@ private fun QuickActionsGrid(
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         ActionRow(
             icon = Icons.Default.Info,
-            title = "App Info",
+            title = stringResource(id = com.longboilauncher.core.designsystem.R.string.app_info),
             onClick = onAppInfo,
         )
         ActionRow(
             icon = Icons.Default.Delete,
-            title = "Uninstall",
+            title = stringResource(id = com.longboilauncher.core.designsystem.R.string.uninstall),
             onClick = onUninstall,
         )
         ActionRow(
             icon = Icons.Default.VisibilityOff,
-            title = "Hide",
+            title = stringResource(id = com.longboilauncher.core.designsystem.R.string.hide_app),
             onClick = onHide,
         )
     }

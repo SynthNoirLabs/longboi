@@ -4,8 +4,8 @@ plugins {
 }
 
 android {
-    namespace 'com.longboilauncher.benchmark'
-    compileSdk 36
+    namespace = 'com.longboilauncher.benchmark'
+    compileSdk = 36
 
     defaultConfig {
         minSdk 26
@@ -20,21 +20,21 @@ android {
         // This is the default build type for benchmarks.
         // It should be non-debuggable.
         benchmark {
-            debuggable false
-            signingConfig signingConfigs.debug
+            debuggable = false
+            signingConfig = signingConfigs.debug
             matchingFallbacks = ['release']
-            minifyEnabled true
+            minifyEnabled = true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'benchmark-rules.pro'
         }
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
 }
 

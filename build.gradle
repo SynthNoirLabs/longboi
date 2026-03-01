@@ -26,41 +26,14 @@ subprojects {
         }
     }
 
-    // Apply kover to all subprojects
     apply plugin: "org.jetbrains.kotlinx.kover"
-
-    kover {
-        reports {
-            filters {
-                excludes {
-                    classes(
-                        '*.BuildConfig',
-                        '*.R',
-                        '*.R$*',
-                        '*_Factory',
-                        '*_HiltModules*',
-                        '*_HiltModules_*',
-                        '*Hilt_*',
-                        '*_MembersInjector',
-                        '*_Provide*Factory',
-                        '*_ViewBinding',
-                        '*_ViewBinding$*'
-                    )
-                }
-            }
-        }
-    }
 }
 
 kover {
     reports {
         total {
-            xml {
-                onCheck = true
-            }
-            html {
-                onCheck = true
-            }
+            xml { onCheck = true }
+            html { onCheck = true }
         }
     }
 }

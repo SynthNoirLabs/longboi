@@ -9,26 +9,26 @@ plugins {
 }
 
 android {
-    namespace 'com.longboilauncher.core.common'
+    namespace = 'com.longboilauncher.core.common'
     compileSdk = 36
 
     defaultConfig {
-        minSdk 26
+        minSdk = 26
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     buildFeatures {
-        compose true
+        compose = true
     }
 }
 
 kotlin {
     compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_11)
+        jvmTarget.set(JvmTarget.JVM_17)
     }
 }
 

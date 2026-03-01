@@ -4,7 +4,7 @@ import android.os.Build
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import com.google.common.truth.Truth.assertThat
-import com.longboilauncher.app.UserSettings
+import com.longboilauncher.core.datastore_proto.UserSettings
 import com.longboilauncher.app.core.datastore.serializer.UserSettingsSerializer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

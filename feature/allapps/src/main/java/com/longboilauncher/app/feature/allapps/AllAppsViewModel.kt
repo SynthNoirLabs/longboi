@@ -135,7 +135,7 @@ enum class ProfileFilter {
     PRIVATE,
 }
 
-internal fun scrubberIndexForY(
+fun scrubberIndexForY(
     y: Float,
     height: Float,
     itemCount: Int,

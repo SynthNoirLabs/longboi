@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option java_package = "com.longboilauncher.app";
+option java_package = "com.longboilauncher.core.datastore_proto";
 option java_multiple_files = true;
 
 message FavoriteApp {
@@ -9,6 +9,40 @@ message FavoriteApp {
   string label = 3;
   int32 user_identifier = 4;
   string profile = 5;
+}
+
+message AppPair {
+  string id = 1;
+  string first_package = 2;
+  string first_class = 3;
+  int32 first_user = 4;
+  string second_package = 5;
+  string second_class = 6;
+  int32 second_user = 7;
+  string label = 8;
+}
+
+message AppUsageStat {
+  int64 last_launch_timestamp_ms = 1;
+  int32 launch_count = 2;
+}
+
+message PersistedWidget {
+  int32 app_widget_id = 1;
+  string provider_package = 2;
+  string provider_class = 3;
+  int32 min_width = 4;
+  int32 min_height = 5;
+  int32 position_x = 6;
+  int32 position_y = 7;
+  int32 span_x = 8;
+  int32 span_y = 9;
+}
+
+enum PrivateSpaceAuthMethod {
+  NONE = 0;
+  PIN = 1;
+  BIOMETRIC = 2;
 }
 
 message UserSettings {
@@ -23,4 +57,10 @@ message UserSettings {
   string icon_pack_package_name = 9;
   map<string, string> per_app_icon_overrides = 10;
   bool reduce_motion = 11;
+  repeated AppPair app_pairs = 12;
+  map<string, AppUsageStat> app_usage_stats = 13;
+  repeated PersistedWidget widgets = 14;
+  bool private_space_unlocked = 15;
+  PrivateSpaceAuthMethod private_space_auth_method = 16;
+  string private_space_pin_hash = 17;
 }

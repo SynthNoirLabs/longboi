@@ -1,8 +1,5 @@
 package com.longboilauncher.app.core.designsystem.components
 
-import android.content.Intent
-import android.net.Uri
-import android.provider.Settings
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,7 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.longboilauncher.app.core.icons.AppIcon
 import com.longboilauncher.app.core.model.AppEntry
@@ -52,18 +49,17 @@ fun ActionsSheet(
     onAddToFavorites: () -> Unit,
     onRemoveFromFavorites: () -> Unit,
     onHideApp: () -> Unit,
+    onAppInfo: () -> Unit,
+    onUninstall: () -> Unit,
     onRename: () -> Unit = {},
-    onUninstall: () -> Unit = {},
 ) {
-    val context = LocalContext.current
-
     val actions =
         buildList {
             if (isFavorite) {
                 add(
                     AppAction(
                         icon = Icons.Default.StarBorder,
-                        label = "Remove from favorites",
+                        label = stringResource(id = com.longboilauncher.core.designsystem.R.string.remove_from_favorites),
                         onClick = onRemoveFromFavorites,
                     ),
                 )
@@ -71,7 +67,7 @@ fun ActionsSheet(
                 add(
                     AppAction(
                         icon = Icons.Default.Star,
-                        label = "Add to favorites",
+                        label = stringResource(id = com.longboilauncher.core.designsystem.R.string.add_to_favorites),
                         onClick = onAddToFavorites,
                     ),
                 )
@@ -80,23 +76,15 @@ fun ActionsSheet(
             add(
                 AppAction(
                     icon = Icons.Default.Info,
-                    label = "App info",
-                    onClick = {
-                        val intent =
-                            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                                data = Uri.fromParts("package", app.packageName, null)
-                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                            }
-                        context.startActivity(intent)
-                        onDismiss()
-                    },
+                    label = stringResource(id = com.longboilauncher.core.designsystem.R.string.app_info),
+                    onClick = onAppInfo,
                 ),
             )
 
             add(
                 AppAction(
                     icon = Icons.Default.VisibilityOff,
-                    label = "Hide app",
+                    label = stringResource(id = com.longboilauncher.core.designsystem.R.string.hide_app),
                     onClick = onHideApp,
                 ),
             )
@@ -105,16 +93,8 @@ fun ActionsSheet(
                 add(
                     AppAction(
                         icon = Icons.Default.Delete,
-                        label = "Uninstall",
-                        onClick = {
-                            val intent =
-                                Intent(Intent.ACTION_DELETE).apply {
-                                    data = Uri.fromParts("package", app.packageName, null)
-                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                                }
-                            context.startActivity(intent)
-                            onDismiss()
-                        },
+                        label = stringResource(id = com.longboilauncher.core.designsystem.R.string.uninstall),
+                        onClick = onUninstall,
                     ),
                 )
             }

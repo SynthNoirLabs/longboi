@@ -32,20 +32,6 @@ data class AppEntry(
 
     override fun toString(): String = label
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-        other as AppEntry
-        return packageName == other.packageName &&
-            className == other.className &&
-            userIdentifier == other.userIdentifier
-    }
-
-    override fun hashCode(): Int =
-        31 * packageName.hashCode() +
-            31 * className.hashCode() +
-            userIdentifier
-
     val component: android.content.ComponentName
         get() = android.content.ComponentName(packageName, className)
 

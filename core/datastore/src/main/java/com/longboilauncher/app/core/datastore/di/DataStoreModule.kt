@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
-import com.longboilauncher.app.UserSettings
+import com.longboilauncher.core.datastore_proto.UserSettings
 import com.longboilauncher.app.core.datastore.serializer.UserSettingsSerializer
 import dagger.Module
 import dagger.Provides
