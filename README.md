@@ -1,22 +1,31 @@
-# Longboi Launcher
+# Longboi Launcher: Niagara Overhaul
 
-It's Niagara Launcher but open source and probably worse. You're welcome.
+A premium Niagara-style vertical list launcher for Android, built with Kotlin and Jetpack Compose. Focus on what matters with a clean, unified interface.
 
-A Niagara-style vertical list launcher, open source, written in Kotlin with Jetpack Compose.
+## 📸 Screenshots
 
-## What it does
+<p align="center">
+  <img src="docs/screenshots/01_home.png" width="30%" alt="Home Screen" />
+  <img src="docs/screenshots/02_allapps.png" width="30%" alt="All Apps" />
+</p>
 
-- Vertical alphabetical app list with a wave scrubber
-- Favorites on the home screen with a glance clock
-- Search with fuzzy matching, calculator, web search, contacts
-- Widgets, app shortcuts, pop-up panels
-- Private space support (Android 15+)
-- App pairs for split-screen
-- Icon pack support
-- Backup/restore settings
-- Edge-to-edge, predictive back, Material 3
+## ✨ What it does
 
-## Project structure
+- **Unified Experience**: Home and All Apps merged into one fluid vertical list.
+- **Alphabet Scrubber**: Interactive persistent vertical scrubber for lightning-fast navigation.
+- **Smart Gestures**: Pull down from the top to expand the system notification shade.
+- **Icon Pack Support**: Full support for third-party icon packs + built-in "Glass" and "Minimalist" sets.
+- **Glance Header**: Dynamic clock, date, and upcoming info aligned for readability.
+- **Customizable**: Redesigned Settings with visual theme switching.
+- **Modern Tech**: Built with Compose, Hilt, and Flow following MVI architecture.
+
+## 🚀 Getting Started
+
+1. **Build the APK**: `make assemble`
+2. **Install**: The APK is at `app/build/outputs/apk/debug/app-debug.apk`
+3. **Set as Default**: Follow the system prompts to make Longboi your default home app.
+
+## 🛠️ Project Structure
 
 ```text
 app/              → Entry point, Hilt root, MainActivity
