@@ -1,10 +1,9 @@
 package com.longboilauncher.app.core.designsystem.components
 
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -27,29 +26,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.longboilauncher.app.core.designsystem.theme.LocalThemeType
-import com.longboilauncher.app.core.designsystem.theme.LongboiSpacing
 import com.longboilauncher.app.core.icons.AppIcon
 import com.longboilauncher.app.core.model.FavoriteEntry
 import com.longboilauncher.app.core.model.ThemeType
 
-private val PlayfulPalette =
-    listOf(
-        Color(0xFFA5D6A7),
-        Color(0xFFFFAB91),
-        Color(0xFF81D4FA),
-        Color(0xFFF48FB1),
-        Color(0xFFCE93D8),
-    )
-
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FavoriteAppItem(
     favorite: FavoriteEntry,
@@ -67,20 +53,29 @@ fun FavoriteAppItem(
     var dragOffset by remember { mutableFloatStateOf(0f) }
 
     val themeType = LocalThemeType.current
-    val appColorIndex = Math.abs(favorite.appEntry.packageName.hashCode()) % PlayfulPalette.size
+    val playfulColors =
+        listOf(
+            Color(0xFFA5D6A7), // Green
+            Color(0xFFFFAB91), // Orange
+            Color(0xFF81D4FA), // Blue
+            Color(0xFFF48FB1), // Pink
+            Color(0xFFCE93D8), // Purple
+        )
+    val appColorIndex = Math.abs(favorite.appEntry.packageName.hashCode()) % playfulColors.size
 
     val containerColor =
         when (themeType) {
             ThemeType.GLASSMORPHISM -> Color.White.copy(alpha = 0.15f)
-            ThemeType.VIBRANT_PLAYFUL -> PlayfulPalette[appColorIndex]
+            ThemeType.VIBRANT_PLAYFUL -> playfulColors[appColorIndex]
             ThemeType.SOPHISTICATED_SLEEK -> Color(0xFF1A1A1A)
-            else -> Color.Transparent
+            ThemeType.MODERN_MINIMALIST -> Color.Transparent
+            else -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
         }
     val contentColor =
         when (themeType) {
             ThemeType.VIBRANT_PLAYFUL -> Color.White
-            ThemeType.SOPHISTICATED_SLEEK -> MaterialTheme.colorScheme.primary
-            else -> Color.White
+            ThemeType.SOPHISTICATED_SLEEK -> Color(0xFFF2CC0D)
+            else -> MaterialTheme.colorScheme.onSurface
         }
     val shape =
         when (themeType) {
@@ -88,78 +83,76 @@ fun FavoriteAppItem(
             ThemeType.MODERN_MINIMALIST -> RoundedCornerShape(0.dp)
             else -> RoundedCornerShape(16.dp)
         }
-    val borderMod =
+    val borderStroke =
         when (themeType) {
-            ThemeType.GLASSMORPHISM ->
-                Modifier.border(1.dp, Color.White.copy(alpha = 0.3f), shape)
-            ThemeType.SOPHISTICATED_SLEEK ->
-                Modifier.border(0.5.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f), shape)
+            ThemeType.GLASSMORPHISM -> Modifier.border(1.dp, Color.White.copy(alpha = 0.3f), shape)
+            ThemeType.SOPHISTICATED_SLEEK -> Modifier.border(0.5.dp, Color(0xFFF2CC0D).copy(alpha = 0.3f), shape)
             else -> Modifier
         }
 
-    val useCard = themeType != ThemeType.MATERIAL_YOU && themeType != ThemeType.MODERN_MINIMALIST
-
-    val interactionModifier =
-        Modifier
-            .scale(scale)
-            .fillMaxWidth()
-            .then(borderMod)
-            .pointerInput(Unit) {
-                detectHorizontalDragGestures(
-                    onDragEnd = {
-                        if (dragOffset > 100) onSwipeRight()
-                        dragOffset = 0f
-                    },
-                    onDragCancel = { dragOffset = 0f },
-                    onHorizontalDrag = { _, dragAmount -> dragOffset += dragAmount },
-                )
-            }.combinedClickable(
-                onClick = onClick,
-                onLongClick = onLongClick,
-            )
-
-    if (useCard) {
-        Card(
-            modifier = modifier.then(interactionModifier),
-            shape = shape,
-            colors =
-                CardDefaults.cardColors(
-                    containerColor = containerColor,
-                    contentColor = contentColor,
-                ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp, pressedElevation = 2.dp),
-        ) {
-            FavoriteRow(favorite = favorite, contentColor = contentColor, showNotifications = showNotifications)
-        }
-    } else {
-        // Wallpaper-native: transparent, direct on wallpaper
+    Card(
+        modifier =
+            modifier
+                .scale(scale)
+                .fillMaxWidth()
+                .then(borderStroke)
+                .pointerInput(Unit) {
+                    detectHorizontalDragGestures(
+                        onDragEnd = {
+                            if (dragOffset > 100) {
+                                onSwipeRight()
+                            }
+                            dragOffset = 0f
+                        },
+                        onDragCancel = { dragOffset = 0f },
+                        onHorizontalDrag = { _, dragAmount ->
+                            dragOffset += dragAmount
+                        },
+                    )
+                }.clickable { onClick() },
+        shape = shape,
+        colors =
+            CardDefaults.cardColors(
+                containerColor = containerColor,
+                contentColor = contentColor,
+            ),
+        elevation =
+            CardDefaults.cardElevation(
+                defaultElevation = 0.dp,
+                pressedElevation = 2.dp,
+            ),
+        onClick = onClick,
+    ) {
         Row(
             modifier =
-                modifier
-                    .then(interactionModifier)
-                    .padding(horizontal = LongboiSpacing.L, vertical = LongboiSpacing.S),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(LongboiSpacing.M),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            AppIcon(appEntry = favorite.appEntry, size = 48.dp)
+            // App Icon
+            AppIcon(
+                appEntry = favorite.appEntry,
+                size = 48.dp,
+            )
+
+            // App Label
             Text(
                 text = favorite.displayLabel,
-                style =
-                    MaterialTheme.typography.bodyLarge.copy(
-                        shadow =
-                            Shadow(
-                                color = Color.Black.copy(alpha = 0.5f),
-                                offset = Offset(0f, 2f),
-                                blurRadius = 4f,
-                            ),
-                    ),
+                style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Medium,
-                color = contentColor,
+                color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(1f),
             )
-            if (favorite.isPlaying) PlayingIndicator()
+
+            // Status Indicators
+            if (favorite.isPlaying) {
+                PlayingIndicator()
+            }
+
             if (showNotifications && favorite.hasNotifications) {
                 NotificationDot(count = favorite.notificationCount)
             }
@@ -168,51 +161,13 @@ fun FavoriteAppItem(
 }
 
 @Composable
-private fun FavoriteRow(
-    favorite: FavoriteEntry,
-    contentColor: Color,
-    showNotifications: Boolean,
-) {
-    Row(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = LongboiSpacing.L, vertical = LongboiSpacing.M),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(LongboiSpacing.M),
-    ) {
-        AppIcon(appEntry = favorite.appEntry, size = 48.dp)
-        Text(
-            text = favorite.displayLabel,
-            style =
-                MaterialTheme.typography.bodyLarge.copy(
-                    shadow =
-                        Shadow(
-                            color = Color.Black.copy(alpha = 0.5f),
-                            offset = Offset(0f, 2f),
-                            blurRadius = 4f,
-                        ),
-                ),
-            fontWeight = FontWeight.Medium,
-            color = contentColor,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1f),
-        )
-        if (favorite.isPlaying) PlayingIndicator()
-        if (showNotifications && favorite.hasNotifications) {
-            NotificationDot(count = favorite.notificationCount)
-        }
-    }
-}
-
-@Composable
 private fun PlayingIndicator() {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(LongboiSpacing.XS),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        Spacer(modifier = Modifier.width(LongboiSpacing.XS))
+        // Music note icon or animation
+        Spacer(modifier = Modifier.width(4.dp))
         Text(
             text = "♪",
             style = MaterialTheme.typography.bodySmall,

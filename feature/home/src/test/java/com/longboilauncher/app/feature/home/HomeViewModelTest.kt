@@ -2,18 +2,16 @@ package com.longboilauncher.app.feature.home
 
 import android.content.pm.ShortcutInfo
 import android.os.Build
-import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.longboilauncher.app.core.appcatalog.AppCatalogRepository
 import com.longboilauncher.app.core.common.ClockTicker
 import com.longboilauncher.app.core.common.NowProvider
-import com.longboilauncher.app.core.common.SystemServiceHelper
 import com.longboilauncher.app.core.datastore.FavoritesRepository
+import com.longboilauncher.app.core.settings.PreferencesRepository
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.model.FavoriteEntry
 import com.longboilauncher.app.core.model.ProfileType
 import com.longboilauncher.app.core.model.ThemeType
-import com.longboilauncher.app.core.settings.PreferencesRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -36,18 +34,21 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import java.time.Instant
 
+/**
+ * Tests for [HomeViewModel].
+ *
+ * We use a mocked ClockTicker to control time-based updates and avoid infinite loops.
+ */
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.Q], manifest = Config.NONE)
 class HomeViewModelTest {
     private val testDispatcher = UnconfinedTestDispatcher()
-
     private lateinit var appCatalogRepository: AppCatalogRepository
     private lateinit var favoritesRepository: FavoritesRepository
+    private lateinit var preferencesRepository: PreferencesRepository
     private lateinit var nowProvider: NowProvider
     private lateinit var clockTicker: ClockTicker
-    private lateinit var preferencesRepository: PreferencesRepository
-    private lateinit var systemServiceHelper: SystemServiceHelper
 
     private val testApp =
         AppEntry(
@@ -70,18 +71,18 @@ class HomeViewModelTest {
     private fun createMocks() {
         appCatalogRepository = mockk<AppCatalogRepository>(relaxed = true)
         favoritesRepository = mockk<FavoritesRepository>(relaxed = true)
+        preferencesRepository = mockk<PreferencesRepository>(relaxed = true)
         nowProvider = mockk<NowProvider>()
         clockTicker = mockk<ClockTicker>()
-        preferencesRepository = mockk<PreferencesRepository>(relaxed = true)
-        systemServiceHelper = mockk<SystemServiceHelper>(relaxed = true)
 
         every { appCatalogRepository.apps } returns MutableStateFlow(listOf(testApp))
         every { favoritesRepository.favorites } returns MutableStateFlow(testFavorites)
-        every { favoritesRepository.hiddenApps } returns MutableStateFlow(emptySet())
+        every { preferencesRepository.themeType } returns flowOf(ThemeType.MATERIAL_YOU)
+        every { preferencesRepository.reduceMotion } returns flowOf(false)
         coEvery { appCatalogRepository.refreshAppCatalog() } returns Unit
         every { nowProvider.now() } returns Instant.parse("2026-01-17T12:00:00Z")
+        // Default clock ticker mock that emits once and then hangs (to avoid infinite loop in tests)
         every { clockTicker.tick(any()) } returns flowOf(Unit)
-        every { preferencesRepository.themeType } returns MutableStateFlow(ThemeType.MATERIAL_YOU)
     }
 
     private fun createViewModel() =
@@ -91,7 +92,6 @@ class HomeViewModelTest {
             nowProvider,
             clockTicker,
             preferencesRepository,
-            systemServiceHelper,
         )
 
     @Before
@@ -114,36 +114,32 @@ class HomeViewModelTest {
         }
 
     @Test
-    fun `uiState emits favorites from repository`() =
+    fun `uiState emits values from repository`() =
         runTest {
             createMocks()
             val viewModel = createViewModel()
 
-            viewModel.uiState.test {
-                val state = awaitItem()
-                assertThat(state.favorites).hasSize(1)
-                assertThat(state.favorites[0].id).isEqualTo("fav_1")
-                cancelAndIgnoreRemainingEvents()
-            }
+            val state = viewModel.uiState.value
+            assertThat(state.favorites).hasSize(1)
+            assertThat(state.favorites[0].id).isEqualTo("fav_1")
         }
 
     @Test
     fun `glanceData emits clock updates`() =
         runTest {
             createMocks()
+            // Override clock ticker to emit Unit
             val tickerFlow = MutableSharedFlow<Unit>(replay = 1)
             every { clockTicker.tick(any()) } returns tickerFlow
             tickerFlow.tryEmit(Unit)
 
             val viewModel = createViewModel()
 
-            viewModel.uiState.test {
-                val state = awaitItem()
-                assertThat(state.glanceData.currentTime).isNotEmpty()
-                assertThat(state.glanceData.currentDate).contains("January 17")
-                assertThat(state.glanceData.currentDate).contains("Saturday")
-                cancelAndIgnoreRemainingEvents()
-            }
+            val state = viewModel.uiState.value
+            assertThat(state.glanceData.currentTime).isNotEmpty()
+            // 2026-01-17 is a Saturday
+            assertThat(state.glanceData.currentDate).contains("January 17")
+            assertThat(state.glanceData.currentDate).contains("Saturday")
         }
 
     @Test
@@ -192,17 +188,13 @@ class HomeViewModelTest {
             createMocks()
             val viewModel = createViewModel()
 
-            viewModel.uiState.test {
-                assertThat(awaitItem().currentSurface).isEqualTo(LauncherSurface.HOME)
+            assertThat(viewModel.uiState.value.currentSurface).isEqualTo(LauncherSurface.HOME)
 
-                viewModel.onEvent(HomeEvent.NavigateTo(LauncherSurface.ALL_APPS))
-                assertThat(awaitItem().currentSurface).isEqualTo(LauncherSurface.ALL_APPS)
+            viewModel.onEvent(HomeEvent.NavigateTo(LauncherSurface.ALL_APPS))
+            assertThat(viewModel.uiState.value.currentSurface).isEqualTo(LauncherSurface.ALL_APPS)
 
-                viewModel.onEvent(HomeEvent.NavigateTo(LauncherSurface.SEARCH))
-                assertThat(awaitItem().currentSurface).isEqualTo(LauncherSurface.SEARCH)
-
-                cancelAndIgnoreRemainingEvents()
-            }
+            viewModel.onEvent(HomeEvent.NavigateTo(LauncherSurface.SEARCH))
+            assertThat(viewModel.uiState.value.currentSurface).isEqualTo(LauncherSurface.SEARCH)
         }
 
     @Test
@@ -213,22 +205,13 @@ class HomeViewModelTest {
             coEvery { appCatalogRepository.getAppShortcuts(testApp) } returns listOf(shortcut)
             val viewModel = createViewModel()
 
-            viewModel.uiState.test {
-                assertThat(awaitItem().popupApp).isNull() // initial
+            assertThat(viewModel.uiState.value.popupApp).isNull()
 
-                viewModel.onEvent(HomeEvent.ShowPopup(testApp))
+            viewModel.onEvent(HomeEvent.ShowPopup(testApp))
 
-                // First update: popupApp is set synchronously
-                val withPopup = awaitItem()
-                assertThat(withPopup.popupApp).isEqualTo(testApp)
-
-                // Second update: shortcuts loaded asynchronously in a launched coroutine
-                val withShortcuts = awaitItem()
-                assertThat(withShortcuts.popupShortcuts).hasSize(1)
-
-                coVerify { appCatalogRepository.getAppShortcuts(testApp) }
-                cancelAndIgnoreRemainingEvents()
-            }
+            assertThat(viewModel.uiState.value.popupApp).isEqualTo(testApp)
+            assertThat(viewModel.uiState.value.popupShortcuts).hasSize(1)
+            coVerify { appCatalogRepository.getAppShortcuts(testApp) }
         }
 
     @Test
@@ -238,19 +221,13 @@ class HomeViewModelTest {
             coEvery { appCatalogRepository.getAppShortcuts(any()) } returns emptyList()
             val viewModel = createViewModel()
 
-            viewModel.uiState.test {
-                awaitItem() // initial
+            viewModel.onEvent(HomeEvent.ShowPopup(testApp))
+            assertThat(viewModel.uiState.value.popupApp).isNotNull()
 
-                viewModel.onEvent(HomeEvent.ShowPopup(testApp))
-                assertThat(awaitItem().popupApp).isNotNull()
+            viewModel.onEvent(HomeEvent.HidePopup)
 
-                viewModel.onEvent(HomeEvent.HidePopup)
-                val cleared = awaitItem()
-                assertThat(cleared.popupApp).isNull()
-                assertThat(cleared.popupShortcuts).isEmpty()
-
-                cancelAndIgnoreRemainingEvents()
-            }
+            assertThat(viewModel.uiState.value.popupApp).isNull()
+            assertThat(viewModel.uiState.value.popupShortcuts).isEmpty()
         }
 
     @Test
@@ -270,18 +247,12 @@ class HomeViewModelTest {
             coEvery { appCatalogRepository.getAppShortcuts(any()) } returns emptyList<ShortcutInfo>()
             val viewModel = createViewModel()
 
-            viewModel.uiState.test {
-                awaitItem() // initial
+            viewModel.onEvent(HomeEvent.ShowPopup(testApp))
+            assertThat(viewModel.uiState.value.popupApp).isNotNull()
 
-                viewModel.onEvent(HomeEvent.ShowPopup(testApp))
-                assertThat(awaitItem().popupApp).isNotNull()
+            viewModel.onEvent(HomeEvent.HideApp)
 
-                viewModel.onEvent(HomeEvent.HideApp(testApp))
-                val cleared = awaitItem()
-                coVerify { favoritesRepository.hideApp(testApp.packageName) }
-                assertThat(cleared.popupApp).isNull()
-
-                cancelAndIgnoreRemainingEvents()
-            }
+            coVerify { favoritesRepository.hideApp(testApp.packageName) }
+            assertThat(viewModel.uiState.value.popupApp).isNull()
         }
 }

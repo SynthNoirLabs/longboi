@@ -2,8 +2,6 @@ package com.longboilauncher.app.feature.settingsui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.longboilauncher.app.core.icons.IconPackInfo
-import com.longboilauncher.app.core.icons.IconPackManager
 import com.longboilauncher.app.core.model.ThemeType
 import com.longboilauncher.app.core.settings.PreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,8 +14,6 @@ import javax.inject.Inject
 
 data class SettingsState(
     val theme: ThemeType = ThemeType.MATERIAL_YOU,
-    val iconPackPackageName: String = "",
-    val installedIconPacks: List<IconPackInfo> = emptyList(),
     val hapticsEnabled: Boolean = true,
     val showNotifications: Boolean = true,
     val gestureSwipeUp: String = "all_apps",
@@ -28,10 +24,6 @@ data class SettingsState(
 sealed class SettingsEvent {
     data class SetTheme(
         val theme: ThemeType,
-    ) : SettingsEvent()
-
-    data class SetIconPack(
-        val packageName: String,
     ) : SettingsEvent()
 
     data class SetHapticsEnabled(
@@ -60,29 +52,22 @@ class SettingsViewModel
     @Inject
     constructor(
         private val preferencesRepository: PreferencesRepository,
-        private val iconPackManager: IconPackManager,
     ) : ViewModel() {
         val uiState: StateFlow<SettingsState> =
             combine(
-                combine(
-                    preferencesRepository.themeType,
-                    preferencesRepository.iconPackPackageName,
-                    ::Pair,
-                ),
+                preferencesRepository.themeType,
                 preferencesRepository.hapticsEnabled,
                 preferencesRepository.showNotifications,
                 preferencesRepository.gestureSwipeUp,
                 preferencesRepository.gestureSwipeDown,
-            ) { (theme, iconPack), haptics, notifications, swipeUp, swipeDown ->
+            ) { theme, haptics, notifications, swipeUp, swipeDown ->
                 SettingsState(
                     theme = theme,
-                    iconPackPackageName = iconPack,
-                    installedIconPacks = iconPackManager.getInstalledIconPacks(),
                     hapticsEnabled = haptics,
                     showNotifications = notifications,
                     gestureSwipeUp = swipeUp,
                     gestureSwipeDown = swipeDown,
-                    density = "default",
+                    density = "default", // TODO: Add density when fixed
                 )
             }.stateIn(
                 scope = viewModelScope,
@@ -94,7 +79,6 @@ class SettingsViewModel
             viewModelScope.launch {
                 when (event) {
                     is SettingsEvent.SetTheme -> preferencesRepository.setTheme(event.theme.key)
-                    is SettingsEvent.SetIconPack -> preferencesRepository.setIconPack(event.packageName)
                     is SettingsEvent.SetHapticsEnabled -> preferencesRepository.setHapticsEnabled(event.enabled)
                     is SettingsEvent.SetShowNotifications -> preferencesRepository.setShowNotifications(event.show)
                     is SettingsEvent.SetGestureSwipeUp -> preferencesRepository.setGestureSwipeUp(event.action)

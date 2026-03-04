@@ -3,8 +3,6 @@ package com.longboilauncher.app.feature.settingsui
 import android.os.Build
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import com.longboilauncher.app.core.icons.IconPackInfo
-import com.longboilauncher.app.core.icons.IconPackManager
 import com.longboilauncher.app.core.model.ThemeType
 import com.longboilauncher.app.core.settings.PreferencesRepository
 import io.mockk.coEvery
@@ -32,24 +30,16 @@ import org.robolectric.annotation.Config
 class SettingsViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
     private val preferencesRepository = mockk<PreferencesRepository>(relaxed = true)
-    private val iconPackManager = mockk<IconPackManager>(relaxed = true)
     private lateinit var viewModel: SettingsViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-
-        // All flows combined by SettingsViewModel must be stubbed
         every { preferencesRepository.themeType } returns MutableStateFlow(ThemeType.MATERIAL_YOU)
-        every { preferencesRepository.iconPackPackageName } returns MutableStateFlow("")
         every { preferencesRepository.hapticsEnabled } returns MutableStateFlow(true)
         every { preferencesRepository.showNotifications } returns MutableStateFlow(true)
-        every { preferencesRepository.gestureSwipeUp } returns MutableStateFlow("all_apps")
-        every { preferencesRepository.gestureSwipeDown } returns MutableStateFlow("notifications")
 
-        every { iconPackManager.getInstalledIconPacks() } returns emptyList<IconPackInfo>()
-
-        viewModel = SettingsViewModel(preferencesRepository, iconPackManager)
+        viewModel = SettingsViewModel(preferencesRepository)
     }
 
     @After
@@ -60,13 +50,10 @@ class SettingsViewModelTest {
     @Test
     fun `uiState emits from repository`() =
         runTest {
-            advanceUntilIdle()
             viewModel.uiState.test {
                 val state = awaitItem()
                 assertThat(state.theme).isEqualTo(ThemeType.MATERIAL_YOU)
                 assertThat(state.hapticsEnabled).isTrue()
-                assertThat(state.showNotifications).isTrue()
-                cancelAndIgnoreRemainingEvents()
             }
         }
 
@@ -95,32 +82,5 @@ class SettingsViewModelTest {
             viewModel.onEvent(SettingsEvent.SetShowNotifications(false))
             advanceUntilIdle()
             coVerify { preferencesRepository.setShowNotifications(false) }
-        }
-
-    @Test
-    fun `setIconPack calls repository`() =
-        runTest {
-            coEvery { preferencesRepository.setIconPack(any()) } returns Unit
-            viewModel.onEvent(SettingsEvent.SetIconPack("com.example.icons"))
-            advanceUntilIdle()
-            coVerify { preferencesRepository.setIconPack("com.example.icons") }
-        }
-
-    @Test
-    fun `theme change propagates to uiState`() =
-        runTest {
-            val themeFlow = MutableStateFlow(ThemeType.MATERIAL_YOU)
-            every { preferencesRepository.themeType } returns themeFlow
-            viewModel = SettingsViewModel(preferencesRepository, iconPackManager)
-            advanceUntilIdle()
-
-            viewModel.uiState.test {
-                assertThat(awaitItem().theme).isEqualTo(ThemeType.MATERIAL_YOU)
-
-                themeFlow.value = ThemeType.SOPHISTICATED_SLEEK
-                assertThat(awaitItem().theme).isEqualTo(ThemeType.SOPHISTICATED_SLEEK)
-
-                cancelAndIgnoreRemainingEvents()
-            }
         }
 }

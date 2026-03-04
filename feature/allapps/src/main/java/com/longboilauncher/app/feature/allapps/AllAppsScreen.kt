@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -105,7 +106,9 @@ fun AllAppsScreen(
         Surface(
             modifier = Modifier.fillMaxSize(),
             color =
-                if (LocalThemeType.current == ThemeType.MATERIAL_YOU) {
+                if (LocalThemeType.current ==
+                    ThemeType.MATERIAL_YOU
+                ) {
                     MaterialTheme.colorScheme.background
                 } else {
                     Color.Transparent
@@ -151,25 +154,33 @@ fun AllAppsScreen(
                     colors =
                         OutlinedTextFieldDefaults.colors(
                             focusedBorderColor =
-                                if (LocalThemeType.current == ThemeType.GLASSMORPHISM) {
+                                if (LocalThemeType.current ==
+                                    ThemeType.GLASSMORPHISM
+                                ) {
                                     Color.White
                                 } else {
                                     MaterialTheme.colorScheme.primary
                                 },
                             unfocusedBorderColor =
-                                if (LocalThemeType.current == ThemeType.GLASSMORPHISM) {
+                                if (LocalThemeType.current ==
+                                    ThemeType.GLASSMORPHISM
+                                ) {
                                     Color.White.copy(alpha = 0.3f)
                                 } else {
                                     MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
                                 },
                             focusedContainerColor =
-                                if (LocalThemeType.current == ThemeType.GLASSMORPHISM) {
+                                if (LocalThemeType.current ==
+                                    ThemeType.GLASSMORPHISM
+                                ) {
                                     Color.White.copy(alpha = 0.1f)
                                 } else {
                                     Color.Transparent
                                 },
                             unfocusedContainerColor =
-                                if (LocalThemeType.current == ThemeType.GLASSMORPHISM) {
+                                if (LocalThemeType.current ==
+                                    ThemeType.GLASSMORPHISM
+                                ) {
                                     Color.White.copy(alpha = 0.05f)
                                 } else {
                                     Color.Transparent
@@ -212,7 +223,7 @@ fun AllAppsScreen(
                                         modifier =
                                             Modifier
                                                 .fillMaxWidth()
-                                                .padding(horizontal = 16.dp),
+                                                .padding(horizontal = 16.dp, vertical = 8.dp),
                                     )
                                 }
                                 is ListItem.App -> {
@@ -221,7 +232,8 @@ fun AllAppsScreen(
                                         modifier =
                                             Modifier
                                                 .fillMaxWidth()
-                                                .clickable { onAppSelected(item.app) },
+                                                .clickable { onAppSelected(item.app) }
+                                                .padding(horizontal = 8.dp, vertical = 2.dp),
                                     )
                                 }
                             }
@@ -294,15 +306,15 @@ private fun SectionHeader(
 ) {
     Text(
         text = letter,
-        style = MaterialTheme.typography.labelMedium,
-        fontWeight = FontWeight.SemiBold,
-        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-        modifier = modifier.padding(top = 8.dp, bottom = 4.dp),
+        style = MaterialTheme.typography.titleLarge,
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.primary,
+        modifier = modifier,
     )
 }
 
 @Composable
-fun AlphabetScrubber(
+private fun AlphabetScrubber(
     letters: List<String>,
     currentLetter: String,
     hapticFeedbackManager: HapticFeedbackManager,
@@ -311,22 +323,15 @@ fun AlphabetScrubber(
     modifier: Modifier = Modifier,
 ) {
     val view = LocalView.current
-    val primaryColor = MaterialTheme.colorScheme.primary
-    val onPrimaryColor = MaterialTheme.colorScheme.onPrimary
-    // High-contrast text: white in dark themes, near-black in light — derived from onBackground
-    val textColor = MaterialTheme.colorScheme.onBackground
 
     Box(
         modifier =
             modifier
-                .padding(end = 2.dp, top = 8.dp, bottom = 8.dp)
-                .width(28.dp)
-                .fillMaxHeight()
-                // Subtle frosted-glass pill background so letters stay legible over any wallpaper
                 .background(
-                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.55f),
-                    shape = RoundedCornerShape(14.dp),
-                ).pointerInput(letters) {
+                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                    shape = RoundedCornerShape(16.dp),
+                ).padding(horizontal = 4.dp, vertical = 8.dp)
+                .pointerInput(letters) {
                     if (letters.isEmpty()) return@pointerInput
 
                     var lastIndex = -1
@@ -348,10 +353,18 @@ fun AlphabetScrubber(
                         )
 
                     detectDragGestures(
-                        onDragStart = { offset -> selectIndex(yToIndex(offset.y)) },
-                        onDragCancel = { onScrubStateChanged(false, null) },
-                        onDragEnd = { onScrubStateChanged(false, null) },
-                        onDrag = { change, _ -> selectIndex(yToIndex(change.position.y)) },
+                        onDragStart = { offset ->
+                            selectIndex(yToIndex(offset.y))
+                        },
+                        onDragCancel = {
+                            onScrubStateChanged(false, null)
+                        },
+                        onDragEnd = {
+                            onScrubStateChanged(false, null)
+                        },
+                        onDrag = { change, _ ->
+                            selectIndex(yToIndex(change.position.y))
+                        },
                     )
                 },
     ) {
@@ -363,69 +376,59 @@ fun AlphabetScrubber(
             val activeIndex = letters.indexOf(currentLetter).takeIf { it >= 0 } ?: 0
 
             letters.forEachIndexed { index, letter ->
-                val isActive = letter == currentLetter
                 val distance = kotlin.math.abs(index - activeIndex)
-                // Wave: letters near the active one bulge left and grow
-                val waveStrength = (1f - (distance / 5f)).coerceIn(0f, 1f)
+                val waveStrength = (1f - (distance / 6f)).coerceIn(0f, 1f)
                 val offsetX by animateDpAsState(
-                    targetValue = (-6f * waveStrength).dp,
+                    targetValue = (-10f * waveStrength).dp,
                     label = "scrubberWaveOffset",
                 )
-                // Alpha fades from 100% at active → 50% at the edges (always readable)
-                val textAlpha = if (isActive) 1f else (0.5f + 0.35f * waveStrength).coerceIn(0.5f, 0.85f)
 
-                Box(
-                    contentAlignment = Alignment.Center,
+                Text(
+                    text = letter,
+                    fontSize = (10f + (2f * waveStrength)).sp,
+                    fontWeight = if (letter == currentLetter) FontWeight.Bold else FontWeight.Normal,
+                    color =
+                        if (letter == currentLetter) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        },
+                    textAlign = TextAlign.Center,
                     modifier =
                         Modifier
-                            .size(24.dp)
-                            .then(
-                                if (isActive) {
-                                    Modifier.background(primaryColor, RoundedCornerShape(8.dp))
-                                } else {
-                                    Modifier
-                                },
-                            ).offset(x = offsetX)
+                            .offset(x = offsetX)
                             .clickable {
                                 onScrubStateChanged(true, letter)
                                 hapticFeedbackManager.tick(view)
                                 onLetterSelected(letter)
                                 onScrubStateChanged(false, null)
                             },
-                ) {
-                    Text(
-                        text = letter,
-                        fontSize = if (isActive) 13.sp else (11f + 1f * waveStrength).sp,
-                        fontWeight = if (isActive) FontWeight.Bold else FontWeight.Medium,
-                        color = if (isActive) onPrimaryColor else textColor.copy(alpha = textAlpha),
-                        textAlign = TextAlign.Center,
-                    )
-                }
+                )
             }
         }
     }
 }
 
 @Composable
-fun FloatingLetterIndicator(
+private fun FloatingLetterIndicator(
     letter: String,
     modifier: Modifier = Modifier,
 ) {
     Box(
         modifier =
             modifier
-                .size(64.dp)
+                .size(96.dp)
                 .background(
-                    color = MaterialTheme.colorScheme.primary,
-                    shape = androidx.compose.foundation.shape.CircleShape,
+                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.9f),
+                    shape = RoundedCornerShape(24.dp),
                 ),
         contentAlignment = Alignment.Center,
     ) {
         Text(
             text = letter,
-            style = MaterialTheme.typography.headlineMedium,
+            style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onPrimary,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }

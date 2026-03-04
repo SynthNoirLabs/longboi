@@ -1,8 +1,8 @@
 package com.longboilauncher.app.core.settings
 
 import androidx.datastore.core.DataStore
+import com.longboilauncher.app.UserSettings
 import com.longboilauncher.app.core.model.ThemeType
-import com.longboilauncher.core.datastore_proto.UserSettings
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
@@ -167,15 +167,6 @@ class PreferencesRepository
                 currentSettings
                     .toBuilder()
                     .setDensity(density)
-                    .build()
-            }
-        }
-
-        suspend fun setIconPack(packageName: String) {
-            dataStore.updateData { currentSettings ->
-                currentSettings
-                    .toBuilder()
-                    .setIconPackPackageName(packageName)
                     .build()
             }
         }

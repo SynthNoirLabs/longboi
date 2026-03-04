@@ -7,23 +7,23 @@ plugins {
 }
 
 android {
-    namespace = 'com.longboilauncher.feature.settingsui'
-    compileSdk = 36
+    namespace 'com.longboilauncher.feature.settingsui'
+    compileSdk 36
 
     defaultConfig {
-        minSdk = 26
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        minSdk 26
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = "11"
     }
     buildFeatures {
-        compose = true
+        compose true
     }
     testOptions {
         unitTests.returnDefaultValues = true
@@ -43,10 +43,7 @@ dependencies {
 
     implementation(project(":core:designsystem"))
     implementation(project(":core:settings"))
-    implementation(project(":core:appcatalog"))
-    implementation(project(":core:datastore"))
     implementation(project(":core:model"))
-    implementation(project(":core:icons"))
 
     testImplementation(libs.junit)
     testImplementation(libs.google.truth)

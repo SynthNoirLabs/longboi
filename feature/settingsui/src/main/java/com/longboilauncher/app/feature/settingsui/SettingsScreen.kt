@@ -18,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.ColorLens
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.Home
@@ -27,8 +26,6 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.SettingsBackupRestore
 import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -40,21 +37,15 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.longboilauncher.app.core.designsystem.components.ThemeBackground
 import com.longboilauncher.app.core.designsystem.theme.LocalThemeType
 import com.longboilauncher.app.core.model.ThemeType
-import com.longboilauncher.feature.settingsui.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,7 +59,9 @@ fun SettingsScreen(
     ThemeBackground(themeType = LocalThemeType.current) {
         Scaffold(
             containerColor =
-                if (LocalThemeType.current == ThemeType.MATERIAL_YOU) {
+                if (LocalThemeType.current ==
+                    ThemeType.MATERIAL_YOU
+                ) {
                     MaterialTheme.colorScheme.background
                 } else {
                     Color.Transparent
@@ -76,12 +69,12 @@ fun SettingsScreen(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
                 LargeTopAppBar(
-                    title = { Text(stringResource(R.string.settings_title)) },
+                    title = { Text("Settings") },
                     navigationIcon = {
                         IconButton(onClick = onNavigateBack) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = stringResource(R.string.settings_back),
+                                contentDescription = "Back",
                             )
                         }
                     },
@@ -97,81 +90,46 @@ fun SettingsScreen(
                         .verticalScroll(rememberScrollState()),
             ) {
                 ThemeSwitcher(uiState.theme) { onEvent(SettingsEvent.SetTheme(it)) }
-
                 // Appearance Section
-                SettingsSection(title = stringResource(R.string.settings_section_appearance)) {
+                SettingsSection(title = "Appearance") {
                     SettingsItem(
                         icon = Icons.Default.ColorLens,
-                        title = stringResource(R.string.settings_item_theme_title),
+                        title = "Theme",
                         subtitle =
                             uiState.theme.name
                                 .lowercase()
                                 .replace("_", " ")
                                 .replaceFirstChar { it.uppercase() },
                         onClick = {
-                            val nextTheme =
-                                ThemeType.entries[(uiState.theme.ordinal + 1) % ThemeType.entries.size]
-                            onEvent(SettingsEvent.SetTheme(nextTheme))
+                            onEvent(
+                                SettingsEvent.SetTheme(
+                                    ThemeType.entries[(uiState.theme.ordinal + 1) % ThemeType.entries.size],
+                                ),
+                            )
                         },
                     )
-
-                    var showIconPackMenu by remember { mutableStateOf(false) }
-                    Box {
-                        SettingsItem(
-                            icon = Icons.Default.AutoAwesome,
-                            title = stringResource(R.string.settings_icon_pack_title),
-                            subtitle =
-                                uiState.installedIconPacks
-                                    .find { it.packageName == uiState.iconPackPackageName }
-                                    ?.label
-                                    ?: stringResource(R.string.settings_icon_pack_system_default),
-                            onClick = { showIconPackMenu = true },
-                        )
-                        DropdownMenu(
-                            expanded = showIconPackMenu,
-                            onDismissRequest = { showIconPackMenu = false },
-                        ) {
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.settings_icon_pack_system_default)) },
-                                onClick = {
-                                    onEvent(SettingsEvent.SetIconPack(""))
-                                    showIconPackMenu = false
-                                },
-                            )
-                            uiState.installedIconPacks.forEach { pack ->
-                                DropdownMenuItem(
-                                    text = { Text(pack.label) },
-                                    onClick = {
-                                        onEvent(SettingsEvent.SetIconPack(pack.packageName))
-                                        showIconPackMenu = false
-                                    },
-                                )
-                            }
-                        }
-                    }
-
                     SettingsItem(
                         icon = Icons.Default.GridView,
-                        title = stringResource(R.string.settings_item_density_title),
+                        title = "Density",
                         subtitle = uiState.density.replaceFirstChar { it.uppercase() },
-                        onClick = { /* TODO */ },
+                        onClick = { /* TODO: Show density picker */ },
                     )
                 }
 
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
                 // Home Section
-                SettingsSection(title = stringResource(R.string.settings_section_home)) {
+                SettingsSection(title = "Home") {
                     SettingsItem(
                         icon = Icons.Default.Home,
-                        title = stringResource(R.string.settings_item_favorites_title),
-                        subtitle = stringResource(R.string.settings_item_favorites_subtitle),
+                        title = "Favorites",
+                        subtitle = "Manage your favorite apps",
                         onClick = { /* TODO: Show favorites editor */ },
                     )
                     SettingsSwitchItem(
                         icon = Icons.Default.Notifications,
-                        title = stringResource(R.string.settings_item_notification_dots_title),
-                        subtitle = stringResource(R.string.settings_item_notification_dots_subtitle),
+                        title = "Notification dots",
+                        subtitle = "Show notification indicators",
                         checked = uiState.showNotifications,
                         onCheckedChange = { onEvent(SettingsEvent.SetShowNotifications(it)) },
                     )
@@ -180,17 +138,17 @@ fun SettingsScreen(
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
                 // Behavior Section
-                SettingsSection(title = stringResource(R.string.settings_section_behavior)) {
+                SettingsSection(title = "Behavior") {
                     SettingsItem(
                         icon = Icons.Default.TouchApp,
-                        title = stringResource(R.string.settings_item_gestures_title),
-                        subtitle = stringResource(R.string.settings_item_gestures_subtitle),
+                        title = "Gestures",
+                        subtitle = "Customize swipe actions",
                         onClick = { /* TODO: Show gesture settings */ },
                     )
                     SettingsSwitchItem(
                         icon = Icons.Default.TouchApp,
-                        title = stringResource(R.string.settings_item_haptics_title),
-                        subtitle = stringResource(R.string.settings_item_haptics_subtitle),
+                        title = "Haptic feedback",
+                        subtitle = "Vibration on interactions",
                         checked = uiState.hapticsEnabled,
                         onCheckedChange = { onEvent(SettingsEvent.SetHapticsEnabled(it)) },
                     )
@@ -199,11 +157,11 @@ fun SettingsScreen(
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
                 // Apps Section
-                SettingsSection(title = stringResource(R.string.settings_section_apps)) {
+                SettingsSection(title = "Apps") {
                     SettingsItem(
                         icon = Icons.Default.VisibilityOff,
-                        title = stringResource(R.string.settings_item_hidden_apps_title),
-                        subtitle = stringResource(R.string.settings_item_hidden_apps_subtitle),
+                        title = "Hidden apps",
+                        subtitle = "Manage hidden applications",
                         onClick = { /* TODO: Show hidden apps manager */ },
                     )
                 }
@@ -211,11 +169,11 @@ fun SettingsScreen(
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
                 // Backup Section
-                SettingsSection(title = stringResource(R.string.settings_section_backup)) {
+                SettingsSection(title = "Backup") {
                     SettingsItem(
                         icon = Icons.Default.SettingsBackupRestore,
-                        title = stringResource(R.string.settings_item_backup_restore_title),
-                        subtitle = stringResource(R.string.settings_item_backup_restore_subtitle),
+                        title = "Backup & Restore",
+                        subtitle = "Export or import settings",
                         onClick = { /* TODO: Show backup options */ },
                     )
                 }
@@ -223,11 +181,11 @@ fun SettingsScreen(
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
                 // About Section
-                SettingsSection(title = stringResource(R.string.settings_section_about)) {
+                SettingsSection(title = "About") {
                     SettingsItem(
                         icon = Icons.Default.Info,
-                        title = stringResource(R.string.settings_item_version_title),
-                        subtitle = stringResource(R.string.settings_item_version_value),
+                        title = "Version",
+                        subtitle = "1.0.0",
                         onClick = { },
                     )
                 }

@@ -9,14 +9,16 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.metrics.performance.JankStats
@@ -24,6 +26,8 @@ import com.longboilauncher.app.core.common.LauncherRoleHandler
 import com.longboilauncher.app.core.common.LauncherRoleManager
 import com.longboilauncher.app.core.designsystem.theme.LongboiLauncherTheme
 import com.longboilauncher.app.core.settings.HapticFeedbackManager
+import com.longboilauncher.app.feature.allapps.AllAppsScreen
+import com.longboilauncher.app.feature.allapps.AllAppsViewModel
 import com.longboilauncher.app.feature.home.HomeEvent
 import com.longboilauncher.app.feature.home.HomeScreen
 import com.longboilauncher.app.feature.home.HomeViewModel
@@ -60,11 +64,11 @@ class MainActivity : ComponentActivity() {
             }
 
             val homeViewModel: HomeViewModel = hiltViewModel()
-            val theme by homeViewModel.uiState.collectAsStateWithLifecycle()
-            LongboiLauncherTheme(themeType = theme.theme) {
+            val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
+            LongboiLauncherTheme(themeType = uiState.theme) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = Color.Transparent,
+                    color = MaterialTheme.colorScheme.background,
                 ) {
                     LauncherApp(
                         hapticFeedbackManager = hapticFeedbackManager,
@@ -92,12 +96,32 @@ fun LauncherApp(
         homeViewModel.onEvent(HomeEvent.NavigateTo(LauncherSurface.HOME))
     }
 
-    // Unified Home + All Apps screen
+    // Home screen is always rendered as the base
     HomeScreen(
         uiState = uiState,
         onEvent = homeViewModel::onEvent,
-        hapticFeedbackManager = hapticFeedbackManager,
     )
+
+    // All Apps overlay
+    AnimatedVisibility(
+        visible = uiState.currentSurface == LauncherSurface.ALL_APPS,
+        enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+        exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
+    ) {
+        val allAppsViewModel: AllAppsViewModel = hiltViewModel()
+        val allAppsState by allAppsViewModel.uiState.collectAsStateWithLifecycle()
+
+        AllAppsScreen(
+            uiState = allAppsState,
+            onEvent = allAppsViewModel::onEvent,
+            onAppSelected = { appEntry ->
+                homeViewModel.onEvent(HomeEvent.LaunchApp(appEntry))
+                homeViewModel.onEvent(HomeEvent.NavigateTo(LauncherSurface.HOME))
+            },
+            onDismiss = { homeViewModel.onEvent(HomeEvent.NavigateTo(LauncherSurface.HOME)) },
+            hapticFeedbackManager = hapticFeedbackManager,
+        )
+    }
 
     // Search overlay
     AnimatedVisibility(

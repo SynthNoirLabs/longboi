@@ -45,7 +45,7 @@ class PreferencesRepositoryTest {
     }
 
     @Test
-    fun `default theme is system`() =
+    fun `default theme is material_you`() =
         runTest(testDispatcher) {
             dataStore =
                 DataStoreFactory.create(
