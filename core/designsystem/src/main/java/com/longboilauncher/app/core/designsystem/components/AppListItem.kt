@@ -18,11 +18,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.longboilauncher.app.core.designsystem.theme.LocalThemeType
+import com.longboilauncher.app.core.designsystem.theme.LongboiSpacing
 import com.longboilauncher.app.core.icons.AppIcon
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.model.ProfileType
@@ -38,81 +41,113 @@ fun AppListItem(
         targetValue = if (isPressed) 0.95f else 1f,
         label = "scale",
     )
-
     val alpha = if (app.isArchived) 0.5f else 1f
-
     val themeType = LocalThemeType.current
-    val containerColor =
-        when (themeType) {
-            ThemeType.GLASSMORPHISM -> Color.White.copy(alpha = 0.1f)
-            ThemeType.VIBRANT_PLAYFUL -> Color.Transparent
-            ThemeType.SOPHISTICATED_SLEEK -> Color.Transparent
-            ThemeType.MODERN_MINIMALIST -> Color.Transparent
-            else -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
-        }
-    val shape =
-        when (themeType) {
-            ThemeType.VIBRANT_PLAYFUL -> RoundedCornerShape(24.dp)
-            ThemeType.MODERN_MINIMALIST -> RoundedCornerShape(0.dp)
-            else -> RoundedCornerShape(12.dp)
-        }
-    val borderStroke =
-        when (themeType) {
-            ThemeType.GLASSMORPHISM -> Modifier.border(0.5.dp, Color.White.copy(alpha = 0.2f), shape)
-            else -> Modifier
-        }
 
-    Card(
-        modifier =
-            modifier
-                .scale(scale)
-                .alpha(alpha)
-                .fillMaxWidth()
-                .then(borderStroke),
-        shape = shape,
-        colors =
-            CardDefaults.cardColors(
-                containerColor = containerColor,
-            ),
-        elevation =
-            CardDefaults.cardElevation(
-                defaultElevation = 0.dp,
-                pressedElevation = 1.dp,
-            ),
-    ) {
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            // App Icon
-            AppIcon(
-                appEntry = app,
-                size = 48.dp,
-            )
+    when (themeType) {
+        ThemeType.GLASSMORPHISM, ThemeType.VIBRANT_PLAYFUL -> {
+            // Themed card treatment — glass blur / playful colour chip
+            val containerColor =
+                if (themeType == ThemeType.GLASSMORPHISM) {
+                    Color.White.copy(alpha = 0.1f)
+                } else {
+                    MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.25f)
+                }
+            val shape =
+                if (themeType == ThemeType.VIBRANT_PLAYFUL) {
+                    RoundedCornerShape(24.dp)
+                } else {
+                    RoundedCornerShape(12.dp)
+                }
+            val borderMod =
+                if (themeType == ThemeType.GLASSMORPHISM) {
+                    Modifier.border(0.5.dp, Color.White.copy(alpha = 0.2f), shape)
+                } else {
+                    Modifier
+                }
 
-            // App Label
-            Text(
-                text = app.label,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onSurface,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f),
-            )
-
-            // Profile Badge
-            ProfileBadge(profile = app.profile)
-
-            // Status Indicators
-            if (app.isArchived) {
-                ArchivedIndicator()
+            Card(
+                modifier =
+                    modifier
+                        .scale(scale)
+                        .alpha(alpha)
+                        .fillMaxWidth()
+                        .then(borderMod),
+                shape = shape,
+                colors = CardDefaults.cardColors(containerColor = containerColor),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp, pressedElevation = 1.dp),
+            ) {
+                AppListItemRow(app = app)
             }
         }
+
+        else -> {
+            // Wallpaper-native: transparent, no card — wallpaper IS the canvas
+            Row(
+                modifier =
+                    modifier
+                        .scale(scale)
+                        .alpha(alpha)
+                        .fillMaxWidth()
+                        .padding(horizontal = LongboiSpacing.L, vertical = LongboiSpacing.S),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(LongboiSpacing.M),
+            ) {
+                AppIcon(appEntry = app, size = 48.dp)
+                Text(
+                    text = app.label,
+                    style =
+                        MaterialTheme.typography.bodyLarge.copy(
+                            shadow =
+                                Shadow(
+                                    color = Color.Black.copy(alpha = 0.5f),
+                                    offset = Offset(0f, 2f),
+                                    blurRadius = 4f,
+                                ),
+                        ),
+                    fontWeight = FontWeight.Medium,
+                    color = Color.White,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f),
+                )
+                ProfileBadge(profile = app.profile)
+                if (app.isArchived) ArchivedIndicator()
+            }
+        }
+    }
+}
+
+@Composable
+private fun AppListItemRow(app: AppEntry) {
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = LongboiSpacing.L, vertical = LongboiSpacing.M),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(LongboiSpacing.M),
+    ) {
+        AppIcon(appEntry = app, size = 48.dp)
+        Text(
+            text = app.label,
+            style =
+                MaterialTheme.typography.bodyLarge.copy(
+                    shadow =
+                        Shadow(
+                            color = Color.Black.copy(alpha = 0.5f),
+                            offset = Offset(0f, 2f),
+                            blurRadius = 4f,
+                        ),
+                ),
+            fontWeight = FontWeight.Medium,
+            color = Color.White,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f),
+        )
+        ProfileBadge(profile = app.profile)
+        if (app.isArchived) ArchivedIndicator()
     }
 }
 
@@ -128,13 +163,13 @@ private fun ProfileBadge(
                 shape = CircleShape,
                 colors =
                     CardDefaults.cardColors(
-                        containerColor = Color(0xFF4285F4),
+                        containerColor = MaterialTheme.colorScheme.tertiary,
                     ),
             ) {
                 Text(
                     text = "W",
                     style = MaterialTheme.typography.labelSmall,
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onTertiary,
                     modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
                 )
             }
@@ -145,20 +180,18 @@ private fun ProfileBadge(
                 shape = CircleShape,
                 colors =
                     CardDefaults.cardColors(
-                        containerColor = Color(0xFFEA4335),
+                        containerColor = MaterialTheme.colorScheme.error,
                     ),
             ) {
                 Text(
                     text = "P",
                     style = MaterialTheme.typography.labelSmall,
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onError,
                     modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
                 )
             }
         }
-        ProfileType.PERSONAL -> {
-            // No badge for personal profile
-        }
+        ProfileType.PERSONAL -> Unit
     }
 }
 
@@ -167,7 +200,7 @@ private fun ArchivedIndicator() {
     Text(
         text = "Archived",
         style = MaterialTheme.typography.labelSmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        modifier = Modifier.padding(horizontal = 8.dp),
+        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+        modifier = Modifier.padding(horizontal = LongboiSpacing.S),
     )
 }

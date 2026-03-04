@@ -4,8 +4,8 @@ import android.os.Build
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import com.google.common.truth.Truth.assertThat
-import com.longboilauncher.core.datastore_proto.UserSettings
 import com.longboilauncher.app.core.datastore.serializer.UserSettingsSerializer
+import com.longboilauncher.core.datastore_proto.UserSettings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -56,7 +56,7 @@ class PreferencesRepositoryTest {
             repository = PreferencesRepository(dataStore)
             advanceUntilIdle()
 
-            assertThat(repository.theme.first()).isEqualTo("system")
+            assertThat(repository.theme.first()).isEqualTo("material_you")
         }
 
     @Test

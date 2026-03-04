@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="swipe_up_hint">Swipe up for all apps</string>
+  <string name="empty_favorites_hint">Swipe up to add favorite apps</string>
+  <string name="widget_unavailable">Widget unavailable</string>
+</resources>

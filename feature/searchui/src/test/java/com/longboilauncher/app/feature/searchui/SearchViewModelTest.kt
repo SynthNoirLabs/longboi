@@ -1,6 +1,7 @@
 package com.longboilauncher.app.feature.searchui
 
 import android.os.Build
+import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.longboilauncher.app.core.appcatalog.AppCatalogRepository
 import com.longboilauncher.app.core.datastore.FavoritesRepository
@@ -11,8 +12,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -23,11 +23,16 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
+/**
+ * Search VM tests use [UnconfinedTestDispatcher] so coroutines execute eagerly,
+ * keeping the Turbine `test {}` flow assertions straightforward — no need to
+ * call `advanceUntilIdle()` inside the Turbine context.
+ */
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.Q])
 class SearchViewModelTest {
-    private val testDispatcher = StandardTestDispatcher()
+    private val testDispatcher = UnconfinedTestDispatcher()
     private val appCatalogRepository = mockk<AppCatalogRepository>(relaxed = true)
     private val favoritesRepository = mockk<FavoritesRepository>(relaxed = true)
     private lateinit var viewModel: SearchViewModel
@@ -76,138 +81,155 @@ class SearchViewModelTest {
 
     @Test
     fun `search returns empty results for empty query`() =
-        runTest {
-            advanceUntilIdle()
-            assertThat(viewModel.uiState.value.searchResults).isEmpty()
+        runTest(testDispatcher) {
+            viewModel.uiState.test {
+                assertThat(awaitItem().searchResults).isEmpty()
 
-            viewModel.onEvent(SearchEvent.UpdateSearchQuery(""))
-            advanceUntilIdle()
-
-            assertThat(viewModel.uiState.value.searchResults).isEmpty()
+                viewModel.onEvent(SearchEvent.UpdateSearchQuery(""))
+                // Empty query — state unchanged, no new emission
+                cancelAndIgnoreRemainingEvents()
+            }
         }
 
     @Test
     fun `search filters apps by label`() =
-        runTest {
-            advanceUntilIdle()
-            assertThat(viewModel.uiState.value.searchResults).isEmpty()
+        runTest(testDispatcher) {
+            viewModel.uiState.test {
+                awaitItem() // initial empty
 
-            viewModel.onEvent(SearchEvent.UpdateSearchQuery("you"))
-            advanceUntilIdle()
+                viewModel.onEvent(SearchEvent.UpdateSearchQuery("you"))
 
-            val results = viewModel.uiState.value.searchResults
-            assertThat(results).isNotEmpty()
-            val appResults = results.filterIsInstance<SearchResult.AppResult>()
-            assertThat(appResults).hasSize(1)
-            assertThat(appResults[0].app.label).isEqualTo("YouTube")
+                val state = awaitItem()
+                val appResults = state.searchResults.filterIsInstance<SearchResult.AppResult>()
+                assertThat(appResults).hasSize(1)
+                assertThat(appResults[0].app.label).isEqualTo("YouTube")
+
+                cancelAndIgnoreRemainingEvents()
+            }
         }
 
     @Test
     fun `search excludes hidden apps`() =
-        runTest {
-            every { favoritesRepository.hiddenApps } returns MutableStateFlow(setOf("com.google.android.youtube"))
-            every { favoritesRepository.favorites } returns MutableStateFlow(emptyList())
+        runTest(testDispatcher) {
+            every { favoritesRepository.hiddenApps } returns
+                MutableStateFlow(setOf("com.google.android.youtube"))
             viewModel = SearchViewModel(appCatalogRepository, favoritesRepository)
-            advanceUntilIdle()
 
-            viewModel.onEvent(SearchEvent.UpdateSearchQuery("you"))
-            advanceUntilIdle()
+            viewModel.uiState.test {
+                awaitItem() // initial
 
-            val appResults =
-                viewModel.uiState.value.searchResults
-                    .filterIsInstance<SearchResult.AppResult>()
-            assertThat(appResults).isEmpty()
+                viewModel.onEvent(SearchEvent.UpdateSearchQuery("you"))
+
+                val state = awaitItem()
+                val appResults = state.searchResults.filterIsInstance<SearchResult.AppResult>()
+                assertThat(appResults).isEmpty()
+
+                cancelAndIgnoreRemainingEvents()
+            }
         }
 
     @Test
     fun `fuzzy match handles small typos`() =
-        runTest {
-            advanceUntilIdle()
+        runTest(testDispatcher) {
+            viewModel.uiState.test {
+                awaitItem()
 
-            // "youtub" is 6 chars, and fuzzy match allows 1 char difference
-            viewModel.onEvent(SearchEvent.UpdateSearchQuery("youtub"))
-            advanceUntilIdle()
+                viewModel.onEvent(SearchEvent.UpdateSearchQuery("youtub"))
 
-            val appResults =
-                viewModel.uiState.value.searchResults
-                    .filterIsInstance<SearchResult.AppResult>()
-            assertThat(appResults).isNotEmpty()
-            assertThat(appResults[0].app.label).isEqualTo("YouTube")
+                val state = awaitItem()
+                val appResults = state.searchResults.filterIsInstance<SearchResult.AppResult>()
+                assertThat(appResults).isNotEmpty()
+                assertThat(appResults[0].app.label).isEqualTo("YouTube")
+
+                cancelAndIgnoreRemainingEvents()
+            }
         }
 
     @Test
     fun `acronym match works`() =
-        runTest {
-            advanceUntilIdle()
+        runTest(testDispatcher) {
+            viewModel.uiState.test {
+                awaitItem()
 
-            // YouTube has acronym "YT" (uppercase letters)
-            viewModel.onEvent(SearchEvent.UpdateSearchQuery("yt"))
-            advanceUntilIdle()
+                viewModel.onEvent(SearchEvent.UpdateSearchQuery("yt"))
 
-            val appResults =
-                viewModel.uiState.value.searchResults
-                    .filterIsInstance<SearchResult.AppResult>()
-            assertThat(appResults).isNotEmpty()
-            assertThat(appResults[0].app.label).isEqualTo("YouTube")
+                val state = awaitItem()
+                val appResults = state.searchResults.filterIsInstance<SearchResult.AppResult>()
+                assertThat(appResults).isNotEmpty()
+                assertThat(appResults[0].app.label).isEqualTo("YouTube")
+
+                cancelAndIgnoreRemainingEvents()
+            }
         }
 
     @Test
     fun `calculator evaluates simple expressions`() =
-        runTest {
-            advanceUntilIdle()
+        runTest(testDispatcher) {
+            viewModel.uiState.test {
+                awaitItem()
 
-            viewModel.onEvent(SearchEvent.UpdateSearchQuery("123+456"))
-            advanceUntilIdle()
+                viewModel.onEvent(SearchEvent.UpdateSearchQuery("123+456"))
 
-            val results = viewModel.uiState.value.searchResults
-            assertThat(results).isNotEmpty()
-            val calcResult = results.filterIsInstance<SearchResult.CalculatorResult>().firstOrNull()
-            assertThat(calcResult).isNotNull()
-            assertThat(calcResult!!.expression).isEqualTo("123+456")
-            assertThat(calcResult.result).isEqualTo("579")
+                val state = awaitItem()
+                val calcResult =
+                    state.searchResults.filterIsInstance<SearchResult.CalculatorResult>().firstOrNull()
+                assertThat(calcResult).isNotNull()
+                assertThat(calcResult!!.expression).isEqualTo("123+456")
+                assertThat(calcResult.result).isEqualTo("579")
+
+                cancelAndIgnoreRemainingEvents()
+            }
         }
 
     @Test
     fun `calculator handles decimals`() =
-        runTest {
-            advanceUntilIdle()
+        runTest(testDispatcher) {
+            viewModel.uiState.test {
+                awaitItem()
 
-            viewModel.onEvent(SearchEvent.UpdateSearchQuery("10.5+2.3"))
-            advanceUntilIdle()
+                viewModel.onEvent(SearchEvent.UpdateSearchQuery("10.5+2.3"))
 
-            val results = viewModel.uiState.value.searchResults
-            val calcResult = results.filterIsInstance<SearchResult.CalculatorResult>().firstOrNull()
-            assertThat(calcResult).isNotNull()
-            assertThat(calcResult!!.result).isEqualTo("12.8")
+                val state = awaitItem()
+                val calcResult =
+                    state.searchResults.filterIsInstance<SearchResult.CalculatorResult>().firstOrNull()
+                assertThat(calcResult).isNotNull()
+                assertThat(calcResult!!.result).isEqualTo("12.8")
+
+                cancelAndIgnoreRemainingEvents()
+            }
         }
 
     @Test
     fun `settings shortcuts appear`() =
-        runTest {
-            advanceUntilIdle()
+        runTest(testDispatcher) {
+            viewModel.uiState.test {
+                awaitItem()
 
-            viewModel.onEvent(SearchEvent.UpdateSearchQuery("wifi"))
-            advanceUntilIdle()
+                viewModel.onEvent(SearchEvent.UpdateSearchQuery("wifi"))
 
-            val results = viewModel.uiState.value.searchResults
-            assertThat(results).isNotEmpty()
-            val settings = results.filterIsInstance<SearchResult.SettingsShortcutResult>()
-            assertThat(settings).isNotEmpty()
-            assertThat(settings[0].title).isEqualTo("Wi-Fi")
+                val state = awaitItem()
+                val settings =
+                    state.searchResults.filterIsInstance<SearchResult.SettingsShortcutResult>()
+                assertThat(settings).isNotEmpty()
+                assertThat(settings[0].title).isEqualTo("Wi-Fi")
+
+                cancelAndIgnoreRemainingEvents()
+            }
         }
 
     @Test
     fun `mixed results prioritize calculator then settings then apps`() =
-        runTest {
-            advanceUntilIdle()
+        runTest(testDispatcher) {
+            viewModel.uiState.test {
+                awaitItem()
 
-            // "1+1" will match calculator
-            viewModel.onEvent(SearchEvent.UpdateSearchQuery("1+1"))
-            advanceUntilIdle()
+                viewModel.onEvent(SearchEvent.UpdateSearchQuery("1+1"))
 
-            val results = viewModel.uiState.value.searchResults
-            assertThat(results).isNotEmpty()
-            // Calculator should be first
-            assertThat(results[0]).isInstanceOf(SearchResult.CalculatorResult::class.java)
+                val state = awaitItem()
+                assertThat(state.searchResults).isNotEmpty()
+                assertThat(state.searchResults[0]).isInstanceOf(SearchResult.CalculatorResult::class.java)
+
+                cancelAndIgnoreRemainingEvents()
+            }
         }
 }

@@ -293,3 +293,36 @@ private fun SettingsShortcutItem(
         )
     }
 }
+
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@androidx.compose.runtime.Composable
+private fun SearchScreenEmptyPreview() {
+    com.longboilauncher.app.core.designsystem.theme.LongboiLauncherTheme {
+        SearchScreen(
+            uiState = SearchState(searchQuery = ""),
+            onEvent = {},
+            onAppSelected = {},
+            onDismiss = {},
+        )
+    }
+}
+
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@androidx.compose.runtime.Composable
+private fun SearchScreenResultsPreview() {
+    com.longboilauncher.app.core.designsystem.theme.LongboiLauncherTheme {
+        SearchScreen(
+            uiState =
+                SearchState(
+                    searchQuery = "youtube",
+                    searchResults =
+                        listOf(
+                            SearchResult.CalculatorResult(expression = "1+1", result = "2"),
+                        ),
+                ),
+            onEvent = {},
+            onAppSelected = {},
+            onDismiss = {},
+        )
+    }
+}

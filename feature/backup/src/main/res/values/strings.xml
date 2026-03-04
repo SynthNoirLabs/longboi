@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="backup_title">Backup &amp; Restore</string>
+  <string name="backup_back">Back</string>
+  <string name="backup_heading">Backup your settings</string>
+  <string name="backup_description">Export your favorites, hidden apps, gestures, and other settings to a file. You can restore them later or on another device.</string>
+  <string name="backup_export_button">Export Backup</string>
+  <string name="backup_restore_button">Restore from Backup</string>
+  <string name="backup_note">Note: Restoring a backup will overwrite your current settings.</string>
+  <string name="backup_export_success">Backup exported successfully</string>
+  <string name="backup_export_failed">Export failed: %1$s</string>
+  <string name="backup_import_success">Backup restored successfully</string>
+  <string name="backup_import_failed">Import failed: %1$s</string>
+</resources>

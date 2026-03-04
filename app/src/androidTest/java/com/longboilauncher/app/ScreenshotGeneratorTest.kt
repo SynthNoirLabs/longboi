@@ -1,11 +1,9 @@
 package com.longboilauncher.app
 
 import android.graphics.Bitmap
-import android.os.Environment
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeUp
@@ -49,31 +47,25 @@ class ScreenshotGeneratorTest {
 
     @Test
     fun generateScreenshots() {
+        // Wait for app to be ready and idle
+        composeTestRule.waitForIdle()
+        Thread.sleep(1000) // Give animations time to settle
+
         // 1. Home Screen
         takeScreenshot("01_home_screen")
 
-        // 2. All Apps Screen
-        // Using the hint text from strings.xml
-        val swipeHint = composeTestRule.activity.getString(R.string.swipe_up_hint)
-        composeTestRule.onNodeWithText(swipeHint).performTouchInput {
-            swipeUp()
+        // 2. All Apps Screen (Niagara style: just scroll down a bit)
+        composeTestRule.onRoot().performTouchInput {
+            swipeUp(startY = 1500f, endY = 500f, durationMillis = 500)
         }
         composeTestRule.waitForIdle()
+        Thread.sleep(500)
         takeScreenshot("02_all_apps")
 
-        // 3. Search Screen
-        // Assuming there is a search placeholder
-        val searchPlaceholder = composeTestRule.activity.getString(R.string.search_apps_placeholder)
-        // Back to home first
-        InstrumentationRegistry.getInstrumentation().runOnMainSync {
-            composeTestRule.activity.onBackPressedDispatcher.onBackPressed()
-        }
-        composeTestRule.waitForIdle()
-        
-        // Find Search by clicking on the search bar area if it exists, 
-        // or navigate via ViewModel event if we had access.
-        // For now, let's just try to find the search placeholder if it's visible on Home or All Apps
-        // In this app, Search is an overlay.
+        // 3. Settings Screen
+        // We can't easily click through to settings in a generic way if the icon is dynamic,
+        // but we can navigate via activity if we wanted.
+        // For now, let's focus on the main UI parts.
     }
 
     private fun takeScreenshot(name: String) {

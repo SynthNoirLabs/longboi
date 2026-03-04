@@ -25,6 +25,7 @@ data class AllAppsState(
     val filteredApps: List<AppEntry> = emptyList(),
     val appSections: Map<String, List<AppEntry>> = emptyMap(),
     val sectionIndices: Map<String, Int> = emptyMap(),
+    val scrubberLetter: String = "A",
 )
 
 sealed class AllAppsEvent {
@@ -46,6 +47,10 @@ sealed class AllAppsEvent {
 
     data class LaunchApp(
         val app: AppEntry,
+    ) : AllAppsEvent()
+
+    data class UpdateScrubberLetter(
+        val letter: String,
     ) : AllAppsEvent()
 }
 
@@ -124,6 +129,8 @@ class AllAppsViewModel
                         favoritesRepository.hideApp(event.packageName)
                     }
                 is AllAppsEvent.LaunchApp -> appCatalogRepository.launchApp(event.app)
+                is AllAppsEvent.UpdateScrubberLetter ->
+                    _uiState.update { it.copy(scrubberLetter = event.letter) }
             }
         }
     }

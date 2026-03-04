@@ -55,7 +55,6 @@ dependencies {
     implementation(project(":core:appcatalog"))
     implementation(project(":core:common"))
     implementation(project(":core:icons"))
-    implementation(project(":feature:allapps"))
 
     testImplementation(libs.junit)
     testImplementation(libs.google.truth)

@@ -2,10 +2,10 @@ package com.longboilauncher.app.feature.settingsui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.longboilauncher.app.core.model.ThemeType
-import com.longboilauncher.app.core.settings.PreferencesRepository
 import com.longboilauncher.app.core.icons.IconPackInfo
 import com.longboilauncher.app.core.icons.IconPackManager
+import com.longboilauncher.app.core.model.ThemeType
+import com.longboilauncher.app.core.settings.PreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -67,7 +67,7 @@ class SettingsViewModel
                 combine(
                     preferencesRepository.themeType,
                     preferencesRepository.iconPackPackageName,
-                    ::Pair
+                    ::Pair,
                 ),
                 preferencesRepository.hapticsEnabled,
                 preferencesRepository.showNotifications,

@@ -30,6 +30,17 @@ data class AppEntry(
             UserHandle::class.java.getConstructor(Int::class.java).newInstance(userIdentifier)
         }
 
+    /**
+     * Returns true when both entries refer to the same installed app component (same package,
+     * activity class, and user profile). Use this for identity checks (e.g. "did I already load
+     * shortcuts for this app?"). Do NOT use it as a general equality test — data-class `equals`
+     * covers all fields and is what `MutableStateFlow` / Compose stability need.
+     */
+    fun sameApp(other: AppEntry): Boolean =
+        packageName == other.packageName &&
+            className == other.className &&
+            userIdentifier == other.userIdentifier
+
     override fun toString(): String = label
 
     val component: android.content.ComponentName

@@ -12,69 +12,81 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import com.longboilauncher.app.core.designsystem.theme.LocalThemeType
+import com.longboilauncher.app.core.designsystem.theme.LongboiSpacing
 import com.longboilauncher.app.core.model.GlanceHeaderData
 import com.longboilauncher.app.core.model.ThemeType
+import com.longboilauncher.core.designsystem.R
 
 @Composable
 fun GlanceHeader(
     data: GlanceHeaderData,
     modifier: Modifier = Modifier,
 ) {
+    val themeType = LocalThemeType.current
+
+    // Resolve colours once so child composables stay clean
+    val primaryContentColor =
+        when (themeType) {
+            ThemeType.GLASSMORPHISM -> Color.White
+            ThemeType.MODERN_MINIMALIST -> Color.Black
+            else -> Color.White // Default to white for dark wallpapers
+        }
+    val secondaryContentColor = primaryContentColor.copy(alpha = 0.6f)
+    val accentColor =
+        when (themeType) {
+            ThemeType.SOPHISTICATED_SLEEK -> MaterialTheme.colorScheme.primary
+            else -> primaryContentColor
+        }
+
+    val textShadow =
+        Shadow(
+            color = Color.Black.copy(alpha = 0.5f),
+            offset = Offset(0f, 2f),
+            blurRadius = 4f,
+        )
+
     Column(
         modifier =
             modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 24.dp),
+                .padding(horizontal = LongboiSpacing.L, vertical = LongboiSpacing.XL),
         horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(LongboiSpacing.S),
     ) {
-        // Time
-        val themeType = LocalThemeType.current
+        // Clock — Thin weight, full display size
         Text(
             text = data.currentTime,
             style =
                 when (themeType) {
                     ThemeType.SOPHISTICATED_SLEEK ->
-                        MaterialTheme.typography.displayLarge.copy(fontFamily = FontFamily.Serif)
-                    ThemeType.MODERN_MINIMALIST ->
-                        MaterialTheme.typography.displayLarge.copy(fontWeight = FontWeight.Bold)
-                    else -> MaterialTheme.typography.displayLarge
+                        MaterialTheme.typography.displayLarge.copy(fontFamily = FontFamily.Serif, shadow = textShadow)
+                    else -> MaterialTheme.typography.displayLarge.copy(shadow = textShadow)
                 },
-            fontWeight = if (themeType == ThemeType.MODERN_MINIMALIST) FontWeight.Bold else FontWeight.Light,
-            color =
-                when (themeType) {
-                    ThemeType.SOPHISTICATED_SLEEK -> Color(0xFFF2CC0D)
-                    ThemeType.GLASSMORPHISM -> Color.White
-                    ThemeType.MODERN_MINIMALIST -> Color.Black
-                    else -> MaterialTheme.colorScheme.onBackground
-                },
+            fontWeight =
+                if (themeType == ThemeType.MODERN_MINIMALIST) FontWeight.Light else FontWeight.Thin,
+            color = accentColor,
             textAlign = TextAlign.Start,
         )
 
         // Date
         Text(
             text = data.currentDate,
-            style = MaterialTheme.typography.titleMedium,
-            color =
-                when (themeType) {
-                    ThemeType.SOPHISTICATED_SLEEK ->
-                        Color(0xFFF2CC0D).copy(alpha = 0.8f)
-                    ThemeType.GLASSMORPHISM -> Color.White.copy(alpha = 0.8f)
-                    ThemeType.MODERN_MINIMALIST -> Color.Black.copy(alpha = 0.6f)
-                    else -> MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
-                },
+            style = MaterialTheme.typography.titleMedium.copy(shadow = textShadow),
+            color = secondaryContentColor,
             textAlign = TextAlign.Start,
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(LongboiSpacing.L))
 
-        // Next Event
+        // Next calendar event
         data.nextEvent?.let { event ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -82,20 +94,20 @@ fun GlanceHeader(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = "Next: ",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+                    text = stringResource(R.string.glance_next_event_label),
+                    style = MaterialTheme.typography.bodyMedium.copy(shadow = textShadow),
+                    color = secondaryContentColor,
                 )
                 Text(
-                    text = event.title,
-                    style = MaterialTheme.typography.bodyMedium,
+                    text = " ${event.title}",
+                    style = MaterialTheme.typography.bodyMedium.copy(shadow = textShadow),
                     fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onBackground,
+                    color = primaryContentColor,
                 )
                 Text(
-                    text = " • ${event.time}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+                    text = stringResource(R.string.glance_separator) + event.time,
+                    style = MaterialTheme.typography.bodyMedium.copy(shadow = textShadow),
+                    color = secondaryContentColor,
                 )
             }
         }
@@ -109,18 +121,18 @@ fun GlanceHeader(
             ) {
                 Text(
                     text = weather.temperature,
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.titleLarge.copy(shadow = textShadow),
+                    color = primaryContentColor,
                 )
                 Text(
-                    text = " • ${weather.condition}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+                    text = stringResource(R.string.glance_separator) + weather.condition,
+                    style = MaterialTheme.typography.bodyMedium.copy(shadow = textShadow),
+                    color = secondaryContentColor,
                 )
             }
         }
 
-        // Next Alarm
+        // Next alarm
         data.nextAlarm?.let { alarm ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -128,21 +140,21 @@ fun GlanceHeader(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = "Alarm: ",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+                    text = stringResource(R.string.glance_alarm_label),
+                    style = MaterialTheme.typography.bodyMedium.copy(shadow = textShadow),
+                    color = secondaryContentColor,
                 )
                 Text(
-                    text = alarm.time,
-                    style = MaterialTheme.typography.bodyMedium,
+                    text = " ${alarm.time}",
+                    style = MaterialTheme.typography.bodyMedium.copy(shadow = textShadow),
                     fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onBackground,
+                    color = primaryContentColor,
                 )
                 alarm.label?.let { label ->
                     Text(
-                        text = " • $label",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+                        text = stringResource(R.string.glance_separator) + label,
+                        style = MaterialTheme.typography.bodyMedium.copy(shadow = textShadow),
+                        color = secondaryContentColor,
                     )
                 }
             }

@@ -1,11 +1,11 @@
 package com.longboilauncher.app.core.datastore
 
 import androidx.datastore.core.DataStore
-import com.longboilauncher.core.datastore_proto.FavoriteApp
-import com.longboilauncher.core.datastore_proto.UserSettings
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.model.FavoriteEntry
 import com.longboilauncher.app.core.model.ProfileType
+import com.longboilauncher.core.datastore_proto.FavoriteApp
+import com.longboilauncher.core.datastore_proto.UserSettings
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map

@@ -9,10 +9,10 @@ import com.longboilauncher.app.core.common.NowProvider
 import com.longboilauncher.app.core.common.SystemServiceHelper
 import com.longboilauncher.app.core.datastore.FavoritesRepository
 import com.longboilauncher.app.core.model.AppEntry
-import com.longboilauncher.app.core.settings.PreferencesRepository
 import com.longboilauncher.app.core.model.FavoriteEntry
 import com.longboilauncher.app.core.model.GlanceHeaderData
 import com.longboilauncher.app.core.model.ThemeType
+import com.longboilauncher.app.core.settings.PreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -51,6 +51,7 @@ data class HomeState(
         ),
     val popupApp: AppEntry? = null,
     val popupShortcuts: List<ShortcutInfo> = emptyList(),
+    val scrubberLetter: String = "A",
 )
 
 sealed class HomeEvent {
@@ -104,6 +105,10 @@ sealed class HomeEvent {
     ) : HomeEvent()
 
     object ExpandNotifications : HomeEvent()
+
+    data class UpdateScrubberLetter(
+        val letter: String,
+    ) : HomeEvent()
 }
 
 @HiltViewModel
@@ -133,10 +138,11 @@ class HomeViewModel
             appCatalogRepository.apps
                 .onEach { apps ->
                     val sections =
-                        apps.groupBy { app ->
-                            val firstChar = app.label.firstOrNull()?.uppercaseChar() ?: '#'
-                            if (firstChar.isLetter()) firstChar.toString() else "#"
-                        }.toSortedMap()
+                        apps
+                            .groupBy { app ->
+                                val firstChar = app.label.firstOrNull()?.uppercaseChar() ?: '#'
+                                if (firstChar.isLetter()) firstChar.toString() else "#"
+                            }.toSortedMap()
 
                     var index = 0
                     val indices = mutableMapOf<String, Int>()
@@ -154,8 +160,7 @@ class HomeViewModel
                             sectionIndices = indices,
                         )
                     }
-                }
-                .launchIn(viewModelScope)
+                }.launchIn(viewModelScope)
 
             // Clock updates
             this.clockTicker
@@ -229,6 +234,8 @@ class HomeViewModel
                     }
                 }
                 HomeEvent.ExpandNotifications -> systemServiceHelper.expandNotifications()
+                is HomeEvent.UpdateScrubberLetter ->
+                    _uiState.update { it.copy(scrubberLetter = event.letter) }
             }
         }
     }

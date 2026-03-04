@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 8.8.2" type="baseline" client="gradle" dependencies="false" name="AGP (8.8.2)" variant="all" version="8.8.2">
+
+    <issue
+        id="MissingPermission"
+        message="Missing permissions required by Vibrator.vibrate: android.permission.VIBRATE"
+        errorLine1="            vibrator.vibrate(effect)"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/longboilauncher/app/core/designsystem/haptics/HapticFeedback.kt"
+            line="142"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingPermission"
+        message="Missing permissions required by Vibrator.vibrate: android.permission.VIBRATE"
+        errorLine1="            vibrator.vibrate(effect)"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/longboilauncher/app/core/designsystem/haptics/HapticFeedback.kt"
+            line="157"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingPermission"
+        message="Missing permissions required by Vibrator.vibrate: android.permission.VIBRATE"
+        errorLine1="            vibrator.vibrate(effect)"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/longboilauncher/app/core/designsystem/haptics/HapticFeedback.kt"
+            line="168"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingPermission"
+        message="Missing permissions required by Vibrator.vibrate: android.permission.VIBRATE"
+        errorLine1="            vibrator.vibrate(effect)"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/longboilauncher/app/core/designsystem/haptics/HapticFeedback.kt"
+            line="179"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingPermission"
+        message="Missing permissions required by Vibrator.vibrate: android.permission.VIBRATE"
+        errorLine1="            vibrator.vibrate(effect)"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/longboilauncher/app/core/designsystem/haptics/HapticFeedback.kt"
+            line="190"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingPermission"
+        message="Missing permissions required by Vibrator.vibrate: android.permission.VIBRATE"
+        errorLine1="            vibrator.vibrate(effect)"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/longboilauncher/app/core/designsystem/haptics/HapticFeedback.kt"
+            line="201"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="InlinedApi"
+        message="Field requires API level 27 (current min is 26): `android.view.HapticFeedbackConstants#VIRTUAL_KEY_RELEASE`"
+        errorLine1="            view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY_RELEASE)"
+        errorLine2="                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/longboilauncher/app/core/designsystem/haptics/HapticFeedback.kt"
+            line="87"
+            column="40"/>
+    </issue>
+
+    <issue
+        id="ModifierParameter"
+        message="Modifier parameter should be the first optional parameter"
+        errorLine1="    modifier: Modifier = Modifier,"
+        errorLine2="    ~~~~~~~~">
+        <location
+            file="src/main/java/com/longboilauncher/app/core/designsystem/components/ProgressNotificationCard.kt"
+            line="76"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="ModifierParameter"
+        message="Modifier parameter should be the first optional parameter"
+        errorLine1="    modifier: Modifier = Modifier,"
+        errorLine2="    ~~~~~~~~">
+        <location
+            file="src/main/java/com/longboilauncher/app/core/designsystem/components/ProgressNotificationCard.kt"
+            line="350"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="PluralsCandidate"
+        message="Formatting %d followed by words (&quot;notifications&quot;): This should probably be a plural rather than a string"
+        errorLine1="  &lt;string name=&quot;a11y_app_with_notifications&quot;>%1$s, has %2$d notifications&lt;/string>"
+        errorLine2="  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings_accessibility.xml"
+            line="11"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="PluralsCandidate"
+        message="Formatting %d followed by words (&quot;percent&quot;): This should probably be a plural rather than a string"
+        errorLine1="  &lt;string name=&quot;a11y_download_progress&quot;>Download progress: %1$d percent&lt;/string>"
+        errorLine2="  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings_accessibility.xml"
+            line="27"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="PluralsCandidate"
+        message="Formatting %d followed by words (&quot;notifications&quot;): This should probably be a plural rather than a string"
+        errorLine1="  &lt;string name=&quot;a11y_notifications_count&quot;>Has %1$d notifications&lt;/string>"
+        errorLine2="  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings_accessibility.xml"
+            line="35"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="PluralsCandidate"
+        message="Formatting %d followed by words (&quot;notifications&quot;): This should probably be a plural rather than a string"
+        errorLine1="  &lt;string name=&quot;a11y_now_playing_with_notifications&quot;>Now playing, has %1$d notifications&lt;/string>"
+        errorLine2="  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings_accessibility.xml"
+            line="36"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 26"
+        errorLine1="        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &amp;&amp; vibrator.hasAmplitudeControl()) {"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/longboilauncher/app/core/designsystem/haptics/HapticFeedback.kt"
+            line="140"
+            column="13"/>
+    </issue>
+
+</issues>

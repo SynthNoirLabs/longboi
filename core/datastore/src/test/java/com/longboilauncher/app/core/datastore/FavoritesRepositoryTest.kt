@@ -5,10 +5,10 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import com.longboilauncher.core.datastore_proto.UserSettings
 import com.longboilauncher.app.core.datastore.serializer.UserSettingsSerializer
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.model.ProfileType
+import com.longboilauncher.core.datastore_proto.UserSettings
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestScope

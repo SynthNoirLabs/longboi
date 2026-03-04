@@ -9,10 +9,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -27,8 +24,6 @@ import com.longboilauncher.app.core.common.LauncherRoleHandler
 import com.longboilauncher.app.core.common.LauncherRoleManager
 import com.longboilauncher.app.core.designsystem.theme.LongboiLauncherTheme
 import com.longboilauncher.app.core.settings.HapticFeedbackManager
-import com.longboilauncher.app.feature.allapps.AllAppsScreen
-import com.longboilauncher.app.feature.allapps.AllAppsViewModel
 import com.longboilauncher.app.feature.home.HomeEvent
 import com.longboilauncher.app.feature.home.HomeScreen
 import com.longboilauncher.app.feature.home.HomeViewModel

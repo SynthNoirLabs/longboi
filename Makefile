@@ -16,7 +16,7 @@ help:
 	@echo "  test-instrumented  - Run instrumentation tests (requires device)"
 	@echo "  coverage          - Generate test coverage report"
 	@echo "  lint              - Run Android lint checks"
-	@echo "  format            - Format code (ktlint)"
+	@echo "  format            - Format code with Spotless"
 	@echo ""
 	@echo "Build & Maintenance:"
 	@echo "  assemble          - Build debug APK"
@@ -53,7 +53,7 @@ coverage:
 # Format code
 format:
 	@echo "🎨 Formatting code..."
-	./gradlew ktlintFormat
+	./gradlew spotlessApply
 	@echo "✅ Code formatted"
 
 # Build debug version

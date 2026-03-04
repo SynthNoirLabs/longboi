@@ -254,10 +254,11 @@ class AppCatalogRepository
 
         fun uninstallApp(appEntry: AppEntry) {
             try {
-                val intent = Intent(Intent.ACTION_DELETE).apply {
-                    data = Uri.parse("package:${appEntry.packageName}")
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                }
+                val intent =
+                    Intent(Intent.ACTION_DELETE).apply {
+                        data = Uri.parse("package:${appEntry.packageName}")
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    }
                 context.startActivity(intent)
             } catch (e: Exception) {
                 e.printStackTrace()

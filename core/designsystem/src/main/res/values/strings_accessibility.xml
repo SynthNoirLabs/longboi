@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Navigation -->
+  <string name="a11y_open_app_drawer">Open app drawer</string>
+  <string name="a11y_close_app_drawer">Close app drawer</string>
+  <string name="a11y_open_search">Open search</string>
+  <string name="a11y_clear_search">Clear search</string>
+  <string name="a11y_open_panel">Open panel</string>
+  <!-- App items -->
+  <string name="a11y_app_item">App: %1$s</string>
+  <string name="a11y_app_with_notifications">%1$s, has %2$d notifications</string>
+  <string name="a11y_favorite_app">Favorite app: %1$s</string>
+  <string name="a11y_archived">Archived</string>
+  <string name="a11y_work_profile_badge">Work profile</string>
+  <string name="a11y_private_profile_badge">Private profile</string>
+  <!-- Actions -->
+  <string name="a11y_add_to_favorites">Add to favorites</string>
+  <string name="a11y_remove_from_favorites">Remove from favorites</string>
+  <string name="a11y_app_info">App info</string>
+  <string name="a11y_uninstall_app">Uninstall app</string>
+  <string name="a11y_hide_app">Hide app</string>
+  <string name="a11y_close">Close</string>
+  <!-- Clock -->
+  <string name="a11y_current_time">Current time: %1$s</string>
+  <string name="a11y_current_date">%1$s</string>
+  <!-- Progress -->
+  <string name="a11y_download_progress">Download progress: %1$d percent</string>
+  <string name="a11y_download_complete">Download complete</string>
+  <!-- Scrubber -->
+  <string name="a11y_alphabet_scrubber">Alphabet scrubber, drag to jump to letter</string>
+  <string name="a11y_scrubber_letter">Letter %1$s</string>
+  <!-- Misc -->
+  <string name="a11y_now_playing">Now playing</string>
+  <string name="a11y_has_notifications">Has notifications</string>
+  <string name="a11y_notifications_count">Has %1$d notifications</string>
+  <string name="a11y_now_playing_with_notifications">Now playing, has %1$d notifications</string>
+</resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 8.8.2" type="baseline" client="gradle" dependencies="false" name="AGP (8.8.2)" variant="all" version="8.8.2">
+
+    <issue
+        id="InlinedApi"
+        message="Field requires API level 27 (current min is 26): `android.view.HapticFeedbackConstants#VIRTUAL_KEY_RELEASE`"
+        errorLine1="                view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY_RELEASE)"
+        errorLine2="                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/longboilauncher/app/core/settings/HapticFeedbackManager.kt"
+            line="94"
+            column="44"/>
+    </issue>
+
+</issues>

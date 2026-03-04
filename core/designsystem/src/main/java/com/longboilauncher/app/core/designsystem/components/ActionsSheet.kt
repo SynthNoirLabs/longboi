@@ -59,7 +59,10 @@ fun ActionsSheet(
                 add(
                     AppAction(
                         icon = Icons.Default.StarBorder,
-                        label = stringResource(id = com.longboilauncher.core.designsystem.R.string.remove_from_favorites),
+                        label =
+                            stringResource(
+                                id = com.longboilauncher.core.designsystem.R.string.remove_from_favorites,
+                            ),
                         onClick = onRemoveFromFavorites,
                     ),
                 )

@@ -190,75 +190,74 @@ fun AllAppsScreen(
                                 .fillMaxSize()
                                 .padding(end = 36.dp),
                     ) {
-                items(
-                    items = flatList,
-                    key = { item ->
-                        when (item) {
-                            is ListItem.Header -> "header_${item.letter}"
-                            is ListItem.App -> "${item.app.packageName}_${item.app.userIdentifier}"
-                        }
-                    },
-                    contentType = { item ->
-                        when (item) {
-                            is ListItem.Header -> "header"
-                            is ListItem.App -> "app"
-                        }
-                    },
-                ) { item ->
-                    when (item) {
-                        is ListItem.Header -> {
-                            SectionHeader(
-                                letter = item.letter,
-                                modifier =
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                            )
-                        }
-                        is ListItem.App -> {
-                            AppListItem(
-                                app = item.app,
-                                modifier =
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .clickable { onAppSelected(item.app) }
-                                        .padding(horizontal = 8.dp, vertical = 2.dp),
-                            )
-                        }
-                    }
-                }
-            }
-
-            // Alphabet Scrubber
-            AlphabetScrubber(
-                letters = uiState.sectionIndices.keys.toList(),
-                currentLetter = currentLetter,
-                hapticFeedbackManager = hapticFeedbackManager,
-                onScrubStateChanged = { active, letter ->
-                    isScrubbing = active
-                    scrubbingLetter = letter
-                },
-                onLetterSelected = { letter ->
-                    currentLetter = letter
-                    val index = uiState.sectionIndices[letter] ?: return@AlphabetScrubber
-                    scrollJob?.cancel()
-                    scrollJob =
-                        coroutineScope.launch {
-                            if (isScrubbing) {
-                                listState.scrollToItem(index)
-                            } else {
-                                listState.animateScrollToItem(index)
+                        items(
+                            items = flatList,
+                            key = { item ->
+                                when (item) {
+                                    is ListItem.Header -> "header_${item.letter}"
+                                    is ListItem.App -> "${item.app.packageName}_${item.app.userIdentifier}"
+                                }
+                            },
+                            contentType = { item ->
+                                when (item) {
+                                    is ListItem.Header -> "header"
+                                    is ListItem.App -> "app"
+                                }
+                            },
+                        ) { item ->
+                            when (item) {
+                                is ListItem.Header -> {
+                                    SectionHeader(
+                                        letter = item.letter,
+                                        modifier =
+                                            Modifier
+                                                .fillMaxWidth()
+                                                .padding(horizontal = 16.dp),
+                                    )
+                                }
+                                is ListItem.App -> {
+                                    AppListItem(
+                                        app = item.app,
+                                        modifier =
+                                            Modifier
+                                                .fillMaxWidth()
+                                                .clickable { onAppSelected(item.app) },
+                                    )
+                                }
                             }
                         }
-                },
-                modifier =
-                    Modifier
-                        .align(Alignment.CenterEnd)
-                        .fillMaxHeight()
-                        .width(32.dp)
-                        .padding(vertical = 48.dp)
-                        .testTag("alphabet_scrubber"),
-            )
+                    }
+
+                    // Alphabet Scrubber
+                    AlphabetScrubber(
+                        letters = uiState.sectionIndices.keys.toList(),
+                        currentLetter = currentLetter,
+                        hapticFeedbackManager = hapticFeedbackManager,
+                        onScrubStateChanged = { active, letter ->
+                            isScrubbing = active
+                            scrubbingLetter = letter
+                        },
+                        onLetterSelected = { letter ->
+                            currentLetter = letter
+                            val index = uiState.sectionIndices[letter] ?: return@AlphabetScrubber
+                            scrollJob?.cancel()
+                            scrollJob =
+                                coroutineScope.launch {
+                                    if (isScrubbing) {
+                                        listState.scrollToItem(index)
+                                    } else {
+                                        listState.animateScrollToItem(index)
+                                    }
+                                }
+                        },
+                        modifier =
+                            Modifier
+                                .align(Alignment.CenterEnd)
+                                .fillMaxHeight()
+                                .width(32.dp)
+                                .padding(vertical = 48.dp)
+                                .testTag("alphabet_scrubber"),
+                    )
 
                     if (isScrubbing) {
                         scrubbingLetter?.let { letter ->
@@ -295,10 +294,10 @@ private fun SectionHeader(
 ) {
     Text(
         text = letter,
-        style = MaterialTheme.typography.titleLarge,
-        fontWeight = FontWeight.Bold,
-        color = MaterialTheme.colorScheme.primary,
-        modifier = modifier,
+        style = MaterialTheme.typography.labelMedium,
+        fontWeight = FontWeight.SemiBold,
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+        modifier = modifier.padding(top = 8.dp, bottom = 4.dp),
     )
 }
 
@@ -312,15 +311,22 @@ fun AlphabetScrubber(
     modifier: Modifier = Modifier,
 ) {
     val view = LocalView.current
+    val primaryColor = MaterialTheme.colorScheme.primary
+    val onPrimaryColor = MaterialTheme.colorScheme.onPrimary
+    // High-contrast text: white in dark themes, near-black in light — derived from onBackground
+    val textColor = MaterialTheme.colorScheme.onBackground
 
     Box(
         modifier =
             modifier
+                .padding(end = 2.dp, top = 8.dp, bottom = 8.dp)
+                .width(28.dp)
+                .fillMaxHeight()
+                // Subtle frosted-glass pill background so letters stay legible over any wallpaper
                 .background(
-                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-                    shape = RoundedCornerShape(16.dp),
-                ).padding(horizontal = 4.dp, vertical = 8.dp)
-                .pointerInput(letters) {
+                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.55f),
+                    shape = RoundedCornerShape(14.dp),
+                ).pointerInput(letters) {
                     if (letters.isEmpty()) return@pointerInput
 
                     var lastIndex = -1
@@ -342,18 +348,10 @@ fun AlphabetScrubber(
                         )
 
                     detectDragGestures(
-                        onDragStart = { offset ->
-                            selectIndex(yToIndex(offset.y))
-                        },
-                        onDragCancel = {
-                            onScrubStateChanged(false, null)
-                        },
-                        onDragEnd = {
-                            onScrubStateChanged(false, null)
-                        },
-                        onDrag = { change, _ ->
-                            selectIndex(yToIndex(change.position.y))
-                        },
+                        onDragStart = { offset -> selectIndex(yToIndex(offset.y)) },
+                        onDragCancel = { onScrubStateChanged(false, null) },
+                        onDragEnd = { onScrubStateChanged(false, null) },
+                        onDrag = { change, _ -> selectIndex(yToIndex(change.position.y)) },
                     )
                 },
     ) {
@@ -365,34 +363,44 @@ fun AlphabetScrubber(
             val activeIndex = letters.indexOf(currentLetter).takeIf { it >= 0 } ?: 0
 
             letters.forEachIndexed { index, letter ->
+                val isActive = letter == currentLetter
                 val distance = kotlin.math.abs(index - activeIndex)
-                val waveStrength = (1f - (distance / 6f)).coerceIn(0f, 1f)
+                // Wave: letters near the active one bulge left and grow
+                val waveStrength = (1f - (distance / 5f)).coerceIn(0f, 1f)
                 val offsetX by animateDpAsState(
-                    targetValue = (-10f * waveStrength).dp,
+                    targetValue = (-6f * waveStrength).dp,
                     label = "scrubberWaveOffset",
                 )
+                // Alpha fades from 100% at active → 50% at the edges (always readable)
+                val textAlpha = if (isActive) 1f else (0.5f + 0.35f * waveStrength).coerceIn(0.5f, 0.85f)
 
-                Text(
-                    text = letter,
-                    fontSize = (10f + (2f * waveStrength)).sp,
-                    fontWeight = if (letter == currentLetter) FontWeight.Bold else FontWeight.Normal,
-                    color =
-                        if (letter == currentLetter) {
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            MaterialTheme.colorScheme.onSurfaceVariant
-                        },
-                    textAlign = TextAlign.Center,
+                Box(
+                    contentAlignment = Alignment.Center,
                     modifier =
                         Modifier
-                            .offset(x = offsetX)
+                            .size(24.dp)
+                            .then(
+                                if (isActive) {
+                                    Modifier.background(primaryColor, RoundedCornerShape(8.dp))
+                                } else {
+                                    Modifier
+                                },
+                            ).offset(x = offsetX)
                             .clickable {
                                 onScrubStateChanged(true, letter)
                                 hapticFeedbackManager.tick(view)
                                 onLetterSelected(letter)
                                 onScrubStateChanged(false, null)
                             },
-                )
+                ) {
+                    Text(
+                        text = letter,
+                        fontSize = if (isActive) 13.sp else (11f + 1f * waveStrength).sp,
+                        fontWeight = if (isActive) FontWeight.Bold else FontWeight.Medium,
+                        color = if (isActive) onPrimaryColor else textColor.copy(alpha = textAlpha),
+                        textAlign = TextAlign.Center,
+                    )
+                }
             }
         }
     }
@@ -406,18 +414,18 @@ fun FloatingLetterIndicator(
     Box(
         modifier =
             modifier
-                .size(96.dp)
+                .size(64.dp)
                 .background(
-                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.9f),
-                    shape = RoundedCornerShape(24.dp),
+                    color = MaterialTheme.colorScheme.primary,
+                    shape = androidx.compose.foundation.shape.CircleShape,
                 ),
         contentAlignment = Alignment.Center,
     ) {
         Text(
             text = letter,
-            style = MaterialTheme.typography.headlineLarge,
+            style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = MaterialTheme.colorScheme.onPrimary,
         )
     }
 }

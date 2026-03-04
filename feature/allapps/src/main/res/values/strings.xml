@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<resources>
+  <string name="private_space">Private Space</string>
+  <string name="unlock_private_space">Unlock Private Space</string>
+  <string name="lock_private_space">Lock Private Space</string>
+  <string name="recents">Recents</string>
+</resources>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_back">Back</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_get_started">Get Started</string>
+
+    <!-- Welcome page -->
+    <string name="onboarding_welcome_title">Welcome to Longboi</string>
+    <string name="onboarding_welcome_description">A minimal, elegant launcher designed for speed and simplicity.</string>
+
+    <!-- Favorites page -->
+    <string name="onboarding_favorites_title">Quick Access</string>
+    <string name="onboarding_favorites_description">Swipe up to open the app drawer. Your favorite apps are always at your fingertips on the home screen.</string>
+
+    <!-- Notifications page -->
+    <string name="onboarding_notifications_title">Stay Informed</string>
+    <string name="onboarding_notifications_description">See notification badges on your apps. Longboi keeps you informed without the clutter.</string>
+
+    <!-- Customize page -->
+    <string name="onboarding_customize_title">Make It Yours</string>
+    <string name="onboarding_customize_description">Customize gestures, icon packs, and more in Settings. Longboi adapts to your style.</string>
+</resources>

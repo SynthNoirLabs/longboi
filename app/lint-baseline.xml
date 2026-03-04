@@ -1,0 +1,968 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 8.8.2" type="baseline" client="gradle" dependencies="false" name="AGP (8.8.2)" variant="all" version="8.8.2">
+
+    <issue
+        id="AndroidGradlePluginVersion"
+        message="A newer version of com.android.application than 8.8.2 is available: 9.0.0"
+        errorLine1="agp = &quot;8.8.2&quot;"
+        errorLine2="      ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="3"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="AndroidGradlePluginVersion"
+        message="A newer version of com.android.application than 8.8.2 is available: 9.0.0"
+        errorLine1="agp = &quot;8.8.2&quot;"
+        errorLine2="      ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="3"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="AndroidGradlePluginVersion"
+        message="A newer version of com.android.application than 8.8.2 is available: 9.0.0"
+        errorLine1="agp = &quot;8.8.2&quot;"
+        errorLine2="      ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="3"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="AndroidGradlePluginVersion"
+        message="A newer version of com.android.library than 8.8.2 is available: 9.0.0"
+        errorLine1="agp = &quot;8.8.2&quot;"
+        errorLine2="      ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="3"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="AndroidGradlePluginVersion"
+        message="A newer version of com.android.library than 8.8.2 is available: 9.0.0"
+        errorLine1="agp = &quot;8.8.2&quot;"
+        errorLine2="      ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="3"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="AndroidGradlePluginVersion"
+        message="A newer version of com.android.library than 8.8.2 is available: 9.0.0"
+        errorLine1="agp = &quot;8.8.2&quot;"
+        errorLine2="      ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="3"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="AndroidGradlePluginVersion"
+        message="A newer version of com.android.test than 8.8.2 is available: 9.0.0"
+        errorLine1="agp = &quot;8.8.2&quot;"
+        errorLine2="      ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="3"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="AndroidGradlePluginVersion"
+        message="A newer version of com.android.test than 8.8.2 is available: 9.0.0"
+        errorLine1="agp = &quot;8.8.2&quot;"
+        errorLine2="      ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="3"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="AndroidGradlePluginVersion"
+        message="A newer version of com.android.test than 8.8.2 is available: 9.0.0"
+        errorLine1="agp = &quot;8.8.2&quot;"
+        errorLine2="      ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="3"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.core:core-ktx than 1.15.0 is available: 1.17.0"
+        errorLine1="coreKtx = &quot;1.15.0&quot;"
+        errorLine2="          ~~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="5"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.core:core-ktx than 1.15.0 is available: 1.17.0"
+        errorLine1="coreKtx = &quot;1.15.0&quot;"
+        errorLine2="          ~~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="5"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.core:core-ktx than 1.15.0 is available: 1.17.0"
+        errorLine1="coreKtx = &quot;1.15.0&quot;"
+        errorLine2="          ~~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="5"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.activity:activity-compose than 1.9.3 is available: 1.12.3"
+        errorLine1="activityCompose = &quot;1.9.3&quot;"
+        errorLine2="                  ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="12"
+            column="19"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.activity:activity-compose than 1.9.3 is available: 1.12.3"
+        errorLine1="activityCompose = &quot;1.9.3&quot;"
+        errorLine2="                  ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="12"
+            column="19"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.activity:activity-compose than 1.9.3 is available: 1.12.3"
+        errorLine1="activityCompose = &quot;1.9.3&quot;"
+        errorLine2="                  ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="12"
+            column="19"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.compose:compose-bom than 2025.12.00 is available: 2026.01.01"
+        errorLine1="composeBom = &quot;2025.12.00&quot;"
+        errorLine2="             ~~~~~~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="13"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.compose:compose-bom than 2025.12.00 is available: 2026.01.01"
+        errorLine1="composeBom = &quot;2025.12.00&quot;"
+        errorLine2="             ~~~~~~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="13"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.compose:compose-bom than 2025.12.00 is available: 2026.01.01"
+        errorLine1="composeBom = &quot;2025.12.00&quot;"
+        errorLine2="             ~~~~~~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="13"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.google.dagger.hilt.android than 2.52 is available: 2.58"
+        errorLine1="hilt = &quot;2.52&quot;"
+        errorLine2="       ~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="14"
+            column="8"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.google.dagger.hilt.android than 2.52 is available: 2.58"
+        errorLine1="hilt = &quot;2.52&quot;"
+        errorLine2="       ~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="14"
+            column="8"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.google.dagger.hilt.android than 2.52 is available: 2.58"
+        errorLine1="hilt = &quot;2.52&quot;"
+        errorLine2="       ~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="14"
+            column="8"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.hilt:hilt-navigation-compose than 1.2.0 is available: 1.3.0"
+        errorLine1="hiltNavigationCompose = &quot;1.2.0&quot;"
+        errorLine2="                        ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="15"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.hilt:hilt-navigation-compose than 1.2.0 is available: 1.3.0"
+        errorLine1="hiltNavigationCompose = &quot;1.2.0&quot;"
+        errorLine2="                        ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="15"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.hilt:hilt-navigation-compose than 1.2.0 is available: 1.3.0"
+        errorLine1="hiltNavigationCompose = &quot;1.2.0&quot;"
+        errorLine2="                        ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="15"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.google.devtools.ksp than 2.0.21-1.0.25 is available: 2.3.4"
+        errorLine1="ksp = &quot;2.0.21-1.0.25&quot;"
+        errorLine2="      ~~~~~~~~~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="16"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.google.devtools.ksp than 2.0.21-1.0.25 is available: 2.3.4"
+        errorLine1="ksp = &quot;2.0.21-1.0.25&quot;"
+        errorLine2="      ~~~~~~~~~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="16"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.google.devtools.ksp than 2.0.21-1.0.25 is available: 2.3.4"
+        errorLine1="ksp = &quot;2.0.21-1.0.25&quot;"
+        errorLine2="      ~~~~~~~~~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="16"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.google.protobuf than 0.9.4 is available: 0.9.6"
+        errorLine1="protobuf = &quot;0.9.4&quot;"
+        errorLine2="           ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="17"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.google.protobuf than 0.9.4 is available: 0.9.6"
+        errorLine1="protobuf = &quot;0.9.4&quot;"
+        errorLine2="           ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="17"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.google.protobuf than 0.9.4 is available: 0.9.6"
+        errorLine1="protobuf = &quot;0.9.4&quot;"
+        errorLine2="           ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="17"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.jetbrains.kotlinx:kotlinx-serialization-json than 1.6.2 is available: 1.8.1"
+        errorLine1="serialization = &quot;1.6.2&quot;"
+        errorLine2="                ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="20"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.jetbrains.kotlinx:kotlinx-serialization-json than 1.6.2 is available: 1.8.1"
+        errorLine1="serialization = &quot;1.6.2&quot;"
+        errorLine2="                ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="20"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.jetbrains.kotlinx:kotlinx-serialization-json than 1.6.2 is available: 1.8.1"
+        errorLine1="serialization = &quot;1.6.2&quot;"
+        errorLine2="                ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="20"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.metrics:metrics-performance than 1.0.0-beta01 is available: 1.0.0"
+        errorLine1="metrics = &quot;1.0.0-beta01&quot;"
+        errorLine2="          ~~~~~~~~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="23"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.metrics:metrics-performance than 1.0.0-beta01 is available: 1.0.0"
+        errorLine1="metrics = &quot;1.0.0-beta01&quot;"
+        errorLine2="          ~~~~~~~~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="23"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.metrics:metrics-performance than 1.0.0-beta01 is available: 1.0.0"
+        errorLine1="metrics = &quot;1.0.0-beta01&quot;"
+        errorLine2="          ~~~~~~~~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="23"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-test than 1.9.0 is available: 1.10.1"
+        errorLine1="coroutinesTest = &quot;1.9.0&quot;"
+        errorLine2="                 ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="28"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-test than 1.9.0 is available: 1.10.1"
+        errorLine1="coroutinesTest = &quot;1.9.0&quot;"
+        errorLine2="                 ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="28"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-test than 1.9.0 is available: 1.10.1"
+        errorLine1="coroutinesTest = &quot;1.9.0&quot;"
+        errorLine2="                 ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="28"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-android than 1.9.0 is available: 1.10.1"
+        errorLine1="coroutinesAndroid = &quot;1.9.0&quot;"
+        errorLine2="                    ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="29"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-android than 1.9.0 is available: 1.10.1"
+        errorLine1="coroutinesAndroid = &quot;1.9.0&quot;"
+        errorLine2="                    ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="29"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-android than 1.9.0 is available: 1.10.1"
+        errorLine1="coroutinesAndroid = &quot;1.9.0&quot;"
+        errorLine2="                    ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="29"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.window:window than 1.2.0 is available: 1.5.1"
+        errorLine1="window = &quot;1.2.0&quot;"
+        errorLine2="         ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="33"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.window:window than 1.2.0 is available: 1.5.1"
+        errorLine1="window = &quot;1.2.0&quot;"
+        errorLine2="         ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="33"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.window:window than 1.2.0 is available: 1.5.1"
+        errorLine1="window = &quot;1.2.0&quot;"
+        errorLine2="         ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="33"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.google.android.material:material than 1.11.0 is available: 1.13.0"
+        errorLine1="material = &quot;1.11.0&quot;"
+        errorLine2="           ~~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="34"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.google.android.material:material than 1.11.0 is available: 1.13.0"
+        errorLine1="material = &quot;1.11.0&quot;"
+        errorLine2="           ~~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="34"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.google.android.material:material than 1.11.0 is available: 1.13.0"
+        errorLine1="material = &quot;1.11.0&quot;"
+        errorLine2="           ~~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="34"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.test:core than 1.6.1 is available: 1.7.0"
+        errorLine1="testCore = &quot;1.6.1&quot;"
+        errorLine2="           ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="35"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.test:core than 1.6.1 is available: 1.7.0"
+        errorLine1="testCore = &quot;1.6.1&quot;"
+        errorLine2="           ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="35"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.test:core than 1.6.1 is available: 1.7.0"
+        errorLine1="testCore = &quot;1.6.1&quot;"
+        errorLine2="           ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="35"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.test:runner than 1.6.1 is available: 1.7.0"
+        errorLine1="testCore = &quot;1.6.1&quot;"
+        errorLine2="           ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="35"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.test:runner than 1.6.1 is available: 1.7.0"
+        errorLine1="testCore = &quot;1.6.1&quot;"
+        errorLine2="           ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="35"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.test:runner than 1.6.1 is available: 1.7.0"
+        errorLine1="testCore = &quot;1.6.1&quot;"
+        errorLine2="           ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="35"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.jetbrains.kotlinx.kover than 0.8.3 is available: 0.9.4"
+        errorLine1="kover = &quot;0.8.3&quot;"
+        errorLine2="        ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="36"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.jetbrains.kotlinx.kover than 0.8.3 is available: 0.9.4"
+        errorLine1="kover = &quot;0.8.3&quot;"
+        errorLine2="        ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="36"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.jetbrains.kotlinx.kover than 0.8.3 is available: 0.9.4"
+        errorLine1="kover = &quot;0.8.3&quot;"
+        errorLine2="        ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="36"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.diffplug.spotless than 7.0.2 is available: 8.1.0"
+        errorLine1="spotless = &quot;7.0.2&quot;"
+        errorLine2="           ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="37"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.diffplug.spotless than 7.0.2 is available: 8.1.0"
+        errorLine1="spotless = &quot;7.0.2&quot;"
+        errorLine2="           ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="37"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.diffplug.spotless than 7.0.2 is available: 8.1.0"
+        errorLine1="spotless = &quot;7.0.2&quot;"
+        errorLine2="           ~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="37"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of io.gitlab.arturbosch.detekt than 1.23.7 is available: 1.23.8"
+        errorLine1="detekt = &quot;1.23.7&quot;"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="38"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of io.gitlab.arturbosch.detekt than 1.23.7 is available: 1.23.8"
+        errorLine1="detekt = &quot;1.23.7&quot;"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="38"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of io.gitlab.arturbosch.detekt than 1.23.7 is available: 1.23.8"
+        errorLine1="detekt = &quot;1.23.7&quot;"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="38"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.github.ben-manes.versions than 0.52.0 is available: 0.53.0"
+        errorLine1="versionsPlugin = &quot;0.52.0&quot;"
+        errorLine2="                 ~~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="39"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.github.ben-manes.versions than 0.52.0 is available: 0.53.0"
+        errorLine1="versionsPlugin = &quot;0.52.0&quot;"
+        errorLine2="                 ~~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="39"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.github.ben-manes.versions than 0.52.0 is available: 0.53.0"
+        errorLine1="versionsPlugin = &quot;0.52.0&quot;"
+        errorLine2="                 ~~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="39"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.osacky.doctor than 0.10.0 is available: 0.12.1"
+        errorLine1="doctor = &quot;0.10.0&quot;"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="40"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.osacky.doctor than 0.10.0 is available: 0.12.1"
+        errorLine1="doctor = &quot;0.10.0&quot;"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="40"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.osacky.doctor than 0.10.0 is available: 0.12.1"
+        errorLine1="doctor = &quot;0.10.0&quot;"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="$HOME/Pruebas/launch/gradle/libs.versions.toml"
+            line="40"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="This folder configuration (`v26`) is unnecessary; `minSdkVersion` is 26. Merge all the resources in this folder into `mipmap-anydpi`.">
+        <location
+            file="src/main/res/mipmap-anydpi-v26"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.md_theme_light_background` appears to be unused"
+        errorLine1="    &lt;color name=&quot;md_theme_light_background&quot;>#FAFAFA&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="15"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.md_theme_light_onBackground` appears to be unused"
+        errorLine1="    &lt;color name=&quot;md_theme_light_onBackground&quot;>#212121&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="16"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.md_theme_light_surface` appears to be unused"
+        errorLine1="    &lt;color name=&quot;md_theme_light_surface&quot;>#FFFFFF&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="17"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.md_theme_light_onSurface` appears to be unused"
+        errorLine1="    &lt;color name=&quot;md_theme_light_onSurface&quot;>#212121&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="18"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.md_theme_light_surfaceVariant` appears to be unused"
+        errorLine1="    &lt;color name=&quot;md_theme_light_surfaceVariant&quot;>#F5F5F5&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="19"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.md_theme_light_onSurfaceVariant` appears to be unused"
+        errorLine1="    &lt;color name=&quot;md_theme_light_onSurfaceVariant&quot;>#757575&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="20"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.md_theme_light_outline` appears to be unused"
+        errorLine1="    &lt;color name=&quot;md_theme_light_outline&quot;>#BDBDBD&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="21"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.md_theme_light_outlineVariant` appears to be unused"
+        errorLine1="    &lt;color name=&quot;md_theme_light_outlineVariant&quot;>#E0E0E0&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="22"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.md_theme_light_scrim` appears to be unused"
+        errorLine1="    &lt;color name=&quot;md_theme_light_scrim&quot;>#000000&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="23"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.md_theme_light_inverseSurface` appears to be unused"
+        errorLine1="    &lt;color name=&quot;md_theme_light_inverseSurface&quot;>#212121&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="24"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.md_theme_light_inverseOnSurface` appears to be unused"
+        errorLine1="    &lt;color name=&quot;md_theme_light_inverseOnSurface&quot;>#FAFAFA&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="25"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.md_theme_light_inversePrimary` appears to be unused"
+        errorLine1="    &lt;color name=&quot;md_theme_light_inversePrimary&quot;>#90CAF9&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="26"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.md_theme_light_surfaceTint` appears to be unused"
+        errorLine1="    &lt;color name=&quot;md_theme_light_surfaceTint&quot;>#1976D2&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="27"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.private_space` appears to be unused"
+        errorLine1="  &lt;string name=&quot;private_space&quot;>Private Space&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="4"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.unlock_private_space` appears to be unused"
+        errorLine1="  &lt;string name=&quot;unlock_private_space&quot;>Unlock Private Space&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="5"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.lock_private_space` appears to be unused"
+        errorLine1="  &lt;string name=&quot;lock_private_space&quot;>Lock Private Space&lt;/string>"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="6"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="MonochromeLauncherIcon"
+        message="The application adaptive icon is missing a monochrome tag"
+        errorLine1="&lt;adaptive-icon xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;>"
+        errorLine2="^">
+        <location
+            file="src/main/res/mipmap-anydpi-v26/ic_launcher.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="MonochromeLauncherIcon"
+        message="The application adaptive roundIcon is missing a monochrome tag"
+        errorLine1="&lt;adaptive-icon xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;>"
+        errorLine2="^">
+        <location
+            file="src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+</issues>

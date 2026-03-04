@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="widget_picker_title">Add Widget</string>
+  <string name="widget_picker_close">Close</string>
+  <string name="widget_picker_search_hint">Search widgets</string>
+  <string name="widget_picker_no_widgets">No widgets found</string>
+  <string name="widget_picker_collapse">Collapse</string>
+  <string name="widget_picker_expand">Expand</string>
+  <string name="widget_picker_widget_count_single">%1$d widget</string>
+  <string name="widget_picker_widget_count_plural">%1$d widgets</string>
+  <string name="widget_picker_widget_size">%1$dx%2$d dp</string>
+</resources>
