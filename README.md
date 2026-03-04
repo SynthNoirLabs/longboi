@@ -86,6 +86,7 @@ Use the `Makefile` for convenient shortcuts:
 ```bash
 make test          # Run all tests
 make test-unit     # Unit tests only
+make visual-audit  # Generate app screenshots
 make coverage      # Generate coverage report
 make format        # Format code with Spotless
 make lint          # Run Android lint

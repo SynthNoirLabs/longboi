@@ -22,7 +22,7 @@ class AppEntryTest {
                 packageName = "com.example.app",
                 className = "com.example.app.MainActivity",
                 label = "Example App",
-                userIdentifier = 0,
+                userSerialNumber = 0L,
                 profile = ProfileType.PERSONAL,
                 lastUpdateTime = 1234567890L,
                 firstInstallTime = 1234567800L,
@@ -52,7 +52,7 @@ class AppEntryTest {
                 packageName = "com.example.app",
                 className = "com.example.app.MainActivity",
                 label = "Example App",
-                userIdentifier = 0,
+                userSerialNumber = 0L,
             )
         val renamed = original.copy(label = "Renamed App")
 
@@ -66,7 +66,7 @@ class AppEntryTest {
                 packageName = "com.example.app",
                 className = "com.example.app.MainActivity",
                 label = "App",
-                userIdentifier = 0,
+                userSerialNumber = 0L,
                 isEnabled = true,
             )
         val disabled = enabled.copy(isEnabled = false)
@@ -81,7 +81,7 @@ class AppEntryTest {
                 packageName = "com.example.app",
                 className = "com.example.app.MainActivity",
                 label = "App",
-                userIdentifier = 0,
+                userSerialNumber = 0L,
             )
         val suspended = active.copy(isSuspended = true)
 
@@ -95,7 +95,7 @@ class AppEntryTest {
                 packageName = "com.example.app",
                 className = "com.example.app.MainActivity",
                 label = "App",
-                userIdentifier = 0,
+                userSerialNumber = 0L,
             )
         val archived = live.copy(isArchived = true)
 
@@ -109,7 +109,7 @@ class AppEntryTest {
                 packageName = "com.example.app",
                 className = "com.example.app.MainActivity",
                 label = "App",
-                userIdentifier = 0,
+                userSerialNumber = 0L,
             )
 
         assertEquals(entry, entry.copy())
@@ -122,14 +122,14 @@ class AppEntryTest {
                 packageName = "com.example.app1",
                 className = "com.example.app.MainActivity",
                 label = "App",
-                userIdentifier = 0,
+                userSerialNumber = 0L,
             )
         val entry2 =
             AppEntry(
                 packageName = "com.example.app2",
                 className = "com.example.app.MainActivity",
                 label = "App",
-                userIdentifier = 0,
+                userSerialNumber = 0L,
             )
 
         assertNotEquals(entry1, entry2)
@@ -146,7 +146,7 @@ class AppEntryTest {
                 packageName = "com.example.app",
                 className = "com.example.app.MainActivity",
                 label = "Example App",
-                userIdentifier = 0,
+                userSerialNumber = 0L,
             )
         val renamed = original.copy(label = "Renamed App")
 
@@ -162,14 +162,14 @@ class AppEntryTest {
                 packageName = "com.example.app1",
                 className = "com.example.app.MainActivity",
                 label = "App",
-                userIdentifier = 0,
+                userSerialNumber = 0L,
             )
         val entry2 =
             AppEntry(
                 packageName = "com.example.app2",
                 className = "com.example.app.MainActivity",
                 label = "App",
-                userIdentifier = 0,
+                userSerialNumber = 0L,
             )
 
         assert(!entry1.sameApp(entry2))

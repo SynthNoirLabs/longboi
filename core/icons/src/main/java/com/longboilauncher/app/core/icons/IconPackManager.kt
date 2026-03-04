@@ -49,7 +49,9 @@ class IconPackManager
 
             val drawable = ResourcesCompat.getDrawable(resources, resId, null) ?: return null
             return try {
-                context.packageManager.getUserBadgedIcon(drawable, appEntry.user)
+                appEntry.user?.let { user ->
+                    context.packageManager.getUserBadgedIcon(drawable, user)
+                } ?: drawable
             } catch (_: Exception) {
                 drawable
             }

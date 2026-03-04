@@ -5,10 +5,12 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import com.longboilauncher.app.core.common.UserHandleManager
 import com.longboilauncher.app.core.datastore.serializer.UserSettingsSerializer
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.model.ProfileType
 import com.longboilauncher.core.datastore_proto.UserSettings
+import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestScope
@@ -33,13 +35,14 @@ class FavoritesRepositoryTest {
     private val testScope = TestScope(testDispatcher)
     private lateinit var dataStore: DataStore<UserSettings>
     private lateinit var repository: FavoritesRepository
+    private lateinit var userHandleManager: UserHandleManager
 
     private val testApp =
         AppEntry(
             packageName = "com.test.app",
             className = "MainActivity",
             label = "Test App",
-            userIdentifier = 0,
+            userSerialNumber = 0L,
             profile = ProfileType.PERSONAL,
         )
 
@@ -51,7 +54,8 @@ class FavoritesRepositoryTest {
                 produceFile = { tmpFolder.newFile("user_settings.pb") },
                 scope = testScope,
             )
-        repository = FavoritesRepository(dataStore)
+        userHandleManager = mockk(relaxed = true)
+        repository = FavoritesRepository(dataStore, userHandleManager)
     }
 
     @Test

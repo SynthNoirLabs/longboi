@@ -165,7 +165,7 @@ fun SearchScreen(
                             key = { result ->
                                 when (result) {
                                     is SearchResult.AppResult ->
-                                        "app_${result.app.packageName}_${result.app.userIdentifier}"
+                                        "app_${result.app.packageName}_${result.app.userSerialNumber}"
                                     is SearchResult.ShortcutResult ->
                                         "shortcut_${result.app.packageName}_${result.shortcutId}"
                                     is SearchResult.CalculatorResult ->

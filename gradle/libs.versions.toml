@@ -26,7 +26,6 @@ robolectric = "4.14.1"
 truth = "1.4.4"
 coroutinesTest = "1.9.0"
 turbine = "1.1.0"
-screenshot = "1.6.0-alpha08"
 window = "1.2.0"
 material = "1.11.0"
 testCore = "1.6.1"
@@ -75,7 +74,6 @@ google-truth = { group = "com.google.truth", name = "truth", version.ref = "trut
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesTest" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
-androidx-screenshot = { group = "androidx.test", name = "screenshot", version.ref = "screenshot" }
 androidx-window = { group = "androidx.window", name = "window", version.ref = "window" }
 google-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-test-core = { group = "androidx.test", name = "core", version.ref = "testCore" }
@@ -91,6 +89,5 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 protobuf = { id = "com.google.protobuf", version.ref = "protobuf" }
-screenshot = { id = "androidx.test.screenshot", version.ref = "screenshot" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }

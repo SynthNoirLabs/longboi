@@ -47,6 +47,8 @@ class ArchitectureTest {
                 .should()
                 .dependOnClassesThat()
                 .haveSimpleNameEndingWith("ViewModel")
+                .andShould()
+                .resideOutsideOfPackage("..testing..")
 
         rule.check(coreClasses)
     }

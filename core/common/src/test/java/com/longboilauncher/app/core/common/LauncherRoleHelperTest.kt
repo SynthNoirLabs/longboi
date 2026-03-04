@@ -5,12 +5,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import com.google.common.truth.Truth.assertThat
-import com.longboilauncher.app.core.settings.PreferencesRepository
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -24,12 +24,12 @@ import org.robolectric.annotation.Config
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.Q])
-class LauncherRoleManagerTest {
+class LauncherRoleHelperTest {
     private val testDispatcher = StandardTestDispatcher()
+    private val testScope = TestScope(testDispatcher)
     private val context = mockk<Context>(relaxed = true)
-    private val preferencesRepository = mockk<PreferencesRepository>(relaxed = true)
     private val roleManager = mockk<RoleManager>(relaxed = true)
-    private lateinit var launcherRoleManager: LauncherRoleManager
+    private lateinit var launcherRoleHelper: LauncherRoleHelper
 
     @Before
     fun setup() {
@@ -37,7 +37,7 @@ class LauncherRoleManagerTest {
         every { context.getSystemService(Context.ROLE_SERVICE) } returns roleManager
         every { context.packageName } returns "com.longboilauncher.app"
 
-        launcherRoleManager = LauncherRoleManager(context, preferencesRepository)
+        launcherRoleHelper = LauncherRoleHelper(context, testScope)
     }
 
     @After
@@ -50,11 +50,11 @@ class LauncherRoleManagerTest {
         runTest {
             every { roleManager.isRoleHeld(RoleManager.ROLE_HOME) } returns true
 
-            launcherRoleManager.checkDefaultLauncher()
+            launcherRoleHelper.checkDefaultLauncher()
             testDispatcher.scheduler.advanceUntilIdle()
 
-            assertThat(launcherRoleManager.isDefaultLauncher.value).isTrue()
-            assertThat(launcherRoleManager.shouldRequestRole.value).isFalse()
+            assertThat(launcherRoleHelper.isDefaultLauncher.value).isTrue()
+            assertThat(launcherRoleHelper.shouldRequestRole.value).isFalse()
         }
 
     @Test
@@ -62,11 +62,11 @@ class LauncherRoleManagerTest {
         runTest {
             every { roleManager.isRoleHeld(RoleManager.ROLE_HOME) } returns false
 
-            launcherRoleManager.checkDefaultLauncher()
+            launcherRoleHelper.checkDefaultLauncher()
             testDispatcher.scheduler.advanceUntilIdle()
 
-            assertThat(launcherRoleManager.isDefaultLauncher.value).isFalse()
-            assertThat(launcherRoleManager.shouldRequestRole.value).isTrue()
+            assertThat(launcherRoleHelper.isDefaultLauncher.value).isFalse()
+            assertThat(launcherRoleHelper.shouldRequestRole.value).isTrue()
         }
 
     @Test
@@ -74,13 +74,13 @@ class LauncherRoleManagerTest {
         val intent = Intent("com.android.role.ID_LIKE_IT")
         every { roleManager.createRequestRoleIntent(RoleManager.ROLE_HOME) } returns intent
 
-        val result = launcherRoleManager.requestDefaultLauncher()
+        val result = launcherRoleHelper.requestDefaultLauncher()
         assertThat(result).isEqualTo(intent)
     }
 
     @Test
     fun `dismissRoleRequest updates state`() {
-        launcherRoleManager.dismissRoleRequest()
-        assertThat(launcherRoleManager.shouldRequestRole.value).isFalse()
+        launcherRoleHelper.dismissRoleRequest()
+        assertThat(launcherRoleHelper.shouldRequestRole.value).isFalse()
     }
 }

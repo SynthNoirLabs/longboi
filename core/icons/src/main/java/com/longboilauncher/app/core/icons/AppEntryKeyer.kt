@@ -8,5 +8,5 @@ class AppEntryKeyer : Keyer<AppEntry> {
     override fun key(
         data: AppEntry,
         options: Options,
-    ): String = "app:${data.packageName}/${data.className}:${data.userIdentifier}:${data.lastUpdateTime}"
+    ): String = "app:${data.packageName}/${data.className}:${data.userSerialNumber}:${data.lastUpdateTime}"
 }

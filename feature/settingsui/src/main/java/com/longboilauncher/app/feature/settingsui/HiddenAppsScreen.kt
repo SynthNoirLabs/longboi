@@ -152,7 +152,7 @@ fun HiddenAppsScreen(
 
                     items(
                         items = state.hiddenApps,
-                        key = { "${it.packageName}_${it.userIdentifier}_hidden" },
+                        key = { "${it.packageName}_${it.userSerialNumber}_hidden" },
                     ) { app ->
                         HiddenAppItem(
                             app = app,
@@ -179,7 +179,7 @@ fun HiddenAppsScreen(
 
                 items(
                     items = state.visibleApps,
-                    key = { "${it.packageName}_${it.userIdentifier}_visible" },
+                    key = { "${it.packageName}_${it.userSerialNumber}_visible" },
                 ) { app ->
                     HiddenAppItem(
                         app = app,

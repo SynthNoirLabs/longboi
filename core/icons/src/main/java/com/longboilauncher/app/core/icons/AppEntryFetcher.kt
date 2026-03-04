@@ -29,7 +29,7 @@ class AppEntryFetcher(
 
         // 1. Per-app override (Check repository)
         val overrides = preferencesRepository.perAppIconOverrides.first()
-        val overrideKey = "${appEntry.packageName}_${appEntry.userIdentifier}"
+        val overrideKey = "${appEntry.packageName}_${appEntry.userSerialNumber}"
         val overridePath = overrides[overrideKey]
         if (overridePath != null) {
             // TODO: Logic to load from path (e.g. URI or file)
@@ -51,9 +51,11 @@ class AppEntryFetcher(
         // 3. Themed/Monochrome support (Android 13+)
         var drawable: Drawable? =
             try {
-                val activities = launcherApps.getActivityList(appEntry.packageName, appEntry.user)
-                val activity = activities.find { it.name == appEntry.className }
-                activity?.getBadgedIcon(0)
+                appEntry.user?.let { user ->
+                    val activities = launcherApps.getActivityList(appEntry.packageName, user)
+                    val activity = activities.find { it.name == appEntry.className }
+                    activity?.getBadgedIcon(0)
+                }
             } catch (e: Exception) {
                 null
             }

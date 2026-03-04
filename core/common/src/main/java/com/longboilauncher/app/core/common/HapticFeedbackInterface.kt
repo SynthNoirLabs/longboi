@@ -1,4 +1,4 @@
-package com.longboilauncher.app.core.settings
+package com.longboilauncher.app.core.common
 
 import android.view.View
 

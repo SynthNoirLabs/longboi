@@ -7,9 +7,10 @@ import android.content.pm.LauncherApps
 import android.content.pm.ShortcutInfo
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.os.Process
 import android.os.UserHandle
 import android.os.UserManager
+import android.util.Log
+import com.longboilauncher.app.core.common.UserHandleManager
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.model.ProfileType
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -29,6 +30,7 @@ class AppCatalogRepository
     @Inject
     constructor(
         @ApplicationContext private val context: Context,
+        private val userHandleManager: UserHandleManager,
     ) {
         private val launcherApps = context.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
         private val userManager = context.getSystemService(Context.USER_SERVICE) as UserManager
@@ -84,7 +86,6 @@ class AppCatalogRepository
                     shortcuts: MutableList<ShortcutInfo>,
                     user: UserHandle,
                 ) {
-                    // We might not need a full refresh for shortcuts, but for now it's safest
                     repositoryScope.launch { refreshAppCatalog() }
                 }
             }
@@ -96,31 +97,41 @@ class AppCatalogRepository
 
         suspend fun refreshAppCatalog() =
             withContext(Dispatchers.IO) {
-                _isLoading.value = true
-                val allApps = mutableListOf<AppEntry>()
+                try {
+                    _isLoading.value = true
+                    val allApps = mutableListOf<AppEntry>()
 
-                // Get personal profile apps
-                allApps.addAll(getAppsForUser(Process.myUserHandle(), ProfileType.PERSONAL))
+                    val myUser = userHandleManager.myUserHandle()
+                    val myUserSerial = userHandleManager.getSerialNumberForUser(myUser)
 
-                // Get work profile apps if available
-                userManager.userProfiles.forEach { userHandle ->
-                    if (userHandle != Process.myUserHandle()) {
-                        val profileType =
-                            if (isPrivateSpace(userHandle)) {
-                                ProfileType.PRIVATE
-                            } else {
-                                ProfileType.WORK
-                            }
-                        allApps.addAll(getAppsForUser(userHandle, profileType))
+                    // Get personal profile apps
+                    allApps.addAll(getAppsForUser(myUser, myUserSerial, ProfileType.PERSONAL))
+
+                    // Get other profile apps if available
+                    userManager.userProfiles.forEach { userHandle ->
+                        if (userHandle != myUser) {
+                            val serial = userHandleManager.getSerialNumberForUser(userHandle)
+                            val profileType =
+                                if (isPrivateSpace(userHandle)) {
+                                    ProfileType.PRIVATE
+                                } else {
+                                    ProfileType.WORK
+                                }
+                            allApps.addAll(getAppsForUser(userHandle, serial, profileType))
+                        }
                     }
-                }
 
-                _apps.value = allApps.sortedBy { it.label.lowercase() }
-                _isLoading.value = false
+                    _apps.value = allApps.sortedBy { it.label.lowercase() }
+                } catch (e: Exception) {
+                    Log.e("AppCatalogRepository", "Failed to refresh app catalog", e)
+                } finally {
+                    _isLoading.value = false
+                }
             }
 
         private fun getAppsForUser(
             user: UserHandle,
+            userSerialNumber: Long,
             profileType: ProfileType,
         ): List<AppEntry> =
             try {
@@ -155,6 +166,7 @@ class AppCatalogRepository
                             className = launcherActivityInfo.name,
                             label = launcherActivityInfo.label.toString(),
                             user = user,
+                            userSerialNumber = userSerialNumber,
                             profile = profileType,
                             lastUpdateTime = packageInfo?.lastUpdateTime ?: 0L,
                             firstInstallTime = packageInfo?.firstInstallTime ?: 0L,
@@ -162,7 +174,6 @@ class AppCatalogRepository
                             isEnabled = appInfo.enabled,
                             isSuspended =
                                 try {
-                                    // Check if app is suspended via ApplicationInfo flags
                                     (appInfo.flags and android.content.pm.ApplicationInfo.FLAG_SUSPENDED) != 0
                                 } catch (e: Exception) {
                                     false
@@ -175,26 +186,23 @@ class AppCatalogRepository
                 }
             } catch (e: SecurityException) {
                 emptyList()
-            }
-
-        private fun isPrivateSpace(user: UserHandle): Boolean =
-            try {
-                // Private Space detection is complex and requires Android 15+
-                // For now, treat non-main users that aren't managed profiles as potential private space
-                // This is a simplified heuristic
-                false
             } catch (e: Exception) {
-                false
+                Log.e("AppCatalogRepository", "Error getting apps for user $user", e)
+                emptyList()
             }
 
-        fun getAppIcon(appEntry: AppEntry): Drawable? =
-            try {
-                val activities = launcherApps.getActivityList(appEntry.packageName, appEntry.user)
+        private fun isPrivateSpace(user: UserHandle): Boolean = false
+
+        fun getAppIcon(appEntry: AppEntry): Drawable? {
+            val user = appEntry.user ?: return null
+            return try {
+                val activities = launcherApps.getActivityList(appEntry.packageName, user)
                 val activity = activities.find { it.name == appEntry.className }
                 activity?.getBadgedIcon(0)
             } catch (e: Exception) {
                 null
             }
+        }
 
         fun getAppIcon(
             packageName: String,
@@ -210,11 +218,11 @@ class AppCatalogRepository
             }
 
         fun launchApp(appEntry: AppEntry) {
+            val user = appEntry.user ?: return
             try {
                 val component = ComponentName(appEntry.packageName, appEntry.className)
-                launcherApps.startMainActivity(component, appEntry.user, null, null)
+                launcherApps.startMainActivity(component, user, null, null)
             } catch (e: Exception) {
-                // Handle launch failure - could show toast or log
                 e.printStackTrace()
             }
         }
@@ -236,17 +244,41 @@ class AppCatalogRepository
             appEntry: AppEntry,
             shortcutId: String,
         ) {
+            val user = appEntry.user ?: return
             try {
-                launcherApps.startShortcut(appEntry.packageName, shortcutId, null, null, appEntry.user)
+                launcherApps.startShortcut(appEntry.packageName, shortcutId, null, null, user)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
 
         fun showAppInfo(appEntry: AppEntry) {
+            val user = appEntry.user ?: return
             try {
                 val component = ComponentName(appEntry.packageName, appEntry.className)
-                launcherApps.startAppDetailsActivity(component, appEntry.user, null, null)
+                launcherApps.startAppDetailsActivity(component, user, null, null)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+        fun openSettings(destination: String) {
+            try {
+                val intent =
+                    when (destination) {
+                        "wifi" -> Intent(android.provider.Settings.ACTION_WIFI_SETTINGS)
+                        "bluetooth" -> Intent(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS)
+                        "display" -> Intent(android.provider.Settings.ACTION_DISPLAY_SETTINGS)
+                        "sound" -> Intent(android.provider.Settings.ACTION_SOUND_SETTINGS)
+                        "apps" -> Intent(android.provider.Settings.ACTION_APPLICATION_SETTINGS)
+                        "battery" -> Intent(android.provider.Settings.ACTION_BATTERY_SAVER_SETTINGS)
+                        "storage" -> Intent(android.provider.Settings.ACTION_INTERNAL_STORAGE_SETTINGS)
+                        "security" -> Intent(android.provider.Settings.ACTION_SECURITY_SETTINGS)
+                        else -> Intent(android.provider.Settings.ACTION_SETTINGS)
+                    }.apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    }
+                context.startActivity(intent)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -265,12 +297,9 @@ class AppCatalogRepository
             }
         }
 
-        fun openSettings(destination: String) {
-            // TODO: Navigate to specific settings screen via Intent
-        }
-
-        fun getAppShortcuts(appEntry: AppEntry): List<ShortcutInfo> =
-            try {
+        fun getAppShortcuts(appEntry: AppEntry): List<ShortcutInfo> {
+            val user = appEntry.user ?: return emptyList()
+            return try {
                 val query =
                     LauncherApps.ShortcutQuery().apply {
                         setQueryFlags(
@@ -280,10 +309,11 @@ class AppCatalogRepository
                         )
                         setPackage(appEntry.packageName)
                     }
-                launcherApps.getShortcuts(query, appEntry.user) ?: emptyList()
+                launcherApps.getShortcuts(query, user) ?: emptyList()
             } catch (e: Exception) {
                 emptyList()
             }
+        }
 
         fun registerPackageListener(callback: LauncherApps.Callback) {
             launcherApps.registerCallback(callback)

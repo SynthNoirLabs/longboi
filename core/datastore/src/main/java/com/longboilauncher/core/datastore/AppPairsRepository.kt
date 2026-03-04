@@ -42,14 +42,14 @@ class AppPairsRepository
                                     packageName = proto.firstPackage,
                                     className = proto.firstClass,
                                     label = "",
-                                    userIdentifier = proto.firstUser,
+                                    userSerialNumber = proto.firstUserSerialNumber,
                                 ),
                             secondApp =
                                 AppEntry(
                                     packageName = proto.secondPackage,
                                     className = proto.secondClass,
                                     label = "",
-                                    userIdentifier = proto.secondUser,
+                                    userSerialNumber = proto.secondUserSerialNumber,
                                 ),
                             label = proto.label,
                         )
@@ -69,10 +69,10 @@ class AppPairsRepository
                         .setId(id)
                         .setFirstPackage(firstApp.packageName)
                         .setFirstClass(firstApp.className)
-                        .setFirstUser(firstApp.userIdentifier)
+                        .setFirstUserSerialNumber(firstApp.userSerialNumber)
                         .setSecondPackage(secondApp.packageName)
                         .setSecondClass(secondApp.className)
-                        .setSecondUser(secondApp.userIdentifier)
+                        .setSecondUserSerialNumber(secondApp.userSerialNumber)
                         .setLabel(label)
                         .build()
 

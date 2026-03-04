@@ -154,6 +154,15 @@ fun HomeScreen(
                             showActionsSheet = null
                         },
                         onHideApp = {
+                            onEvent(HomeEvent.HideApp)
+                            showActionsSheet = null
+                        },
+                        onAppInfo = {
+                            onEvent(HomeEvent.ShowAppInfo)
+                            showActionsSheet = null
+                        },
+                        onUninstall = {
+                            onEvent(HomeEvent.UninstallApp)
                             showActionsSheet = null
                         },
                     )

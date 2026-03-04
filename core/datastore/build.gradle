@@ -30,6 +30,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     api(project(":core:datastore-proto"))
     implementation(project(":core:model"))
+    implementation(project(":core:common"))
 
     testImplementation(libs.junit)
     testImplementation(libs.google.truth)

@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -23,9 +24,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.metrics.performance.JankStats
 import com.longboilauncher.app.core.common.LauncherRoleHandler
-import com.longboilauncher.app.core.common.LauncherRoleManager
+import com.longboilauncher.app.core.common.LauncherRoleHelper
 import com.longboilauncher.app.core.designsystem.theme.LongboiLauncherTheme
-import com.longboilauncher.app.core.settings.HapticFeedbackManager
+import com.longboilauncher.app.core.common.HapticFeedbackManager
+import com.longboilauncher.app.core.settings.PreferencesRepository
 import com.longboilauncher.app.feature.allapps.AllAppsScreen
 import com.longboilauncher.app.feature.allapps.AllAppsViewModel
 import com.longboilauncher.app.feature.home.HomeEvent
@@ -37,11 +39,20 @@ import com.longboilauncher.app.feature.searchui.SearchViewModel
 import com.longboilauncher.app.feature.settingsui.SettingsScreen
 import com.longboilauncher.app.feature.settingsui.SettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @javax.inject.Inject
     lateinit var hapticFeedbackManager: HapticFeedbackManager
+
+    @javax.inject.Inject
+    lateinit var preferencesRepository: PreferencesRepository
+
+    @javax.inject.Inject
+    lateinit var roleHelper: LauncherRoleHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +74,16 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
+            LaunchedEffect(hapticFeedbackManager) {
+                combine(
+                    preferencesRepository.hapticsEnabled,
+                    preferencesRepository.reduceMotion,
+                ) { hapticsEnabled, reduceMotion ->
+                    hapticsEnabled && !reduceMotion
+                }.onEach { hapticFeedbackManager.isEnabled = it }
+                    .launchIn(this)
+            }
+
             val homeViewModel: HomeViewModel = hiltViewModel()
             val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
             LongboiLauncherTheme(themeType = uiState.theme) {
@@ -73,6 +94,7 @@ class MainActivity : ComponentActivity() {
                     LauncherApp(
                         hapticFeedbackManager = hapticFeedbackManager,
                         homeViewModel = homeViewModel,
+                        roleHelper = roleHelper,
                     )
                 }
             }
@@ -84,12 +106,12 @@ class MainActivity : ComponentActivity() {
 fun LauncherApp(
     hapticFeedbackManager: HapticFeedbackManager,
     homeViewModel: HomeViewModel,
-    roleManager: LauncherRoleManager = hiltViewModel(),
+    roleHelper: LauncherRoleHelper,
 ) {
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
 
     // Handle launcher role
-    LauncherRoleHandler(roleManager)
+    LauncherRoleHandler(roleHelper)
 
     // Handle back button
     BackHandler(enabled = uiState.currentSurface != LauncherSurface.HOME) {

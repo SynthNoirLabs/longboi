@@ -55,7 +55,7 @@ class HomeViewModelTest {
             packageName = "com.test.app",
             className = "MainActivity",
             label = "Test App",
-            userIdentifier = 0,
+            userSerialNumber = 0L,
             profile = ProfileType.PERSONAL,
         )
 

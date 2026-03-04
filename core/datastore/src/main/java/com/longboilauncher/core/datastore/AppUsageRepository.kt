@@ -52,5 +52,5 @@ class AppUsageRepository
         }
 
         fun appKey(appEntry: AppEntry): String =
-            "${appEntry.packageName}|${appEntry.className}|${appEntry.userIdentifier}"
+            "${appEntry.packageName}|${appEntry.className}|${appEntry.userSerialNumber}"
     }

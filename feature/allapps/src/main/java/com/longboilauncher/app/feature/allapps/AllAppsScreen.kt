@@ -52,7 +52,7 @@ import com.longboilauncher.app.core.designsystem.components.ThemeBackground
 import com.longboilauncher.app.core.designsystem.theme.LocalThemeType
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.model.ThemeType
-import com.longboilauncher.app.core.settings.HapticFeedbackManager
+import com.longboilauncher.app.core.common.HapticFeedbackManager
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -206,7 +206,7 @@ fun AllAppsScreen(
                             key = { item ->
                                 when (item) {
                                     is ListItem.Header -> "header_${item.letter}"
-                                    is ListItem.App -> "${item.app.packageName}_${item.app.userIdentifier}"
+                                    is ListItem.App -> "${item.app.packageName}_${item.app.userSerialNumber}"
                                 }
                             },
                             contentType = { item ->

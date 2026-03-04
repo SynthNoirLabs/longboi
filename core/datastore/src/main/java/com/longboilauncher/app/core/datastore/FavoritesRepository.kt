@@ -1,6 +1,7 @@
 package com.longboilauncher.app.core.datastore
 
 import androidx.datastore.core.DataStore
+import com.longboilauncher.app.core.common.UserHandleManager
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.model.FavoriteEntry
 import com.longboilauncher.app.core.model.ProfileType
@@ -18,6 +19,7 @@ class FavoritesRepository
     @Inject
     constructor(
         private val dataStore: DataStore<UserSettings>,
+        private val userHandleManager: UserHandleManager,
     ) {
         val favorites: Flow<List<FavoriteEntry>> =
             dataStore.data
@@ -30,14 +32,15 @@ class FavoritesRepository
                 }.map { settings ->
                     settings.favoritesList.mapIndexed { index, proto ->
                         FavoriteEntry(
-                            id = "${proto.packageName}_${proto.userIdentifier}",
+                            id = "${proto.packageName}_${proto.userSerialNumber}",
                             appEntry =
                                 AppEntry(
                                     packageName = proto.packageName,
                                     className = proto.className,
                                     label = proto.label,
-                                    userIdentifier = proto.userIdentifier,
+                                    userSerialNumber = proto.userSerialNumber,
                                     profile = ProfileType.valueOf(proto.profile.ifBlank { "PERSONAL" }),
+                                    user = userHandleManager.getUserForSerialNumber(proto.userSerialNumber),
                                 ),
                             position = index,
                         )
@@ -58,7 +61,7 @@ class FavoritesRepository
             dataStore.updateData { currentSettings ->
                 val alreadyExists =
                     currentSettings.favoritesList.any {
-                        it.packageName == appEntry.packageName && it.userIdentifier == appEntry.userIdentifier
+                        it.packageName == appEntry.packageName && it.userSerialNumber == appEntry.userSerialNumber
                     }
                 if (alreadyExists) return@updateData currentSettings
 
@@ -68,7 +71,7 @@ class FavoritesRepository
                         .setPackageName(appEntry.packageName)
                         .setClassName(appEntry.className)
                         .setLabel(appEntry.label)
-                        .setUserIdentifier(appEntry.userIdentifier)
+                        .setUserSerialNumber(appEntry.userSerialNumber)
                         .setProfile(appEntry.profile.name)
                         .build()
 
@@ -83,7 +86,7 @@ class FavoritesRepository
             dataStore.updateData { currentSettings ->
                 val updatedFavorites =
                     currentSettings.favoritesList.filter {
-                        "${it.packageName}_${it.userIdentifier}" != favoriteId
+                        "${it.packageName}_${it.userSerialNumber}" != favoriteId
                     }
                 currentSettings
                     .toBuilder()
@@ -97,7 +100,7 @@ class FavoritesRepository
             dataStore.updateData { currentSettings ->
                 val reordered =
                     favoriteIds.mapNotNull { id ->
-                        currentSettings.favoritesList.find { "${it.packageName}_${it.userIdentifier}" == id }
+                        currentSettings.favoritesList.find { "${it.packageName}_${it.userSerialNumber}" == id }
                     }
                 currentSettings
                     .toBuilder()

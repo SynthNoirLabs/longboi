@@ -8,6 +8,7 @@ import android.os.UserHandle
 import android.os.UserManager
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
+import com.longboilauncher.app.core.common.UserHandleManager
 import com.longboilauncher.app.core.model.AppEntry
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -27,6 +28,7 @@ class AppCatalogRepositoryTest {
     private lateinit var repository: AppCatalogRepository
     private lateinit var launcherApps: LauncherApps
     private lateinit var userManager: UserManager
+    private lateinit var userHandleManager: UserHandleManager
     private lateinit var shadowLauncherApps: ShadowLauncherApps
     private lateinit var shadowUserManager: ShadowUserManager
 
@@ -35,11 +37,12 @@ class AppCatalogRepositoryTest {
         context = ApplicationProvider.getApplicationContext()
         launcherApps = context.getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
         userManager = context.getSystemService(Context.USER_SERVICE) as UserManager
+        userHandleManager = UserHandleManager(context)
 
         shadowLauncherApps = shadowOf(launcherApps)
         shadowUserManager = shadowOf(userManager)
 
-        repository = AppCatalogRepository(context)
+        repository = AppCatalogRepository(context, userHandleManager)
     }
 
     @Test
@@ -55,17 +58,7 @@ class AppCatalogRepositoryTest {
     @Test
     fun `refreshAppCatalog fetches apps for current user`() =
         runTest {
-            val user = Process.myUserHandle()
-            val appInfo =
-                ApplicationInfo().apply {
-                    packageName = "com.test.app"
-                    name = "com.test.app.MainActivity"
-                    flags = ApplicationInfo.FLAG_SYSTEM
-                    enabled = true
-                }
-
             repository.refreshAppCatalog()
-
             assertThat(repository.isLoading.value).isFalse()
         }
 
@@ -76,7 +69,7 @@ class AppCatalogRepositoryTest {
                 packageName = "com.nonexistent.app",
                 className = "MainActivity",
                 label = "Test App",
-                userIdentifier = 0,
+                userSerialNumber = 0L,
             )
 
         repository.launchApp(appEntry)
@@ -89,7 +82,7 @@ class AppCatalogRepositoryTest {
                 packageName = "com.test.app",
                 className = "MainActivity",
                 label = "Test App",
-                userIdentifier = 0,
+                userSerialNumber = 0L,
             )
 
         val shortcuts = repository.getAppShortcuts(appEntry)
@@ -103,12 +96,10 @@ class AppCatalogRepositoryTest {
                 packageName = "com.test.app",
                 className = "MainActivity",
                 label = "Test App",
-                userIdentifier = 0,
+                userSerialNumber = 0L,
             )
 
         val icon = repository.getAppIcon(appEntry)
-        // Default shadow behavior returns null or default drawable
-        // We just ensure it doesn't crash
     }
 
     @Test
@@ -118,31 +109,10 @@ class AppCatalogRepositoryTest {
                 packageName = "com.test.app",
                 className = "MainActivity",
                 label = "Test App",
-                userIdentifier = 0,
+                userSerialNumber = 0L,
+                user = Process.myUserHandle()
             )
 
         repository.launchApp(appEntry)
-        // Verify launch intent if needed via shadows
-    }
-
-    @Test
-    fun `isPrivateSpace returns true for managed profiles`() {
-        val user = mockk<UserHandle>()
-        // Simulate a managed profile which we use for Private Space detection
-        // In a real Android 15+ environment this would be more specific
-        // but for current implementation it checks isManagedProfile
-
-        // We can't easily shadow getUserInfo because it's hidden/removed in some Robolectric versions
-        // but we can test the repository's internal logic if it was more decoupled.
-        // For now, let's verify it doesn't crash.
-        val result =
-            try {
-                val method = repository.javaClass.getDeclaredMethod("isPrivateSpace", UserHandle::class.java)
-                method.isAccessible = true
-                method.invoke(repository, user) as Boolean
-            } catch (e: Exception) {
-                false
-            }
-        assertThat(result).isFalse() // Default for unknown user
     }
 }

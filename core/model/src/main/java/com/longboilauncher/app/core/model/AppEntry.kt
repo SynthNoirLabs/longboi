@@ -1,18 +1,23 @@
 package com.longboilauncher.app.core.model
 
-import android.os.Process
 import android.os.UserHandle
 import androidx.compose.runtime.Stable
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
+/**
+ * Represents an installed application.
+ *
+ * [userSerialNumber] is the stable ID used for persistence (from UserManager.getSerialNumberForUser).
+ * [user] is a transient field populated during runtime. It should NOT be persisted.
+ */
 @Stable
 @Serializable
 data class AppEntry(
     val packageName: String,
     val className: String,
     val label: String,
-    val userIdentifier: Int = 0,
+    val userSerialNumber: Long = 0L,
     val profile: ProfileType = ProfileType.PERSONAL,
     val lastUpdateTime: Long = 0L,
     val firstInstallTime: Long = 0L,
@@ -21,25 +26,16 @@ data class AppEntry(
     val isSuspended: Boolean = false,
     val isArchived: Boolean = false,
     val supportShortcuts: Boolean = false,
-) {
     @Transient
-    val user: UserHandle =
-        if (userIdentifier == 0) {
-            Process.myUserHandle()
-        } else {
-            UserHandle::class.java.getConstructor(Int::class.java).newInstance(userIdentifier)
-        }
-
+    val user: UserHandle? = null,
+) {
     /**
-     * Returns true when both entries refer to the same installed app component (same package,
-     * activity class, and user profile). Use this for identity checks (e.g. "did I already load
-     * shortcuts for this app?"). Do NOT use it as a general equality test — data-class `equals`
-     * covers all fields and is what `MutableStateFlow` / Compose stability need.
+     * Returns true when both entries refer to the same installed app component.
      */
     fun sameApp(other: AppEntry): Boolean =
         packageName == other.packageName &&
             className == other.className &&
-            userIdentifier == other.userIdentifier
+            userSerialNumber == other.userSerialNumber
 
     override fun toString(): String = label
 
@@ -52,6 +48,7 @@ data class AppEntry(
             className: String,
             label: String,
             user: UserHandle,
+            userSerialNumber: Long,
             profile: ProfileType = ProfileType.PERSONAL,
             lastUpdateTime: Long = 0L,
             firstInstallTime: Long = 0L,
@@ -65,7 +62,8 @@ data class AppEntry(
                 packageName = packageName,
                 className = className,
                 label = label,
-                userIdentifier = user.hashCode(),
+                userSerialNumber = userSerialNumber,
+                user = user,
                 profile = profile,
                 lastUpdateTime = lastUpdateTime,
                 firstInstallTime = firstInstallTime,

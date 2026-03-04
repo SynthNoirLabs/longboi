@@ -4,24 +4,22 @@ import android.app.role.RoleManager
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.longboilauncher.app.core.settings.PreferencesRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Singleton
 
-@HiltViewModel
-class LauncherRoleManager
+@Singleton
+class LauncherRoleHelper
     @Inject
     constructor(
         @ApplicationContext private val context: Context,
-        private val preferencesRepository: PreferencesRepository,
-    ) : ViewModel() {
+        private val externalScope: CoroutineScope,
+    ) {
         private val _isDefaultLauncher = MutableStateFlow(false)
         val isDefaultLauncher: StateFlow<Boolean> = _isDefaultLauncher.asStateFlow()
 
@@ -39,7 +37,7 @@ class LauncherRoleManager
                 _isDefaultLauncher.value = isHeld
 
                 if (!isHeld) {
-                    viewModelScope.launch {
+                    externalScope.launch {
                         _shouldRequestRole.value = true
                     }
                 } else {

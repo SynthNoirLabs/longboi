@@ -6,4 +6,11 @@
     <string name="theme_minimalist">Modern Minimalist</string>
     <string name="theme_playful">Vibrant &amp; Playful</string>
     <string name="theme_sleek">Sophisticated &amp; Sleek</string>
+    <string name="add_to_favorites">Add to Favorites</string>
+    <string name="remove_from_favorites">Remove from Favorites</string>
+    <string name="app_info">App Info</string>
+    <string name="uninstall">Uninstall</string>
+    <string name="hide_app">Hide App</string>
+    <string name="quick_actions">Quick Actions</string>
+    <string name="shortcuts">Shortcuts</string>
 </resources>
