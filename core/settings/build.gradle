@@ -32,6 +32,7 @@ dependencies {
     implementation(libs.datastore)
     implementation(project(":core:datastore"))
     implementation(project(":core:datastore-proto"))
+    implementation(project(":core:model"))
 
     testImplementation(libs.junit)
     testImplementation(libs.google.truth)

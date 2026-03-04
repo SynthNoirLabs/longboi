@@ -45,7 +45,7 @@ class PreferencesRepositoryTest {
     }
 
     @Test
-    fun `default theme is system`() =
+    fun `default theme is material_you`() =
         runTest(testDispatcher) {
             dataStore =
                 DataStoreFactory.create(
@@ -56,7 +56,7 @@ class PreferencesRepositoryTest {
             repository = PreferencesRepository(dataStore)
             advanceUntilIdle()
 
-            assertThat(repository.theme.first()).isEqualTo("system")
+            assertThat(repository.theme.first()).isEqualTo("material_you")
         }
 
     @Test

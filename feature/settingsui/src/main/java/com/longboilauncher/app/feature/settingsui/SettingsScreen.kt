@@ -57,69 +57,6 @@ fun SettingsScreen(
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     ThemeBackground(themeType = LocalThemeType.current) {
-        @Composable
-        private fun ThemeSwitcher(
-            currentTheme: ThemeType,
-            onThemeSelected: (ThemeType) -> Unit,
-        ) {
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                ThemeType.entries.forEach { theme ->
-                    val isSelected = theme == currentTheme
-                    Box(
-                        modifier =
-                            Modifier
-                                .weight(1f)
-                                .height(80.dp)
-                                .background(
-                                    color =
-                                        when (theme) {
-                                            ThemeType.GLASSMORPHISM -> Color.Cyan.copy(alpha = 0.3f)
-                                            ThemeType.VIBRANT_PLAYFUL -> Color.Magenta.copy(alpha = 0.3f)
-                                            ThemeType.SOPHISTICATED_SLEEK -> Color.Black
-                                            ThemeType.MODERN_MINIMALIST -> Color.White
-                                            else -> Color.Gray.copy(alpha = 0.3f)
-                                        },
-                                    shape = RoundedCornerShape(12.dp),
-                                ).border(
-                                    width = if (isSelected) 3.dp else 1.dp,
-                                    color =
-                                        if (isSelected) {
-                                            MaterialTheme.colorScheme.primary
-                                        } else {
-                                            Color.Gray.copy(alpha = 0.5f)
-                                        },
-                                    shape = RoundedCornerShape(12.dp),
-                                ).clickable { onThemeSelected(theme) },
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Text(
-                            text =
-                                when (theme) {
-                                    ThemeType.GLASSMORPHISM -> "✨"
-                                    ThemeType.VIBRANT_PLAYFUL -> "🎨"
-                                    ThemeType.SOPHISTICATED_SLEEK -> "💎"
-                                    ThemeType.MODERN_MINIMALIST -> "⚡"
-                                    else -> "📱"
-                                },
-                            style = MaterialTheme.typography.headlineSmall,
-                            color =
-                                if (theme == ThemeType.SOPHISTICATED_SLEEK) {
-                                    Color.Yellow
-                                } else {
-                                    MaterialTheme.colorScheme.onSurface
-                                },
-                        )
-                    }
-                }
-            }
-        }
-
         Scaffold(
             containerColor =
                 if (LocalThemeType.current ==
@@ -257,99 +194,162 @@ fun SettingsScreen(
             }
         }
     }
+}
 
-    @Composable
-    private fun SettingsSection(
-        title: String,
-        content: @Composable () -> Unit,
+@Composable
+private fun ThemeSwitcher(
+    currentTheme: ThemeType,
+    onThemeSelected: (ThemeType) -> Unit,
+) {
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
+        ThemeType.entries.forEach { theme ->
+            val isSelected = theme == currentTheme
+            Box(
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .height(80.dp)
+                        .background(
+                            color =
+                                when (theme) {
+                                    ThemeType.GLASSMORPHISM -> Color.Cyan.copy(alpha = 0.3f)
+                                    ThemeType.VIBRANT_PLAYFUL -> Color.Magenta.copy(alpha = 0.3f)
+                                    ThemeType.SOPHISTICATED_SLEEK -> Color.Black
+                                    ThemeType.MODERN_MINIMALIST -> Color.White
+                                    else -> Color.Gray.copy(alpha = 0.3f)
+                                },
+                            shape = RoundedCornerShape(12.dp),
+                        ).border(
+                            width = if (isSelected) 3.dp else 1.dp,
+                            color =
+                                if (isSelected) {
+                                    MaterialTheme.colorScheme.primary
+                                } else {
+                                    Color.Gray.copy(alpha = 0.5f)
+                                },
+                            shape = RoundedCornerShape(12.dp),
+                        ).clickable { onThemeSelected(theme) },
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text =
+                        when (theme) {
+                            ThemeType.GLASSMORPHISM -> "✨"
+                            ThemeType.VIBRANT_PLAYFUL -> "🎨"
+                            ThemeType.SOPHISTICATED_SLEEK -> "💎"
+                            ThemeType.MODERN_MINIMALIST -> "⚡"
+                            else -> "📱"
+                        },
+                    style = MaterialTheme.typography.headlineSmall,
+                    color =
+                        if (theme == ThemeType.SOPHISTICATED_SLEEK) {
+                            Color.Yellow
+                        } else {
+                            MaterialTheme.colorScheme.onSurface
+                        },
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SettingsSection(
+    title: String,
+    content: @Composable () -> Unit,
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+        )
+        content()
+    }
+}
+
+@Composable
+private fun SettingsItem(
+    icon: ImageVector,
+    title: String,
+    subtitle: String,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(horizontal = 16.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.size(24.dp),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface,
             )
-            content()
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
+}
 
-    @Composable
-    private fun SettingsItem(
-        icon: ImageVector,
-        title: String,
-        subtitle: String,
-        onClick: () -> Unit,
+@Composable
+private fun SettingsSwitchItem(
+    icon: ImageVector,
+    title: String,
+    subtitle: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+) {
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable { onCheckedChange(!checked) }
+                .padding(horizontal = 16.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .clickable(onClick = onClick)
-                    .padding(horizontal = 16.dp, vertical = 14.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                modifier = Modifier.size(24.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.size(24.dp),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface,
             )
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
-    }
-
-    @Composable
-    private fun SettingsSwitchItem(
-        icon: ImageVector,
-        title: String,
-        subtitle: String,
-        checked: Boolean,
-        onCheckedChange: (Boolean) -> Unit,
-    ) {
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .clickable { onCheckedChange(!checked) }
-                    .padding(horizontal = 16.dp, vertical = 14.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                modifier = Modifier.size(24.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-            Switch(
-                checked = checked,
-                onCheckedChange = onCheckedChange,
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+        )
     }
 }

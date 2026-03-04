@@ -7,9 +7,11 @@ import com.longboilauncher.app.core.appcatalog.AppCatalogRepository
 import com.longboilauncher.app.core.common.ClockTicker
 import com.longboilauncher.app.core.common.NowProvider
 import com.longboilauncher.app.core.datastore.FavoritesRepository
+import com.longboilauncher.app.core.settings.PreferencesRepository
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.model.FavoriteEntry
 import com.longboilauncher.app.core.model.ProfileType
+import com.longboilauncher.app.core.model.ThemeType
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -44,6 +46,7 @@ class HomeViewModelTest {
     private val testDispatcher = UnconfinedTestDispatcher()
     private lateinit var appCatalogRepository: AppCatalogRepository
     private lateinit var favoritesRepository: FavoritesRepository
+    private lateinit var preferencesRepository: PreferencesRepository
     private lateinit var nowProvider: NowProvider
     private lateinit var clockTicker: ClockTicker
 
@@ -68,11 +71,14 @@ class HomeViewModelTest {
     private fun createMocks() {
         appCatalogRepository = mockk<AppCatalogRepository>(relaxed = true)
         favoritesRepository = mockk<FavoritesRepository>(relaxed = true)
+        preferencesRepository = mockk<PreferencesRepository>(relaxed = true)
         nowProvider = mockk<NowProvider>()
         clockTicker = mockk<ClockTicker>()
 
         every { appCatalogRepository.apps } returns MutableStateFlow(listOf(testApp))
         every { favoritesRepository.favorites } returns MutableStateFlow(testFavorites)
+        every { preferencesRepository.themeType } returns flowOf(ThemeType.MATERIAL_YOU)
+        every { preferencesRepository.reduceMotion } returns flowOf(false)
         coEvery { appCatalogRepository.refreshAppCatalog() } returns Unit
         every { nowProvider.now() } returns Instant.parse("2026-01-17T12:00:00Z")
         // Default clock ticker mock that emits once and then hangs (to avoid infinite loop in tests)
@@ -85,6 +91,7 @@ class HomeViewModelTest {
             favoritesRepository,
             nowProvider,
             clockTicker,
+            preferencesRepository,
         )
 
     @Before

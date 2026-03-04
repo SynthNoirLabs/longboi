@@ -63,13 +63,17 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            val theme by homeViewModel.uiState.collectAsStateWithLifecycle()
-            LongboiLauncherTheme(themeType = theme.theme) {
+            val homeViewModel: HomeViewModel = hiltViewModel()
+            val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
+            LongboiLauncherTheme(themeType = uiState.theme) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
                 ) {
-                    LauncherApp(hapticFeedbackManager = hapticFeedbackManager)
+                    LauncherApp(
+                        hapticFeedbackManager = hapticFeedbackManager,
+                        homeViewModel = homeViewModel,
+                    )
                 }
             }
         }
@@ -79,7 +83,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun LauncherApp(
     hapticFeedbackManager: HapticFeedbackManager,
-    homeViewModel: HomeViewModel = hiltViewModel(),
+    homeViewModel: HomeViewModel,
     roleManager: LauncherRoleManager = hiltViewModel(),
 ) {
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()

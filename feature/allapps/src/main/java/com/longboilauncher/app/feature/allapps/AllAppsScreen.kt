@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -286,123 +287,123 @@ fun AllAppsScreen(
             }
         }
     }
+}
 
-    private sealed class ListItem {
-        data class Header(
-            val letter: String,
-        ) : ListItem()
+private sealed class ListItem {
+    data class Header(
+        val letter: String,
+    ) : ListItem()
 
-        data class App(
-            val app: AppEntry,
-        ) : ListItem()
-    }
+    data class App(
+        val app: AppEntry,
+    ) : ListItem()
+}
 
-    @Composable
-    private fun SectionHeader(
-        letter: String,
-        modifier: Modifier = Modifier,
-    ) {
-        Text(
-            text = letter,
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = modifier,
-        )
-    }
+@Composable
+private fun SectionHeader(
+    letter: String,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        text = letter,
+        style = MaterialTheme.typography.titleLarge,
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.primary,
+        modifier = modifier,
+    )
+}
 
-    @Composable
-    private fun AlphabetScrubber(
-        letters: List<String>,
-        currentLetter: String,
-        hapticFeedbackManager: HapticFeedbackManager,
-        onScrubStateChanged: (active: Boolean, letter: String?) -> Unit,
-        onLetterSelected: (String) -> Unit,
-        modifier: Modifier = Modifier,
-    ) {
-        val view = LocalView.current
+@Composable
+private fun AlphabetScrubber(
+    letters: List<String>,
+    currentLetter: String,
+    hapticFeedbackManager: HapticFeedbackManager,
+    onScrubStateChanged: (active: Boolean, letter: String?) -> Unit,
+    onLetterSelected: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val view = LocalView.current
 
-        Box(
-            modifier =
-                modifier
-                    .background(
-                        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-                        shape = RoundedCornerShape(16.dp),
-                    ).padding(horizontal = 4.dp, vertical = 8.dp)
-                    .pointerInput(letters) {
-                        if (letters.isEmpty()) return@pointerInput
+    Box(
+        modifier =
+            modifier
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                    shape = RoundedCornerShape(16.dp),
+                ).padding(horizontal = 4.dp, vertical = 8.dp)
+                .pointerInput(letters) {
+                    if (letters.isEmpty()) return@pointerInput
 
-                        var lastIndex = -1
+                    var lastIndex = -1
 
-                        fun selectIndex(index: Int) {
-                            if (index == lastIndex) return
-                            lastIndex = index
-                            val letter = letters[index]
-                            onScrubStateChanged(true, letter)
-                            hapticFeedbackManager.tick(view)
-                            onLetterSelected(letter)
-                        }
+                    fun selectIndex(index: Int) {
+                        if (index == lastIndex) return
+                        lastIndex = index
+                        val letter = letters[index]
+                        onScrubStateChanged(true, letter)
+                        hapticFeedbackManager.tick(view)
+                        onLetterSelected(letter)
+                    }
 
-                        fun yToIndex(y: Float): Int =
-                            scrubberIndexForY(
-                                y = y,
-                                height = size.height.toFloat(),
-                                itemCount = letters.size,
-                            )
-
-                        detectDragGestures(
-                            onDragStart = { offset ->
-                                selectIndex(yToIndex(offset.y))
-                            },
-                            onDragCancel = {
-                                onScrubStateChanged(false, null)
-                            },
-                            onDragEnd = {
-                                onScrubStateChanged(false, null)
-                            },
-                            onDrag = { change, _ ->
-                                selectIndex(yToIndex(change.position.y))
-                            },
+                    fun yToIndex(y: Float): Int =
+                        scrubberIndexForY(
+                            y = y,
+                            height = size.height.toFloat(),
+                            itemCount = letters.size,
                         )
-                    },
+
+                    detectDragGestures(
+                        onDragStart = { offset ->
+                            selectIndex(yToIndex(offset.y))
+                        },
+                        onDragCancel = {
+                            onScrubStateChanged(false, null)
+                        },
+                        onDragEnd = {
+                            onScrubStateChanged(false, null)
+                        },
+                        onDrag = { change, _ ->
+                            selectIndex(yToIndex(change.position.y))
+                        },
+                    )
+                },
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceEvenly,
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.SpaceEvenly,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                val activeIndex = letters.indexOf(currentLetter).takeIf { it >= 0 } ?: 0
+            val activeIndex = letters.indexOf(currentLetter).takeIf { it >= 0 } ?: 0
 
-                letters.forEachIndexed { index, letter ->
-                    val distance = kotlin.math.abs(index - activeIndex)
-                    val waveStrength = (1f - (distance / 6f)).coerceIn(0f, 1f)
-                    val offsetX by animateDpAsState(
-                        targetValue = (-10f * waveStrength).dp,
-                        label = "scrubberWaveOffset",
-                    )
+            letters.forEachIndexed { index, letter ->
+                val distance = kotlin.math.abs(index - activeIndex)
+                val waveStrength = (1f - (distance / 6f)).coerceIn(0f, 1f)
+                val offsetX by animateDpAsState(
+                    targetValue = (-10f * waveStrength).dp,
+                    label = "scrubberWaveOffset",
+                )
 
-                    Text(
-                        text = letter,
-                        fontSize = (10f + (2f * waveStrength)).sp,
-                        fontWeight = if (letter == currentLetter) FontWeight.Bold else FontWeight.Normal,
-                        color =
-                            if (letter == currentLetter) {
-                                MaterialTheme.colorScheme.primary
-                            } else {
-                                MaterialTheme.colorScheme.onSurfaceVariant
+                Text(
+                    text = letter,
+                    fontSize = (10f + (2f * waveStrength)).sp,
+                    fontWeight = if (letter == currentLetter) FontWeight.Bold else FontWeight.Normal,
+                    color =
+                        if (letter == currentLetter) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        },
+                    textAlign = TextAlign.Center,
+                    modifier =
+                        Modifier
+                            .offset(x = offsetX)
+                            .clickable {
+                                onScrubStateChanged(true, letter)
+                                hapticFeedbackManager.tick(view)
+                                onLetterSelected(letter)
+                                onScrubStateChanged(false, null)
                             },
-                        textAlign = TextAlign.Center,
-                        modifier =
-                            Modifier
-                                .offset(x = offsetX)
-                                .clickable {
-                                    onScrubStateChanged(true, letter)
-                                    hapticFeedbackManager.tick(view)
-                                    onLetterSelected(letter)
-                                    onScrubStateChanged(false, null)
-                                },
-                    )
-                }
+                )
             }
         }
     }
