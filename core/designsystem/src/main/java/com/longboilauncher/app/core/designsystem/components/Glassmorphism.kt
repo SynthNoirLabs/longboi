@@ -7,19 +7,22 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlin.math.cos
 import kotlin.math.sin
@@ -118,68 +121,99 @@ fun AmbientLightBackground(
 }
 
 /**
- * A subtle glass-like surface with frosted appearance. Uses a semi-transparent background with
- * subtle border.
+ * A sophisticated glass-like surface with frosted appearance.
+ * Features a real blur effect (on supported API levels), a semi-transparent background,
+ * and a subtle elegant border.
  */
 @Composable
 fun GlassSurface(
     modifier: Modifier = Modifier,
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
     tintColor: Color = MaterialTheme.colorScheme.primary,
-    backgroundAlpha: Float = 0.6f,
+    backgroundAlpha: Float = 0.4f,
     tintAlpha: Float = 0.1f,
-    content: @Composable () -> Unit,
+    blurRadius: Dp = 16.dp,
+    cornerRadius: Dp = 24.dp,
+    content: @Composable () -> Unit = {},
 ) {
+    val shape = RoundedCornerShape(cornerRadius)
+    
     Box(
         modifier =
-            modifier.background(
-                Brush.verticalGradient(
-                    colors =
-                        listOf(
-                            backgroundColor.copy(alpha = backgroundAlpha),
-                            backgroundColor.copy(
-                                alpha = backgroundAlpha * 0.85f,
+            modifier
+                .clip(shape)
+                .blur(blurRadius)
+                .background(
+                    Brush.verticalGradient(
+                        colors =
+                            listOf(
+                                backgroundColor.copy(alpha = backgroundAlpha),
+                                backgroundColor.copy(alpha = backgroundAlpha * 0.8f),
+                                tintColor.copy(alpha = tintAlpha),
                             ),
-                            tintColor.copy(alpha = tintAlpha),
-                        ),
+                    ),
+                )
+                .border(
+                    width = 0.5.dp,
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color.White.copy(alpha = 0.2f),
+                            Color.White.copy(alpha = 0.05f),
+                            Color.Black.copy(alpha = 0.05f),
+                        )
+                    ),
+                    shape = shape
                 ),
-            ),
-    ) { content() }
+    ) {
+        content()
+    }
 }
 
 /**
- * A premium card with glassmorphism effect, including a subtle border and inner glow.
+ * Enhanced Glass Card that provides the background blur without blurring the content.
+ * Integrates the best of the premium design and consistent project components.
  */
 @Composable
 fun GlassCard(
     modifier: Modifier = Modifier,
     containerColor: Color = MaterialTheme.colorScheme.surface,
     borderColor: Color = Color.White.copy(alpha = 0.2f),
-    cornerRadius: androidx.compose.ui.unit.Dp = 24.dp,
+    backgroundAlpha: Float = 0.3f,
+    blurRadius: Dp = 20.dp,
+    cornerRadius: Dp = 24.dp,
     content: @Composable () -> Unit,
 ) {
-    Box(
-        modifier =
-            modifier
-                .background(
-                    brush =
-                        Brush.verticalGradient(
-                            colors =
-                                listOf(
-                                    containerColor.copy(alpha = 0.7f),
-                                    containerColor.copy(alpha = 0.4f),
-                                ),
-                        ),
-                    shape = RoundedCornerShape(cornerRadius),
-                ).drawBehind {
-                    drawRoundRect(
-                        color = borderColor,
-                        style = Stroke(width = 1.dp.toPx()),
-                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(cornerRadius.toPx()),
-                    )
-                }.clip(RoundedCornerShape(cornerRadius)),
-    ) {
-        content()
+    val shape = RoundedCornerShape(cornerRadius)
+    
+    Box(modifier = modifier) {
+        // Blur Layer
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .clip(shape)
+                .blur(blurRadius)
+                .background(containerColor.copy(alpha = backgroundAlpha))
+        )
+        
+        // Content Layer with Border
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .border(
+                    width = 0.5.dp,
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            borderColor,
+                            borderColor.copy(alpha = 0.5f),
+                            Color.Black.copy(alpha = 0.1f),
+                        )
+                    ),
+                    shape = shape
+                )
+                .padding(0.5.dp) // Slight offset for border
+        ) {
+            content()
+        }
     }
 }
 

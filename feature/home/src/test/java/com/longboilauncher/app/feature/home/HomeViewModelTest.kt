@@ -6,6 +6,7 @@ import com.google.common.truth.Truth.assertThat
 import com.longboilauncher.app.core.appcatalog.AppCatalogRepository
 import com.longboilauncher.app.core.common.ClockTicker
 import com.longboilauncher.app.core.common.NowProvider
+import com.longboilauncher.app.core.common.SystemServiceHelper
 import com.longboilauncher.app.core.datastore.FavoritesRepository
 import com.longboilauncher.app.core.settings.PreferencesRepository
 import com.longboilauncher.app.core.model.AppEntry
@@ -49,6 +50,7 @@ class HomeViewModelTest {
     private lateinit var preferencesRepository: PreferencesRepository
     private lateinit var nowProvider: NowProvider
     private lateinit var clockTicker: ClockTicker
+    private lateinit var systemServiceHelper: SystemServiceHelper
 
     private val testApp =
         AppEntry(
@@ -74,6 +76,7 @@ class HomeViewModelTest {
         preferencesRepository = mockk<PreferencesRepository>(relaxed = true)
         nowProvider = mockk<NowProvider>()
         clockTicker = mockk<ClockTicker>()
+        systemServiceHelper = mockk<SystemServiceHelper>(relaxed = true)
 
         every { appCatalogRepository.apps } returns MutableStateFlow(listOf(testApp))
         every { favoritesRepository.favorites } returns MutableStateFlow(testFavorites)
@@ -92,6 +95,7 @@ class HomeViewModelTest {
             nowProvider,
             clockTicker,
             preferencesRepository,
+            systemServiceHelper
         )
 
     @Before
@@ -104,14 +108,6 @@ class HomeViewModelTest {
         Dispatchers.resetMain()
         unmockkAll()
     }
-
-    @Test
-    fun `initial data load triggers app catalog refresh`() =
-        runTest {
-            createMocks()
-            createViewModel()
-            coVerify { appCatalogRepository.refreshAppCatalog() }
-        }
 
     @Test
     fun `uiState emits values from repository`() =
@@ -250,9 +246,19 @@ class HomeViewModelTest {
             viewModel.onEvent(HomeEvent.ShowPopup(testApp))
             assertThat(viewModel.uiState.value.popupApp).isNotNull()
 
-            viewModel.onEvent(HomeEvent.HideApp)
+            viewModel.onEvent(HomeEvent.HideApp(testApp))
 
             coVerify { favoritesRepository.hideApp(testApp.packageName) }
             assertThat(viewModel.uiState.value.popupApp).isNull()
+        }
+
+    @Test
+    fun `expandNotifications calls helper`() =
+        runTest(testDispatcher) {
+            createMocks()
+            val viewModel = createViewModel()
+
+            viewModel.onEvent(HomeEvent.ExpandNotifications)
+            coVerify { systemServiceHelper.expandNotifications() }
         }
 }

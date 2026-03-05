@@ -6,12 +6,13 @@ import androidx.lifecycle.viewModelScope
 import com.longboilauncher.app.core.appcatalog.AppCatalogRepository
 import com.longboilauncher.app.core.common.ClockTicker
 import com.longboilauncher.app.core.common.NowProvider
+import com.longboilauncher.app.core.common.SystemServiceHelper
 import com.longboilauncher.app.core.datastore.FavoritesRepository
-import com.longboilauncher.app.core.settings.PreferencesRepository
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.model.FavoriteEntry
 import com.longboilauncher.app.core.model.GlanceHeaderData
 import com.longboilauncher.app.core.model.ThemeType
+import com.longboilauncher.app.core.settings.PreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,13 +30,17 @@ enum class LauncherSurface {
     ALL_APPS,
     SEARCH,
     SETTINGS,
+    ONBOARDING,
 }
 
 data class HomeState(
     val isLoading: Boolean = true,
     val currentSurface: LauncherSurface = LauncherSurface.HOME,
+    val isOnboardingCompleted: Boolean = true,
     val favorites: List<FavoriteEntry> = emptyList(),
     val apps: List<AppEntry> = emptyList(),
+    val appSections: Map<String, List<AppEntry>> = emptyMap(),
+    val sectionIndices: Map<String, Int> = emptyMap(),
     val theme: ThemeType = ThemeType.MATERIAL_YOU,
     val glanceData: GlanceHeaderData =
         GlanceHeaderData(
@@ -48,12 +53,15 @@ data class HomeState(
         ),
     val popupApp: AppEntry? = null,
     val popupShortcuts: List<ShortcutInfo> = emptyList(),
+    val scrubberLetter: String? = null,
 )
 
 sealed class HomeEvent {
     data class NavigateTo(
         val surface: LauncherSurface,
     ) : HomeEvent()
+
+    object CompleteOnboarding : HomeEvent()
 
     data class LaunchApp(
         val app: AppEntry,
@@ -71,12 +79,6 @@ sealed class HomeEvent {
         val favoriteId: String,
     ) : HomeEvent()
 
-    data class ReorderFavorites(
-        val favoriteIds: List<String>,
-    ) : HomeEvent()
-
-    object RefreshCatalog : HomeEvent()
-
     data class ShowPopup(
         val app: AppEntry,
     ) : HomeEvent()
@@ -88,11 +90,23 @@ sealed class HomeEvent {
         val shortcutId: String,
     ) : HomeEvent()
 
-    object ShowAppInfo : HomeEvent()
+    data class ShowAppInfo(
+        val app: AppEntry,
+    ) : HomeEvent()
 
-    object UninstallApp : HomeEvent()
+    data class UninstallApp(
+        val app: AppEntry,
+    ) : HomeEvent()
 
-    object HideApp : HomeEvent()
+    data class HideApp(
+        val app: AppEntry,
+    ) : HomeEvent()
+
+    object ExpandNotifications : HomeEvent()
+
+    data class UpdateScrubberLetter(
+        val letter: String?,
+    ) : HomeEvent()
 }
 
 @HiltViewModel
@@ -104,6 +118,7 @@ class HomeViewModel
         private val nowProvider: NowProvider,
         private val clockTicker: ClockTicker,
         private val preferencesRepository: PreferencesRepository,
+        private val systemServiceHelper: SystemServiceHelper,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(HomeState())
         val uiState: StateFlow<HomeState> = _uiState.asStateFlow()
@@ -112,6 +127,17 @@ class HomeViewModel
         private val dateFormatter = DateTimeFormatter.ofPattern("EEEE, MMMM d")
 
         init {
+            // Collect onboarding status
+            preferencesRepository.isOnboardingCompleted
+                .onEach { completed ->
+                    _uiState.update { state ->
+                        state.copy(
+                            isOnboardingCompleted = completed,
+                            currentSurface = if (!completed) LauncherSurface.ONBOARDING else state.currentSurface
+                        )
+                    }
+                }.launchIn(viewModelScope)
+
             // Collect favorites
             favoritesRepository.favorites
                 .onEach { favs -> _uiState.update { it.copy(favorites = favs) } }
@@ -119,8 +145,31 @@ class HomeViewModel
 
             // Collect apps
             appCatalogRepository.apps
-                .onEach { apps -> _uiState.update { it.copy(apps = apps) } }
-                .launchIn(viewModelScope)
+                .onEach { apps ->
+                    val sections =
+                        apps
+                            .groupBy { app ->
+                                val firstChar = app.label.firstOrNull()?.uppercaseChar() ?: '#'
+                                if (firstChar.isLetter()) firstChar.toString() else "#"
+                            }.toSortedMap()
+
+                    var index = 0
+                    val indices = mutableMapOf<String, Int>()
+                    sections.forEach { (letter, appsInSection) ->
+                        if (appsInSection.isNotEmpty()) {
+                            indices[letter] = index
+                            index += 1 + appsInSection.size // header + apps
+                        }
+                    }
+
+                    _uiState.update {
+                        it.copy(
+                            apps = apps,
+                            appSections = sections,
+                            sectionIndices = indices,
+                        )
+                    }
+                }.launchIn(viewModelScope)
 
             // Clock updates
             this.clockTicker
@@ -129,6 +178,7 @@ class HomeViewModel
                     val now = nowProvider.now().atZone(java.time.ZoneId.systemDefault())
                     _uiState.update { state: HomeState ->
                         state.copy(
+                            isLoading = false,
                             glanceData =
                                 state.glanceData.copy(
                                     currentTime = now.format(timeFormatter),
@@ -138,8 +188,7 @@ class HomeViewModel
                     }
                 }.launchIn(viewModelScope)
 
-            onEvent(HomeEvent.RefreshCatalog)
-
+            // Theme updates
             preferencesRepository.themeType
                 .onEach { theme -> _uiState.update { it.copy(theme = theme) } }
                 .launchIn(viewModelScope)
@@ -148,6 +197,12 @@ class HomeViewModel
         fun onEvent(event: HomeEvent) {
             when (event) {
                 is HomeEvent.NavigateTo -> _uiState.update { it.copy(currentSurface = event.surface) }
+                HomeEvent.CompleteOnboarding -> {
+                    viewModelScope.launch {
+                        preferencesRepository.setOnboardingCompleted(true)
+                        _uiState.update { it.copy(currentSurface = LauncherSurface.HOME) }
+                    }
+                }
                 is HomeEvent.LaunchApp -> appCatalogRepository.launchApp(event.app)
                 is HomeEvent.LaunchFavorite -> appCatalogRepository.launchApp(event.favorite.appEntry)
                 is HomeEvent.AddToFavorites ->
@@ -158,41 +213,31 @@ class HomeViewModel
                     viewModelScope.launch {
                         favoritesRepository.removeFavorite(event.favoriteId)
                     }
-                is HomeEvent.ReorderFavorites ->
-                    viewModelScope.launch {
-                        favoritesRepository.reorderFavorites(event.favoriteIds)
-                    }
-                HomeEvent.RefreshCatalog ->
-                    viewModelScope.launch {
-                        _uiState.update { it.copy(isLoading = true) }
-                        appCatalogRepository.refreshAppCatalog()
-                        _uiState.update { it.copy(isLoading = false) }
-                    }
                 is HomeEvent.ShowPopup -> {
-                    _uiState.update { it.copy(popupApp = event.app) }
-                    viewModelScope.launch {
-                        val shortcuts = appCatalogRepository.getAppShortcuts(event.app)
-                        _uiState.update { it.copy(popupShortcuts = shortcuts) }
-                    }
+                    val shortcuts = appCatalogRepository.getAppShortcuts(event.app)
+                    _uiState.update { it.copy(popupApp = event.app, popupShortcuts = shortcuts) }
                 }
                 HomeEvent.HidePopup -> {
                     _uiState.update { it.copy(popupApp = null, popupShortcuts = emptyList()) }
                 }
                 is HomeEvent.LaunchShortcut -> appCatalogRepository.launchShortcut(event.app, event.shortcutId)
-                HomeEvent.ShowAppInfo -> {
-                    // TODO: Open app info screen
+                is HomeEvent.ShowAppInfo -> {
+                    appCatalogRepository.showAppInfo(event.app)
+                    _uiState.update { it.copy(popupApp = null, popupShortcuts = emptyList()) }
                 }
-                HomeEvent.UninstallApp -> {
-                    // TODO: Start uninstall intent
+                is HomeEvent.UninstallApp -> {
+                    appCatalogRepository.uninstallApp(event.app)
+                    _uiState.update { it.copy(popupApp = null, popupShortcuts = emptyList()) }
                 }
-                HomeEvent.HideApp -> {
-                    _uiState.value.popupApp?.let { app ->
-                        viewModelScope.launch {
-                            favoritesRepository.hideApp(app.packageName)
-                            _uiState.update { it.copy(popupApp = null, popupShortcuts = emptyList()) }
-                        }
+                is HomeEvent.HideApp -> {
+                    viewModelScope.launch {
+                        favoritesRepository.hideApp(event.app.packageName)
+                        _uiState.update { it.copy(popupApp = null, popupShortcuts = emptyList()) }
                     }
                 }
+                HomeEvent.ExpandNotifications -> systemServiceHelper.expandNotifications()
+                is HomeEvent.UpdateScrubberLetter ->
+                    _uiState.update { it.copy(scrubberLetter = event.letter) }
             }
         }
     }

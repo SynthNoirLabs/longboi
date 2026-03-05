@@ -42,10 +42,8 @@ import kotlin.math.abs
 import kotlin.math.roundToInt
 
 /**
- * A curved alphabet scrubber that displays letters in an arc pattern,
- * with the currently selected letter emphasized in the center.
- *
- * Inspired by Niagara Launcher's signature curved letter navigation.
+ * Premium Curved Alphabet Scrubber.
+ * Matches the cardless, minimalist aesthetic of the redesign.
  */
 @Composable
 fun CurvedAlphabetScrubber(
@@ -56,15 +54,13 @@ fun CurvedAlphabetScrubber(
     modifier: Modifier = Modifier,
     showFavoriteStar: Boolean = true,
     curveRadius: Dp = 300.dp,
-    letterSpacing: Dp = 18.dp,
+    letterSpacing: Dp = 20.dp,
     onScrubStateChanged: (active: Boolean, letter: String?) -> Unit = { _, _ -> },
+    onLetterConfirmed: (String) -> Unit = {},
 ) {
     val view = LocalView.current
     val reduceMotion = shouldReduceMotion()
     val density = LocalDensity.current
-
-    val curveRadiusPx = with(density) { curveRadius.toPx() }
-    val letterSpacingPx = with(density) { letterSpacing.toPx() }
 
     val allItems =
         remember(letters, showFavoriteStar) {
@@ -72,16 +68,12 @@ fun CurvedAlphabetScrubber(
         }
 
     var isDragging by remember { mutableStateOf(false) }
-    var scrubberHeight by remember { mutableFloatStateOf(0f) }
+    var lastLetter by remember { mutableStateOf<String?>(null) }
 
     val activeIndex =
         remember(currentLetter, allItems) {
-            allItems.indexOf(currentLetter).takeIf { it >= 0 }
-                ?: if (showFavoriteStar && currentLetter == "★") {
-                    0
-                } else {
-                    allItems.indexOfFirst { it == "A" }.coerceAtLeast(0)
-                }
+            val idx = allItems.indexOf(currentLetter)
+            if (idx >= 0) idx else allItems.indexOf("A").coerceAtLeast(0)
         }
 
     Box(
@@ -92,7 +84,7 @@ fun CurvedAlphabetScrubber(
                     if (allItems.isEmpty()) return@pointerInput
 
                     var lastIndex = -1
-                    scrubberHeight = size.height.toFloat()
+                    val scrubberHeight = size.height.toFloat()
 
                     fun calculateIndex(y: Float): Int {
                         if (allItems.isEmpty() || scrubberHeight <= 0f) return 0
@@ -105,6 +97,7 @@ fun CurvedAlphabetScrubber(
                         if (index == lastIndex) return
                         lastIndex = index
                         val letter = allItems[index]
+                        lastLetter = letter
                         onScrubStateChanged(true, letter)
                         onHapticTick(view)
                         onLetterSelected(letter)
@@ -121,6 +114,7 @@ fun CurvedAlphabetScrubber(
                         },
                         onDragEnd = {
                             isDragging = false
+                            lastLetter?.let { onLetterConfirmed(it) }
                             onScrubStateChanged(false, null)
                         },
                         onDrag = { change, _ ->
@@ -137,13 +131,13 @@ fun CurvedAlphabetScrubber(
                 activeIndex = activeIndex,
                 totalItems = allItems.size,
                 letterSpacing = letterSpacing,
-                curveRadiusPx = curveRadiusPx,
                 isDragging = isDragging,
                 reduceMotion = reduceMotion,
                 onClick = {
                     onHapticTick(view)
                     onScrubStateChanged(true, letter)
                     onLetterSelected(letter)
+                    onLetterConfirmed(letter)
                     onScrubStateChanged(false, null)
                 },
             )
@@ -158,7 +152,6 @@ private fun CurvedLetter(
     activeIndex: Int,
     totalItems: Int,
     letterSpacing: Dp,
-    curveRadiusPx: Float,
     isDragging: Boolean,
     reduceMotion: Boolean,
     onClick: () -> Unit,
@@ -176,8 +169,8 @@ private fun CurvedLetter(
                 snap()
             } else {
                 spring(
-                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                    stiffness = Spring.StiffnessMedium,
+                    dampingRatio = Spring.DampingRatioNoBouncy,
+                    stiffness = Spring.StiffnessMediumLow,
                 )
             },
         label = "letterDistance",
@@ -185,59 +178,37 @@ private fun CurvedLetter(
 
     val absDistance = abs(animatedDistance)
 
-    // Niagara-style curve: sharp peak at active letter, smooth falloff
-    val maxCurveOffsetPx = with(density) { 80.dp.toPx() } // Huge pull
+    // Wave Pull: Letters near thumb pull towards the center of the screen
+    val maxCurveOffsetPx = with(density) { 64.dp.toPx() }
     val curveOffsetX by animateFloatAsState(
         targetValue =
             if (reduceMotion || !isDragging) {
                 0f
             } else {
-                val progress = (absDistance / 6f).coerceIn(0f, 1f)
-                // Cubic ease-out for a sharp peak that smoothly transitions back to origin
+                val progress = (absDistance / 5f).coerceIn(0f, 1f)
                 val curveShape = (1f - progress) * (1f - progress) * (1f - progress)
                 -curveShape * maxCurveOffsetPx
-            },
-        animationSpec =
-            if (reduceMotion) {
-                snap()
-            } else {
-                spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMediumLow)
             },
         label = "curveX",
     )
 
-    // Scale: active 1.3×, nearby 1.1×, far 1.0×
+    // Scale and Alpha logic
     val scale by animateFloatAsState(
         targetValue =
             when {
-                reduceMotion -> if (absDistanceInt == 0) 1.2f else 1f
-                absDistance < 0.5f -> 1.3f
-                absDistance < 2f -> 1.15f - (absDistance - 0.5f) * 0.06f
+                absDistanceInt == 0 -> 1.25f
+                absDistance < 2f -> 1.1f
                 else -> 1f
-            },
-        animationSpec =
-            if (reduceMotion) {
-                snap()
-            } else {
-                spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMedium)
             },
         label = "letterScale",
     )
 
-    // Alpha: strong for nearby, 0.7 floor so all letters are vibrant
     val alpha by animateFloatAsState(
         targetValue =
             when {
-                absDistance < 0.5f -> 1f
-                absDistance < 2f -> 0.9f
-                absDistance < 5f -> 0.8f
-                else -> 0.7f
-            },
-        animationSpec =
-            if (reduceMotion) {
-                snap()
-            } else {
-                spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessLow)
+                absDistanceInt == 0 -> 1f
+                absDistance < 3f -> 0.7f
+                else -> 0.4f
             },
         label = "letterAlpha",
     )
@@ -246,9 +217,9 @@ private fun CurvedLetter(
     val yOffset = (index - centerOffset) * letterSpacingPx
 
     val isActive = absDistanceInt == 0
-    val primaryColor = MaterialTheme.colorScheme.primary
-    val onPrimaryColor = MaterialTheme.colorScheme.onPrimary
-    val textColor = Color.White
+    val highlightColor = MaterialTheme.colorScheme.primary
+    val onHighlightColor = MaterialTheme.colorScheme.onPrimary
+    val textColor = MaterialTheme.colorScheme.onBackground
 
     Box(
         modifier =
@@ -258,13 +229,12 @@ private fun CurvedLetter(
                     scaleX = scale
                     scaleY = scale
                     this.alpha = alpha
-                }.then(
-                    if (isActive && isDragging) {
-                        Modifier
-                            .size(28.dp)
-                            .background(primaryColor, CircleShape)
+                }.size(24.dp)
+                .then(
+                    if (isActive) {
+                        Modifier.background(highlightColor, CircleShape)
                     } else {
-                        Modifier.padding(2.dp)
+                        Modifier
                     },
                 ).clickable(onClick = onClick),
         contentAlignment = Alignment.Center,
@@ -274,30 +244,19 @@ private fun CurvedLetter(
             style =
                 androidx.compose.ui.text.TextStyle(
                     shadow =
-                        Shadow(
-                            color = Color.Black.copy(alpha = 0.85f), // Stronger shadow
-                            offset = Offset(0f, 3f),
-                            blurRadius = 6f,
-                        ),
+                        if (!isActive) {
+                            Shadow(
+                                color = Color.Black.copy(alpha = 0.3f),
+                                offset = Offset(0f, 2f),
+                                blurRadius = 4f,
+                            )
+                        } else {
+                            null
+                        },
                 ),
-            fontSize =
-                when {
-                    isActive -> 22.sp
-                    absDistanceInt < 3 -> 17.sp
-                    else -> 15.sp
-                },
-            fontWeight =
-                when {
-                    isActive -> FontWeight.Bold
-                    absDistanceInt < 2 -> FontWeight.Bold
-                    else -> FontWeight.Bold
-                },
-            color =
-                if (isActive && isDragging) {
-                    onPrimaryColor
-                } else {
-                    textColor.copy(alpha = alpha)
-                },
+            fontSize = if (isActive) 14.sp else 12.sp,
+            fontWeight = if (isActive) FontWeight.Black else FontWeight.Bold,
+            color = if (isActive) onHighlightColor else textColor.copy(alpha = alpha),
             textAlign = TextAlign.Center,
         )
     }
@@ -314,18 +273,18 @@ fun FloatingLetterIndicator(
     Box(
         modifier =
             modifier
-                .size(64.dp)
+                .size(72.dp)
                 .background(
-                    color = MaterialTheme.colorScheme.primary,
+                    color = Color(0xFFEA4335),
                     shape = CircleShape,
                 ),
         contentAlignment = Alignment.Center,
     ) {
         Text(
             text = letter,
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onPrimary,
+            style = MaterialTheme.typography.displaySmall,
+            fontWeight = FontWeight.Black,
+            color = Color.White,
             textAlign = TextAlign.Center,
         )
     }
@@ -342,6 +301,7 @@ fun CompactCurvedAlphabetScrubber(
     onLetterSelected: (String) -> Unit,
     modifier: Modifier = Modifier,
     onScrubStateChanged: (active: Boolean, letter: String?) -> Unit = { _, _ -> },
+    onLetterConfirmed: (String) -> Unit = {},
 ) {
     CurvedAlphabetScrubber(
         letters = letters,
@@ -350,8 +310,8 @@ fun CompactCurvedAlphabetScrubber(
         onLetterSelected = onLetterSelected,
         modifier = modifier,
         showFavoriteStar = true,
-        curveRadius = 250.dp,
-        letterSpacing = 24.dp, // Safely spread across screen without clipping
+        letterSpacing = 24.dp,
         onScrubStateChanged = onScrubStateChanged,
+        onLetterConfirmed = onLetterConfirmed,
     )
 }

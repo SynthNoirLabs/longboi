@@ -236,32 +236,6 @@ object LongboiMotion {
     }
 }
 
-/** Spacing tokens with animation-friendly values. */
-@Stable
-object LongboiSpacing {
-    val XXS: Dp = 2.dp
-    val XS: Dp = 4.dp
-    val S: Dp = 8.dp
-    val M: Dp = 12.dp
-    val L: Dp = 16.dp
-    val XL: Dp = 24.dp
-    val XXL: Dp = 32.dp
-    val XXXL: Dp = 48.dp
-}
-
-/** Corner radius tokens. */
-@Stable
-object LongboiCorners {
-    val None: Dp = 0.dp
-    val XS: Dp = 4.dp
-    val S: Dp = 8.dp
-    val M: Dp = 12.dp
-    val L: Dp = 16.dp
-    val XL: Dp = 24.dp
-    val XXL: Dp = 32.dp
-    val Full: Dp = 1000.dp // For circles
-}
-
 val LocalReduceMotion = staticCompositionLocalOf { false }
 
 /** Utility to check if reduced motion is enabled. */

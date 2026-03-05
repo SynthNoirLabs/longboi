@@ -108,6 +108,16 @@ class PreferencesRepository
                     }
                 }.map { it.reduceMotion }
 
+        val isOnboardingCompleted: Flow<Boolean> =
+            dataStore.data
+                .catch { exception ->
+                    if (exception is IOException) {
+                        emit(UserSettings.getDefaultInstance())
+                    } else {
+                        throw exception
+                    }
+                }.map { it.onboardingCompleted }
+
         suspend fun setTheme(theme: String) {
             dataStore.updateData { currentSettings ->
                 currentSettings
@@ -167,6 +177,15 @@ class PreferencesRepository
                 currentSettings
                     .toBuilder()
                     .setDensity(density)
+                    .build()
+            }
+        }
+
+        suspend fun setOnboardingCompleted(completed: Boolean) {
+            dataStore.updateData { currentSettings ->
+                currentSettings
+                    .toBuilder()
+                    .setOnboardingCompleted(completed)
                     .build()
             }
         }

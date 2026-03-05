@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Minimalist Home Screen Match</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#dc2626", // High-contrast red
+                        "background-light": "#f8fafc",
+                        "background-dark": "#000000", // AMOLED black
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1e293b",
+                        "text-light": "#0f172a",
+                        "text-dark": "#f8fafc",
+                        "text-muted-light": "#64748b",
+                        "text-muted-dark": "#94a3b8",
+                    },
+                    fontFamily: {
+                        display: ["Outfit", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "1rem",
+                    }
+                },
+            },
+        };
+    </script>
+<style>
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark font-display h-screen w-full flex items-center justify-center dark">
+<div class="relative w-[390px] h-[844px] bg-black overflow-hidden rounded-[3rem] border-[14px] border-slate-800 shadow-2xl flex flex-col pt-12 px-8 pb-8">
+<div class="w-full flex justify-end mb-4">
+<button class="bg-gray-900/60 rounded-full p-2.5 flex items-center justify-center transition-colors hover:bg-gray-800">
+<span class="material-symbols-outlined text-gray-400 text-[20px]">search</span>
+</button>
+</div>
+<div class="mb-auto">
+<h1 class="text-[5.5rem] leading-none font-light text-white tracking-tighter">14:30</h1>
+</div>
+<div class="flex-1 flex flex-col justify-end space-y-10 pb-16">
+<button class="flex items-center space-x-6 w-full text-left group">
+<span class="material-symbols-outlined text-3xl font-light text-green-400 group-hover:text-green-300 transition-colors">call</span>
+<span class="text-2xl font-light text-white tracking-wide group-hover:text-gray-200 transition-colors">Phone</span>
+</button>
+<button class="flex items-center space-x-6 w-full text-left group">
+<span class="material-symbols-outlined text-3xl font-light text-blue-400 group-hover:text-blue-300 transition-colors">chat</span>
+<span class="text-2xl font-light text-white tracking-wide group-hover:text-gray-200 transition-colors">Messages</span>
+</button>
+<button class="flex items-center space-x-6 w-full text-left group">
+<span class="material-symbols-outlined text-3xl font-light text-red-400 group-hover:text-red-300 transition-colors">travel_explore</span>
+<span class="text-2xl font-light text-white tracking-wide group-hover:text-gray-200 transition-colors">Browser</span>
+</button>
+<button class="flex items-center space-x-6 w-full text-left group">
+<span class="material-symbols-outlined text-3xl font-light text-yellow-400 group-hover:text-yellow-300 transition-colors">photo_camera</span>
+<span class="text-2xl font-light text-white tracking-wide group-hover:text-gray-200 transition-colors">Camera</span>
+</button>
+<button class="flex items-center space-x-6 w-full text-left group">
+<span class="material-symbols-outlined text-3xl font-light text-purple-400 group-hover:text-purple-300 transition-colors">calendar_month</span>
+<span class="text-2xl font-light text-white tracking-wide group-hover:text-gray-200 transition-colors">Calendar</span>
+</button>
+<button class="flex items-center space-x-6 w-full text-left group">
+<span class="material-symbols-outlined text-3xl font-light text-orange-400 group-hover:text-orange-300 transition-colors">edit_document</span>
+<span class="text-2xl font-light text-white tracking-wide group-hover:text-gray-200 transition-colors">Notes</span>
+</button>
+</div>
+<div class="w-full flex flex-col items-center justify-center opacity-40 mt-auto">
+<span class="material-symbols-outlined text-white text-3xl">keyboard_arrow_up</span>
+</div>
+</div>
+</body></html>

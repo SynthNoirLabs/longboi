@@ -1,13 +1,18 @@
 package com.longboilauncher.app.core.designsystem.components
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -25,18 +30,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.longboilauncher.app.core.designsystem.theme.LocalThemeType
+import com.longboilauncher.app.core.designsystem.theme.LongboiSpacing
 import com.longboilauncher.app.core.icons.AppIcon
 import com.longboilauncher.app.core.model.FavoriteEntry
 import com.longboilauncher.app.core.model.ThemeType
 
-@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalFoundationApi::class, androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun FavoriteAppItem(
     favorite: FavoriteEntry,
@@ -51,10 +61,11 @@ fun FavoriteAppItem(
         targetValue = if (isPressed) 0.95f else 1f,
         label = "scale",
     )
-    var dragOffset by remember { mutableFloatStateOf(0f) }
 
+    var dragOffset by remember { mutableFloatStateOf(0f) }
     val themeType = LocalThemeType.current
     val isGlass = themeType == ThemeType.GLASSMORPHISM
+
     val playfulColors =
         listOf(
             Color(0xFFA5D6A7), // Green
@@ -110,7 +121,10 @@ fun FavoriteAppItem(
                         dragOffset += dragAmount
                     },
                 )
-            }.clickable { onClick() }
+            }.combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick
+            )
 
     val itemContent =
         @Composable {
@@ -120,19 +134,46 @@ fun FavoriteAppItem(
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(if (isGlass) 24.dp else 12.dp),
             ) {
-                // App Icon
-                AppIcon(
-                    appEntry = favorite.appEntry,
-                    size = 48.dp,
-                )
+                // App Icon - with glass backdrop for glass theme
+                if (isGlass) {
+                    GlassCard(
+                        modifier = Modifier.size(64.dp),
+                        cornerRadius = 24.dp,
+                        backgroundAlpha = 0.1f,
+                        blurRadius = 12.dp
+                    ) {
+                        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                            AppIcon(
+                                appEntry = favorite.appEntry,
+                                size = 40.dp,
+                            )
+                        }
+                    }
+                } else {
+                    AppIcon(
+                        appEntry = favorite.appEntry,
+                        size = 48.dp,
+                    )
+                }
 
                 // App Label
                 Text(
                     text = favorite.displayLabel,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Medium,
+                    style = if (isGlass) {
+                        MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.Light,
+                            letterSpacing = 0.5.sp,
+                            shadow = Shadow(
+                                color = Color.Black.copy(alpha = 0.15f),
+                                offset = Offset(0f, 2f),
+                                blurRadius = 4f
+                            )
+                        )
+                    } else {
+                        MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)
+                    },
                     color = contentColor,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -155,7 +196,7 @@ fun FavoriteAppItem(
             modifier = modifier.then(itemModifier),
             containerColor = Color.White.copy(alpha = 0.1f),
             borderColor = Color.White.copy(alpha = 0.2f),
-            cornerRadius = 16.dp,
+            cornerRadius = 24.dp,
         ) {
             itemContent()
         }
@@ -186,11 +227,9 @@ private fun PlayingIndicator() {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        // Music note icon or animation
-        Spacer(modifier = Modifier.width(4.dp))
         Text(
             text = "♪",
-            style = MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.primary,
         )
     }
@@ -199,31 +238,28 @@ private fun PlayingIndicator() {
 @Composable
 private fun NotificationDot(count: Int) {
     if (count > 0) {
-        Card(
-            modifier = Modifier.size(20.dp),
-            shape = CircleShape,
-            colors =
-                CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                ),
+        Box(
+            modifier =
+                Modifier
+                    .size(20.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.primary,
+                        shape = CircleShape,
+                    ),
+            contentAlignment = Alignment.Center,
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = if (count > 99) "99+" else count.toString(),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onPrimary,
-                )
-            }
+            Text(
+                text = if (count > 99) "99+" else count.toString(),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onPrimary,
+                fontWeight = FontWeight.Bold,
+            )
         }
     } else {
         Spacer(
             modifier =
                 Modifier
-                    .size(6.dp)
+                    .size(8.dp)
                     .background(
                         color = MaterialTheme.colorScheme.primary,
                         shape = CircleShape,
