@@ -37,12 +37,15 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import com.longboilauncher.app.core.designsystem.components.GlassCard
 import com.longboilauncher.app.core.designsystem.components.ThemeBackground
 import com.longboilauncher.app.core.designsystem.theme.LocalThemeType
 import com.longboilauncher.app.core.model.ThemeType
@@ -57,6 +60,8 @@ fun SettingsScreen(
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     ThemeBackground(themeType = LocalThemeType.current) {
+        val isGlass = LocalThemeType.current == ThemeType.GLASSMORPHISM
+
         Scaffold(
             containerColor =
                 if (LocalThemeType.current ==
@@ -69,15 +74,31 @@ fun SettingsScreen(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
                 LargeTopAppBar(
-                    title = { Text("Settings") },
+                    title = {
+                        Text(
+                            "Settings",
+                            color = if (isGlass) Color.White else Color.Unspecified,
+                        )
+                    },
                     navigationIcon = {
                         IconButton(onClick = onNavigateBack) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = "Back",
+                                tint = if (isGlass) Color.White else Color.Unspecified,
                             )
                         }
                     },
+                    colors =
+                        if (isGlass) {
+                            TopAppBarDefaults.largeTopAppBarColors(
+                                containerColor = Color.Transparent,
+                                scrolledContainerColor = Color.Transparent,
+                                titleContentColor = Color.White,
+                            )
+                        } else {
+                            TopAppBarDefaults.largeTopAppBarColors()
+                        },
                     scrollBehavior = scrollBehavior,
                 )
             },
@@ -87,11 +108,15 @@ fun SettingsScreen(
                     Modifier
                         .fillMaxSize()
                         .padding(paddingValues)
-                        .verticalScroll(rememberScrollState()),
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 16.dp),
             ) {
                 ThemeSwitcher(uiState.theme) { onEvent(SettingsEvent.SetTheme(it)) }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
                 // Appearance Section
-                SettingsSection(title = "Appearance") {
+                SettingsSection(title = "Appearance", isGlass = isGlass) {
                     SettingsItem(
                         icon = Icons.Default.ColorLens,
                         title = "Theme",
@@ -100,6 +125,7 @@ fun SettingsScreen(
                                 .lowercase()
                                 .replace("_", " ")
                                 .replaceFirstChar { it.uppercase() },
+                        isGlass = isGlass,
                         onClick = {
                             onEvent(
                                 SettingsEvent.SetTheme(
@@ -112,18 +138,21 @@ fun SettingsScreen(
                         icon = Icons.Default.GridView,
                         title = "Density",
                         subtitle = uiState.density.replaceFirstChar { it.uppercase() },
+                        isGlass = isGlass,
                         onClick = { /* TODO: Show density picker */ },
                     )
                 }
 
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                if (!isGlass) HorizontalDivider()
+                Spacer(modifier = Modifier.height(16.dp))
 
                 // Home Section
-                SettingsSection(title = "Home") {
+                SettingsSection(title = "Home", isGlass = isGlass) {
                     SettingsItem(
                         icon = Icons.Default.Home,
                         title = "Favorites",
                         subtitle = "Manage your favorite apps",
+                        isGlass = isGlass,
                         onClick = { /* TODO: Show favorites editor */ },
                     )
                     SettingsSwitchItem(
@@ -131,18 +160,21 @@ fun SettingsScreen(
                         title = "Notification dots",
                         subtitle = "Show notification indicators",
                         checked = uiState.showNotifications,
+                        isGlass = isGlass,
                         onCheckedChange = { onEvent(SettingsEvent.SetShowNotifications(it)) },
                     )
                 }
 
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                if (!isGlass) HorizontalDivider()
+                Spacer(modifier = Modifier.height(16.dp))
 
                 // Behavior Section
-                SettingsSection(title = "Behavior") {
+                SettingsSection(title = "Behavior", isGlass = isGlass) {
                     SettingsItem(
                         icon = Icons.Default.TouchApp,
                         title = "Gestures",
                         subtitle = "Customize swipe actions",
+                        isGlass = isGlass,
                         onClick = { /* TODO: Show gesture settings */ },
                     )
                     SettingsSwitchItem(
@@ -150,42 +182,49 @@ fun SettingsScreen(
                         title = "Haptic feedback",
                         subtitle = "Vibration on interactions",
                         checked = uiState.hapticsEnabled,
+                        isGlass = isGlass,
                         onCheckedChange = { onEvent(SettingsEvent.SetHapticsEnabled(it)) },
                     )
                 }
 
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                if (!isGlass) HorizontalDivider()
+                Spacer(modifier = Modifier.height(16.dp))
 
                 // Apps Section
-                SettingsSection(title = "Apps") {
+                SettingsSection(title = "Apps", isGlass = isGlass) {
                     SettingsItem(
                         icon = Icons.Default.VisibilityOff,
                         title = "Hidden apps",
                         subtitle = "Manage hidden applications",
+                        isGlass = isGlass,
                         onClick = { /* TODO: Show hidden apps manager */ },
                     )
                 }
 
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                if (!isGlass) HorizontalDivider()
+                Spacer(modifier = Modifier.height(16.dp))
 
                 // Backup Section
-                SettingsSection(title = "Backup") {
+                SettingsSection(title = "Backup", isGlass = isGlass) {
                     SettingsItem(
                         icon = Icons.Default.SettingsBackupRestore,
                         title = "Backup & Restore",
                         subtitle = "Export or import settings",
+                        isGlass = isGlass,
                         onClick = { /* TODO: Show backup options */ },
                     )
                 }
 
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                if (!isGlass) HorizontalDivider()
+                Spacer(modifier = Modifier.height(16.dp))
 
                 // About Section
-                SettingsSection(title = "About") {
+                SettingsSection(title = "About", isGlass = isGlass) {
                     SettingsItem(
                         icon = Icons.Default.Info,
                         title = "Version",
                         subtitle = "1.0.0",
+                        isGlass = isGlass,
                         onClick = { },
                     )
                 }
@@ -262,16 +301,28 @@ private fun ThemeSwitcher(
 @Composable
 private fun SettingsSection(
     title: String,
+    isGlass: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = title,
             style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.primary,
+            color = if (isGlass) Color.White.copy(alpha = 0.7f) else MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
         )
-        content()
+        if (isGlass) {
+            GlassCard(
+                modifier = Modifier.fillMaxWidth(),
+                containerColor = Color.Black.copy(alpha = 0.2f),
+            ) {
+                Column {
+                    content()
+                }
+            }
+        } else {
+            content()
+        }
     }
 }
 
@@ -280,6 +331,7 @@ private fun SettingsItem(
     icon: ImageVector,
     title: String,
     subtitle: String,
+    isGlass: Boolean = false,
     onClick: () -> Unit,
 ) {
     Row(
@@ -295,18 +347,18 @@ private fun SettingsItem(
             imageVector = icon,
             contentDescription = null,
             modifier = Modifier.size(24.dp),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            tint = if (isGlass) Color.White.copy(alpha = 0.7f) else MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = if (isGlass) Color.White else MaterialTheme.colorScheme.onSurface,
             )
             Text(
                 text = subtitle,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = if (isGlass) Color.White.copy(alpha = 0.6f) else MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
@@ -318,6 +370,7 @@ private fun SettingsSwitchItem(
     title: String,
     subtitle: String,
     checked: Boolean,
+    isGlass: Boolean = false,
     onCheckedChange: (Boolean) -> Unit,
 ) {
     Row(
@@ -333,18 +386,18 @@ private fun SettingsSwitchItem(
             imageVector = icon,
             contentDescription = null,
             modifier = Modifier.size(24.dp),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            tint = if (isGlass) Color.White.copy(alpha = 0.7f) else MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = if (isGlass) Color.White else MaterialTheme.colorScheme.onSurface,
             )
             Text(
                 text = subtitle,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = if (isGlass) Color.White.copy(alpha = 0.6f) else MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
         Switch(

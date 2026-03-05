@@ -36,6 +36,7 @@ import com.longboilauncher.app.core.icons.AppIcon
 import com.longboilauncher.app.core.model.FavoriteEntry
 import com.longboilauncher.app.core.model.ThemeType
 
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun FavoriteAppItem(
     favorite: FavoriteEntry,
@@ -53,6 +54,7 @@ fun FavoriteAppItem(
     var dragOffset by remember { mutableFloatStateOf(0f) }
 
     val themeType = LocalThemeType.current
+    val isGlass = themeType == ThemeType.GLASSMORPHISM
     val playfulColors =
         listOf(
             Color(0xFFA5D6A7), // Green
@@ -73,6 +75,7 @@ fun FavoriteAppItem(
         }
     val contentColor =
         when (themeType) {
+            ThemeType.GLASSMORPHISM -> Color.White
             ThemeType.VIBRANT_PLAYFUL -> Color.White
             ThemeType.SOPHISTICATED_SLEEK -> Color(0xFFF2CC0D)
             else -> MaterialTheme.colorScheme.onSurface
@@ -85,77 +88,94 @@ fun FavoriteAppItem(
         }
     val borderStroke =
         when (themeType) {
-            ThemeType.GLASSMORPHISM -> Modifier.border(1.dp, Color.White.copy(alpha = 0.3f), shape)
+            ThemeType.GLASSMORPHISM -> Modifier.border(1.dp, Color.White.copy(alpha = 0.2f), shape)
             ThemeType.SOPHISTICATED_SLEEK -> Modifier.border(0.5.dp, Color(0xFFF2CC0D).copy(alpha = 0.3f), shape)
             else -> Modifier
         }
 
-    Card(
-        modifier =
-            modifier
-                .scale(scale)
-                .fillMaxWidth()
-                .then(borderStroke)
-                .pointerInput(Unit) {
-                    detectHorizontalDragGestures(
-                        onDragEnd = {
-                            if (dragOffset > 100) {
-                                onSwipeRight()
-                            }
-                            dragOffset = 0f
-                        },
-                        onDragCancel = { dragOffset = 0f },
-                        onHorizontalDrag = { _, dragAmount ->
-                            dragOffset += dragAmount
-                        },
-                    )
-                }.clickable { onClick() },
-        shape = shape,
-        colors =
-            CardDefaults.cardColors(
-                containerColor = containerColor,
-                contentColor = contentColor,
-            ),
-        elevation =
-            CardDefaults.cardElevation(
-                defaultElevation = 0.dp,
-                pressedElevation = 2.dp,
-            ),
-        onClick = onClick,
-    ) {
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+    val itemModifier =
+        Modifier
+            .scale(scale)
+            .fillMaxWidth()
+            .pointerInput(Unit) {
+                detectHorizontalDragGestures(
+                    onDragEnd = {
+                        if (dragOffset > 100) {
+                            onSwipeRight()
+                        }
+                        dragOffset = 0f
+                    },
+                    onDragCancel = { dragOffset = 0f },
+                    onHorizontalDrag = { _, dragAmount ->
+                        dragOffset += dragAmount
+                    },
+                )
+            }.clickable { onClick() }
+
+    val itemContent =
+        @Composable {
+            Row(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                // App Icon
+                AppIcon(
+                    appEntry = favorite.appEntry,
+                    size = 48.dp,
+                )
+
+                // App Label
+                Text(
+                    text = favorite.displayLabel,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Medium,
+                    color = contentColor,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f),
+                )
+
+                // Status Indicators
+                if (favorite.isPlaying) {
+                    PlayingIndicator()
+                }
+
+                if (showNotifications && favorite.hasNotifications) {
+                    NotificationDot(count = favorite.notificationCount)
+                }
+            }
+        }
+
+    if (isGlass) {
+        GlassCard(
+            modifier = modifier.then(itemModifier),
+            containerColor = Color.White.copy(alpha = 0.1f),
+            borderColor = Color.White.copy(alpha = 0.2f),
+            cornerRadius = 16.dp,
         ) {
-            // App Icon
-            AppIcon(
-                appEntry = favorite.appEntry,
-                size = 48.dp,
-            )
-
-            // App Label
-            Text(
-                text = favorite.displayLabel,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onSurface,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f),
-            )
-
-            // Status Indicators
-            if (favorite.isPlaying) {
-                PlayingIndicator()
-            }
-
-            if (showNotifications && favorite.hasNotifications) {
-                NotificationDot(count = favorite.notificationCount)
-            }
+            itemContent()
+        }
+    } else {
+        Card(
+            modifier = modifier.then(itemModifier).then(borderStroke),
+            shape = shape,
+            colors =
+                CardDefaults.cardColors(
+                    containerColor = containerColor,
+                    contentColor = contentColor,
+                ),
+            elevation =
+                CardDefaults.cardElevation(
+                    defaultElevation = 0.dp,
+                    pressedElevation = 2.dp,
+                ),
+            onClick = onClick,
+        ) {
+            itemContent()
         }
     }
 }

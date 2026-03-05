@@ -8,15 +8,19 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.unit.dp
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -122,8 +126,8 @@ fun GlassSurface(
     modifier: Modifier = Modifier,
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
     tintColor: Color = MaterialTheme.colorScheme.primary,
-    backgroundAlpha: Float = 0.7f,
-    tintAlpha: Float = 0.05f,
+    backgroundAlpha: Float = 0.6f,
+    tintAlpha: Float = 0.1f,
     content: @Composable () -> Unit,
 ) {
     Box(
@@ -134,13 +138,49 @@ fun GlassSurface(
                         listOf(
                             backgroundColor.copy(alpha = backgroundAlpha),
                             backgroundColor.copy(
-                                alpha = backgroundAlpha * 0.9f,
+                                alpha = backgroundAlpha * 0.85f,
                             ),
                             tintColor.copy(alpha = tintAlpha),
                         ),
                 ),
             ),
     ) { content() }
+}
+
+/**
+ * A premium card with glassmorphism effect, including a subtle border and inner glow.
+ */
+@Composable
+fun GlassCard(
+    modifier: Modifier = Modifier,
+    containerColor: Color = MaterialTheme.colorScheme.surface,
+    borderColor: Color = Color.White.copy(alpha = 0.2f),
+    cornerRadius: androidx.compose.ui.unit.Dp = 24.dp,
+    content: @Composable () -> Unit,
+) {
+    Box(
+        modifier =
+            modifier
+                .background(
+                    brush =
+                        Brush.verticalGradient(
+                            colors =
+                                listOf(
+                                    containerColor.copy(alpha = 0.7f),
+                                    containerColor.copy(alpha = 0.4f),
+                                ),
+                        ),
+                    shape = RoundedCornerShape(cornerRadius),
+                ).drawBehind {
+                    drawRoundRect(
+                        color = borderColor,
+                        style = Stroke(width = 1.dp.toPx()),
+                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(cornerRadius.toPx()),
+                    )
+                }.clip(RoundedCornerShape(cornerRadius)),
+    ) {
+        content()
+    }
 }
 
 /**

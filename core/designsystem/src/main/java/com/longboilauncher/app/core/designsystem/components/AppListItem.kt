@@ -42,6 +42,7 @@ fun AppListItem(
     val alpha = if (app.isArchived) 0.5f else 1f
 
     val themeType = LocalThemeType.current
+    val isGlass = themeType == ThemeType.GLASSMORPHISM
     val containerColor =
         when (themeType) {
             ThemeType.GLASSMORPHISM -> Color.White.copy(alpha = 0.1f)
@@ -49,6 +50,11 @@ fun AppListItem(
             ThemeType.SOPHISTICATED_SLEEK -> Color.Transparent
             ThemeType.MODERN_MINIMALIST -> Color.Transparent
             else -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+        }
+    val contentColor =
+        when (themeType) {
+            ThemeType.GLASSMORPHISM -> Color.White
+            else -> MaterialTheme.colorScheme.onSurface
         }
     val shape =
         when (themeType) {
@@ -62,56 +68,76 @@ fun AppListItem(
             else -> Modifier
         }
 
-    Card(
-        modifier =
-            modifier
-                .scale(scale)
-                .alpha(alpha)
-                .fillMaxWidth()
-                .then(borderStroke),
-        shape = shape,
-        colors =
-            CardDefaults.cardColors(
-                containerColor = containerColor,
-            ),
-        elevation =
-            CardDefaults.cardElevation(
-                defaultElevation = 0.dp,
-                pressedElevation = 1.dp,
-            ),
-    ) {
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            // App Icon
-            AppIcon(
-                appEntry = app,
-                size = 48.dp,
-            )
+    val itemContent =
+        @Composable {
+            Row(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                // App Icon
+                AppIcon(
+                    appEntry = app,
+                    size = 48.dp,
+                )
 
-            // App Label
-            Text(
-                text = app.label,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onSurface,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f),
-            )
+                // App Label
+                Text(
+                    text = app.label,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Medium,
+                    color = contentColor,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f),
+                )
 
-            // Profile Badge
-            ProfileBadge(profile = app.profile)
+                // Profile Badge
+                ProfileBadge(profile = app.profile)
 
-            // Status Indicators
-            if (app.isArchived) {
-                ArchivedIndicator()
+                // Status Indicators
+                if (app.isArchived) {
+                    ArchivedIndicator()
+                }
             }
+        }
+
+    if (isGlass) {
+        GlassCard(
+            modifier =
+                modifier
+                    .scale(scale)
+                    .alpha(alpha)
+                    .fillMaxWidth(),
+            containerColor = Color.White.copy(alpha = 0.05f),
+            borderColor = Color.White.copy(alpha = 0.1f),
+            cornerRadius = 12.dp,
+        ) {
+            itemContent()
+        }
+    } else {
+        Card(
+            modifier =
+                modifier
+                    .scale(scale)
+                    .alpha(alpha)
+                    .fillMaxWidth()
+                    .then(borderStroke),
+            shape = shape,
+            colors =
+                CardDefaults.cardColors(
+                    containerColor = containerColor,
+                ),
+            elevation =
+                CardDefaults.cardElevation(
+                    defaultElevation = 0.dp,
+                    pressedElevation = 1.dp,
+                ),
+        ) {
+            itemContent()
         }
     }
 }

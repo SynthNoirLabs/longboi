@@ -31,8 +31,10 @@ import androidx.compose.ui.unit.dp
 import com.longboilauncher.app.core.designsystem.components.ActionsSheet
 import com.longboilauncher.app.core.designsystem.components.FavoriteAppItem
 import com.longboilauncher.app.core.designsystem.components.GlanceHeader
+import com.longboilauncher.app.core.designsystem.components.GlassSurface
 import com.longboilauncher.app.core.designsystem.components.ThemeBackground
 import com.longboilauncher.app.core.model.AppEntry
+import com.longboilauncher.app.core.model.ThemeType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,6 +53,8 @@ fun HomeScreen(
     }
 
     ThemeBackground(themeType = uiState.theme) {
+        val isGlass = uiState.theme == ThemeType.GLASSMORPHISM
+
         Surface(
             modifier =
                 Modifier
@@ -128,7 +132,14 @@ fun HomeScreen(
                         Text(
                             text = stringResource(id = com.longboilauncher.core.designsystem.R.string.swipe_up_hint),
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                            color =
+                                if (isGlass) {
+                                    Color.White.copy(alpha = 0.6f)
+                                } else {
+                                    MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                                        alpha = 0.6f,
+                                    )
+                                },
                             textAlign = TextAlign.Center,
                             modifier =
                                 Modifier

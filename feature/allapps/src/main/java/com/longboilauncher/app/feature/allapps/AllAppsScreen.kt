@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -38,6 +38,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalView
@@ -48,10 +49,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.longboilauncher.app.core.designsystem.components.AppListItem
+import com.longboilauncher.app.core.designsystem.components.GlassSurface
 import com.longboilauncher.app.core.designsystem.components.ThemeBackground
 import com.longboilauncher.app.core.designsystem.theme.LocalThemeType
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.model.ThemeType
+import com.longboilauncher.app.core.designsystem.effects.StaggeredSlideIn
 import com.longboilauncher.app.core.common.HapticFeedbackManager
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -114,6 +117,8 @@ fun AllAppsScreen(
                     Color.Transparent
                 },
         ) {
+            val isGlass = LocalThemeType.current == ThemeType.GLASSMORPHISM
+
             Column(modifier = Modifier.fillMaxSize()) {
                 OutlinedTextField(
                     value = uiState.searchQuery,
@@ -153,35 +158,29 @@ fun AllAppsScreen(
                     shape = RoundedCornerShape(24.dp),
                     colors =
                         OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = if (isGlass) Color.White else Color.Unspecified,
+                            unfocusedTextColor = if (isGlass) Color.White else Color.Unspecified,
                             focusedBorderColor =
-                                if (LocalThemeType.current ==
-                                    ThemeType.GLASSMORPHISM
-                                ) {
-                                    Color.White
+                                if (isGlass) {
+                                    Color.White.copy(alpha = 0.6f)
                                 } else {
                                     MaterialTheme.colorScheme.primary
                                 },
                             unfocusedBorderColor =
-                                if (LocalThemeType.current ==
-                                    ThemeType.GLASSMORPHISM
-                                ) {
+                                if (isGlass) {
                                     Color.White.copy(alpha = 0.3f)
                                 } else {
                                     MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
                                 },
                             focusedContainerColor =
-                                if (LocalThemeType.current ==
-                                    ThemeType.GLASSMORPHISM
-                                ) {
-                                    Color.White.copy(alpha = 0.1f)
+                                if (isGlass) {
+                                    Color.White.copy(alpha = 0.15f)
                                 } else {
                                     Color.Transparent
                                 },
                             unfocusedContainerColor =
-                                if (LocalThemeType.current ==
-                                    ThemeType.GLASSMORPHISM
-                                ) {
-                                    Color.White.copy(alpha = 0.05f)
+                                if (isGlass) {
+                                    Color.White.copy(alpha = 0.08f)
                                 } else {
                                     Color.Transparent
                                 },
@@ -201,40 +200,46 @@ fun AllAppsScreen(
                                 .fillMaxSize()
                                 .padding(end = 36.dp),
                     ) {
-                        items(
+                        itemsIndexed(
                             items = flatList,
-                            key = { item ->
+                            key = { _, item ->
                                 when (item) {
                                     is ListItem.Header -> "header_${item.letter}"
                                     is ListItem.App -> "${item.app.packageName}_${item.app.userSerialNumber}"
                                 }
                             },
-                            contentType = { item ->
+                            contentType = { _, item ->
                                 when (item) {
                                     is ListItem.Header -> "header"
                                     is ListItem.App -> "app"
                                 }
                             },
-                        ) { item ->
-                            when (item) {
-                                is ListItem.Header -> {
-                                    SectionHeader(
-                                        letter = item.letter,
-                                        modifier =
-                                            Modifier
-                                                .fillMaxWidth()
-                                                .padding(horizontal = 16.dp, vertical = 8.dp),
-                                    )
-                                }
-                                is ListItem.App -> {
-                                    AppListItem(
-                                        app = item.app,
-                                        modifier =
-                                            Modifier
-                                                .fillMaxWidth()
-                                                .clickable { onAppSelected(item.app) }
-                                                .padding(horizontal = 8.dp, vertical = 2.dp),
-                                    )
+                        ) { index, item ->
+                            StaggeredSlideIn(
+                                index = index,
+                                totalItems = flatList.size,
+                            ) {
+                                when (item) {
+                                    is ListItem.Header -> {
+                                        SectionHeader(
+                                            letter = item.letter,
+                                            isGlass = isGlass,
+                                            modifier =
+                                                Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                                        )
+                                    }
+                                    is ListItem.App -> {
+                                        AppListItem(
+                                            app = item.app,
+                                            modifier =
+                                                Modifier
+                                                    .fillMaxWidth()
+                                                    .clickable { onAppSelected(item.app) }
+                                                    .padding(horizontal = 8.dp, vertical = 2.dp),
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -302,13 +307,14 @@ private sealed class ListItem {
 @Composable
 private fun SectionHeader(
     letter: String,
+    isGlass: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     Text(
         text = letter,
         style = MaterialTheme.typography.titleLarge,
         fontWeight = FontWeight.Bold,
-        color = MaterialTheme.colorScheme.primary,
+        color = if (isGlass) Color.White else MaterialTheme.colorScheme.primary,
         modifier = modifier,
     )
 }
@@ -323,13 +329,23 @@ private fun AlphabetScrubber(
     modifier: Modifier = Modifier,
 ) {
     val view = LocalView.current
+    val isGlass = LocalThemeType.current == ThemeType.GLASSMORPHISM
 
     Box(
         modifier =
             modifier
-                .background(
-                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-                    shape = RoundedCornerShape(16.dp),
+                .then(
+                    if (isGlass) {
+                        Modifier.background(
+                            color = Color.White.copy(alpha = 0.1f),
+                            shape = RoundedCornerShape(16.dp),
+                        )
+                    } else {
+                        Modifier.background(
+                            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                            shape = RoundedCornerShape(16.dp),
+                        )
+                    },
                 ).padding(horizontal = 4.dp, vertical = 8.dp)
                 .pointerInput(letters) {
                     if (letters.isEmpty()) return@pointerInput
@@ -389,9 +405,9 @@ private fun AlphabetScrubber(
                     fontWeight = if (letter == currentLetter) FontWeight.Bold else FontWeight.Normal,
                     color =
                         if (letter == currentLetter) {
-                            MaterialTheme.colorScheme.primary
+                            if (isGlass) Color.White else MaterialTheme.colorScheme.primary
                         } else {
-                            MaterialTheme.colorScheme.onSurfaceVariant
+                            if (isGlass) Color.White.copy(alpha = 0.5f) else MaterialTheme.colorScheme.onSurfaceVariant
                         },
                     textAlign = TextAlign.Center,
                     modifier =
@@ -414,21 +430,40 @@ private fun FloatingLetterIndicator(
     letter: String,
     modifier: Modifier = Modifier,
 ) {
-    Box(
-        modifier =
-            modifier
-                .size(96.dp)
-                .background(
-                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.9f),
-                    shape = RoundedCornerShape(24.dp),
-                ),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            text = letter,
-            style = MaterialTheme.typography.headlineLarge,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+    val isGlass = LocalThemeType.current == ThemeType.GLASSMORPHISM
+    val content =
+        @Composable {
+            Box(
+                modifier = Modifier.size(96.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = letter,
+                    style = MaterialTheme.typography.headlineLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = if (isGlass) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+
+    if (isGlass) {
+        GlassSurface(
+            modifier =
+                modifier
+                    .clip(RoundedCornerShape(24.dp)),
+            backgroundColor = Color.Black.copy(alpha = 0.3f),
+            content = content,
         )
+    } else {
+        Box(
+            modifier =
+                modifier
+                    .background(
+                        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.9f),
+                        shape = RoundedCornerShape(24.dp),
+                    ),
+        ) {
+            content()
+        }
     }
 }
