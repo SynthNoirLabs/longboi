@@ -2,70 +2,106 @@ package com.longboilauncher.app
 
 import android.graphics.Bitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.test.captureToImage
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onRoot
-import androidx.compose.ui.test.performTouchInput
-import androidx.compose.ui.test.swipeUp
-import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.compose.ui.test.*
+import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.platform.app.InstrumentationRegistry
-import dagger.hilt.android.testing.HiltAndroidRule
-import dagger.hilt.android.testing.HiltAndroidTest
+import com.longboilauncher.app.core.common.HapticFeedbackManager
+import com.longboilauncher.app.core.common.LauncherRoleHelper
+import com.longboilauncher.app.core.designsystem.theme.LongboiLauncherTheme
+import com.longboilauncher.app.feature.allapps.AllAppsState
+import com.longboilauncher.app.feature.allapps.AllAppsViewModel
+import com.longboilauncher.app.feature.home.HomeState
+import com.longboilauncher.app.feature.home.HomeViewModel
+import com.longboilauncher.app.feature.home.LauncherSurface
+import com.longboilauncher.app.feature.onboarding.OnboardingEffect
+import com.longboilauncher.app.feature.onboarding.OnboardingState
+import com.longboilauncher.app.feature.onboarding.OnboardingViewModel
+import com.longboilauncher.app.feature.searchui.SearchState
+import com.longboilauncher.app.feature.searchui.SearchViewModel
+import com.longboilauncher.app.feature.settingsui.SettingsState
+import com.longboilauncher.app.feature.settingsui.SettingsViewModel
+import io.mockk.every
+import io.mockk.mockk
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 import java.io.File
 import java.io.FileOutputStream
 
 /**
  * Instrumented test to generate screenshots of the app.
- * Run this test and then pull the screenshots from /sdcard/LongboiScreenshots/
+ * Tests LauncherApp composable directly to avoid Activity lifecycle issues.
  */
-@HiltAndroidTest
-@RunWith(AndroidJUnit4::class)
 class ScreenshotGeneratorTest {
-    @get:Rule(order = 0)
-    val hiltRule = HiltAndroidRule(this)
+    @get:Rule
+    val composeTestRule = createComposeRule()
 
-    @get:Rule(order = 1)
-    val composeTestRule = createAndroidComposeRule<MainActivity>()
+    private val hapticFeedbackManager = mockk<HapticFeedbackManager>(relaxed = true)
+    private val roleHelper = mockk<LauncherRoleHelper>(relaxed = true)
+    private val homeViewModel = mockk<HomeViewModel>(relaxed = true)
+    private val allAppsViewModel = mockk<AllAppsViewModel>(relaxed = true)
+    private val searchViewModel = mockk<SearchViewModel>(relaxed = true)
+    private val settingsViewModel = mockk<SettingsViewModel>(relaxed = true)
+    private val onboardingViewModel = mockk<OnboardingViewModel>(relaxed = true)
+
+    private val uiState = MutableStateFlow(HomeState(isLoading = false))
+    private val shouldRequestRole = MutableStateFlow(false)
 
     private lateinit var screenshotDir: File
 
     @Before
     fun setup() {
-        hiltRule.inject()
+        every { homeViewModel.uiState } returns uiState
+        every { roleHelper.shouldRequestRole } returns shouldRequestRole
+        every { allAppsViewModel.uiState } returns MutableStateFlow(AllAppsState())
+        every { searchViewModel.uiState } returns MutableStateFlow(SearchState())
+        every { settingsViewModel.uiState } returns MutableStateFlow(SettingsState())
+        every { onboardingViewModel.uiState } returns MutableStateFlow(OnboardingState())
+        every { onboardingViewModel.effects } returns MutableSharedFlow<OnboardingEffect>()
+
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         screenshotDir = File(context.filesDir, "screenshots")
-        println("DEBUG: Screenshot directory: ${screenshotDir.absolutePath}")
         if (!screenshotDir.exists()) {
-            val created = screenshotDir.mkdirs()
-            println("DEBUG: Directory created: $created")
+            screenshotDir.mkdirs()
         }
     }
 
     @Test
     fun generateScreenshots() {
-        // Wait for app to be ready and idle
-        composeTestRule.waitForIdle()
-        Thread.sleep(1000) // Give animations time to settle
-
         // 1. Home Screen
-        takeScreenshot("01_home_screen")
-
-        // 2. All Apps Screen (Niagara style: just scroll down a bit)
-        composeTestRule.onRoot().performTouchInput {
-            swipeUp(startY = 1500f, endY = 500f, durationMillis = 500)
+        uiState.value = HomeState(isLoading = false, currentSurface = LauncherSurface.HOME)
+        composeTestRule.setContent {
+            LongboiLauncherTheme {
+                LauncherApp(
+                    hapticFeedbackManager = hapticFeedbackManager,
+                    homeViewModel = homeViewModel,
+                    roleHelper = roleHelper,
+                    allAppsViewModel = allAppsViewModel,
+                    searchViewModel = searchViewModel,
+                    settingsViewModel = settingsViewModel,
+                    onboardingViewModel = onboardingViewModel,
+                )
+            }
         }
         composeTestRule.waitForIdle()
-        Thread.sleep(500)
+        takeScreenshot("01_home_screen")
+
+        // 2. All Apps Screen
+        uiState.value = HomeState(isLoading = false, currentSurface = LauncherSurface.ALL_APPS)
+        composeTestRule.waitForIdle()
         takeScreenshot("02_all_apps")
 
         // 3. Settings Screen
-        // We can't easily click through to settings in a generic way if the icon is dynamic,
-        // but we can navigate via activity if we wanted.
-        // For now, let's focus on the main UI parts.
+        uiState.value = HomeState(isLoading = false, currentSurface = LauncherSurface.SETTINGS)
+        composeTestRule.waitForIdle()
+        takeScreenshot("03_settings")
+
+        // 4. Onboarding
+        uiState.value = HomeState(isLoading = false, currentSurface = LauncherSurface.ONBOARDING)
+        composeTestRule.waitForIdle()
+        takeScreenshot("04_onboarding")
     }
 
     private fun takeScreenshot(name: String) {

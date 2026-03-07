@@ -25,10 +25,10 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -37,7 +37,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.longboilauncher.app.core.designsystem.components.AppListItem
@@ -57,9 +59,10 @@ fun SearchScreen(
         focusRequester.requestFocus()
     }
 
+    // Immersive Overlay with deep blur/dim
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background.copy(alpha = 0.95f),
+        color = Color.Black.copy(alpha = 0.85f),
     ) {
         Column(
             modifier =
@@ -67,28 +70,29 @@ fun SearchScreen(
                     .fillMaxSize()
                     .imePadding(),
         ) {
-            Spacer(modifier = Modifier.height(48.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
-            // Search field
-            OutlinedTextField(
+            // Minimalist Command Input
+            TextField(
                 value = uiState.searchQuery,
                 onValueChange = { onEvent(SearchEvent.UpdateSearchQuery(it)) },
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
+                        .padding(horizontal = 8.dp)
                         .focusRequester(focusRequester),
                 placeholder = {
                     Text(
-                        text = "Search apps...",
+                        text = "Search apps, settings...",
                         style = MaterialTheme.typography.bodyLarge,
+                        color = Color.White.copy(alpha = 0.5f),
                     )
                 },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = "Search",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint = Color.White.copy(alpha = 0.6f),
                     )
                 },
                 trailingIcon = {
@@ -97,16 +101,13 @@ fun SearchScreen(
                             Icon(
                                 imageVector = Icons.Default.Close,
                                 contentDescription = "Clear",
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                tint = Color.White.copy(alpha = 0.6f),
                             )
                         }
                     }
                 },
                 singleLine = true,
-                keyboardOptions =
-                    KeyboardOptions(
-                        imeAction = ImeAction.Search,
-                    ),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                 keyboardActions =
                     KeyboardActions(
                         onSearch = {
@@ -118,7 +119,7 @@ fun SearchScreen(
                                         onEvent(
                                             SearchEvent.LaunchShortcut(first.app, first.shortcutId),
                                         )
-                                    is SearchResult.CalculatorResult -> { /* No action on search */ }
+                                    is SearchResult.CalculatorResult -> { /* No action */ }
                                     is SearchResult.SettingsShortcutResult ->
                                         onEvent(
                                             SearchEvent.OpenSettings(first.destination),
@@ -128,104 +129,87 @@ fun SearchScreen(
                         },
                     ),
                 colors =
-                    OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = MaterialTheme.colorScheme.primary,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                    TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        disabledContainerColor = Color.Transparent,
+                        focusedIndicatorColor = Color.White.copy(alpha = 0.2f),
+                        unfocusedIndicatorColor = Color.White.copy(alpha = 0.1f),
+                        cursorColor = Color.White,
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White,
                     ),
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Results
+            // Dynamic Results
             if (uiState.searchQuery.isNotEmpty()) {
+                val groupedResults =
+                    remember(uiState.searchResults) {
+                        uiState.searchResults.groupBy {
+                            when (it) {
+                                is SearchResult.AppResult -> "APPS"
+                                is SearchResult.ShortcutResult -> "SHORTCUTS"
+                                is SearchResult.CalculatorResult -> "CALCULATOR"
+                                is SearchResult.SettingsShortcutResult -> "SETTINGS"
+                            }
+                        }
+                    }
+
                 if (uiState.searchResults.isEmpty()) {
                     Box(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(32.dp),
+                        modifier = Modifier.fillMaxWidth().padding(top = 64.dp),
                         contentAlignment = Alignment.Center,
                     ) {
-                        Text(
-                            text = "No results",
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
+                        Text("No results found", color = Color.White.copy(alpha = 0.4f))
                     }
                 } else {
                     LazyColumn(
-                        modifier =
-                            Modifier
-                                .fillMaxSize()
-                                .padding(horizontal = 8.dp),
-                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Top,
                     ) {
-                        items(
-                            items = uiState.searchResults,
-                            key = { result ->
+                        groupedResults.forEach { (category, results) ->
+                            item {
+                                Text(
+                                    text = category,
+                                    style = MaterialTheme.typography.labelLarge,
+                                    color = Color.White.copy(alpha = 0.3f),
+                                    modifier = Modifier.padding(start = 24.dp, top = 24.dp, bottom = 8.dp),
+                                )
+                            }
+                            items(results) { result ->
                                 when (result) {
-                                    is SearchResult.AppResult ->
-                                        "app_${result.app.packageName}_${result.app.userSerialNumber}"
-                                    is SearchResult.ShortcutResult ->
-                                        "shortcut_${result.app.packageName}_${result.shortcutId}"
-                                    is SearchResult.CalculatorResult ->
-                                        "calc_${result.expression}"
-                                    is SearchResult.SettingsShortcutResult ->
-                                        "settings_${result.destination}"
-                                }
-                            },
-                        ) { result ->
-                            when (result) {
-                                is SearchResult.AppResult -> {
-                                    AppListItem(
-                                        app = result.app,
-                                        modifier =
-                                            Modifier
-                                                .fillMaxWidth()
-                                                .clickable {
+                                    is SearchResult.AppResult -> {
+                                        AppListItem(
+                                            app = result.app,
+                                            modifier =
+                                                Modifier.fillMaxWidth().clickable {
                                                     keyboardController?.hide()
                                                     onAppSelected(result.app)
                                                 },
-                                    )
-                                }
-                                is SearchResult.ShortcutResult -> {
-                                    // TODO: Implement shortcut UI
-                                }
-                                is SearchResult.CalculatorResult -> {
-                                    CalculatorResultItem(
-                                        expression = result.expression,
-                                        resultValue = result.result,
-                                        modifier = Modifier.fillMaxWidth(),
-                                    )
-                                }
-                                is SearchResult.SettingsShortcutResult -> {
-                                    SettingsShortcutItem(
-                                        title = result.title,
-                                        onClick = {
-                                            keyboardController?.hide()
-                                            onEvent(SearchEvent.OpenSettings(result.destination))
-                                        },
-                                        modifier = Modifier.fillMaxWidth(),
-                                    )
+                                        )
+                                    }
+                                    is SearchResult.ShortcutResult -> { /* TODO */ }
+                                    is SearchResult.CalculatorResult -> {
+                                        CalculatorResultItem(
+                                            expression = result.expression,
+                                            resultValue = result.result,
+                                            modifier = Modifier.fillMaxWidth(),
+                                        )
+                                    }
+                                    is SearchResult.SettingsShortcutResult -> {
+                                        SettingsShortcutItem(
+                                            title = result.title,
+                                            onClick = {
+                                                keyboardController?.hide()
+                                                onEvent(SearchEvent.OpenSettings(result.destination))
+                                            },
+                                            modifier = Modifier.fillMaxWidth(),
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            } else {
-                // Show hint when empty
-                Box(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(32.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(
-                        text = "Type to search apps, settings, or calculate",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
                 }
             }
         }
@@ -238,29 +222,28 @@ private fun CalculatorResultItem(
     resultValue: String,
     modifier: Modifier = Modifier,
 ) {
-    androidx.compose.foundation.layout.Row(
-        modifier =
-            modifier
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+    Row(
+        modifier = modifier.padding(horizontal = 24.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             imageVector = Icons.Default.Calculate,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(24.dp),
+            tint = Color.White.copy(alpha = 0.6f),
+            modifier = Modifier.size(28.dp),
         )
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(20.dp))
         Column {
             Text(
                 text = expression,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = Color.White.copy(alpha = 0.5f),
             )
             Text(
                 text = "= $resultValue",
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
             )
         }
     }
@@ -272,57 +255,24 @@ private fun SettingsShortcutItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    androidx.compose.foundation.layout.Row(
+    Row(
         modifier =
             modifier
                 .clickable { onClick() }
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+                .padding(horizontal = 24.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             imageVector = Icons.Default.Settings,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(24.dp),
+            tint = Color.White.copy(alpha = 0.6f),
+            modifier = Modifier.size(28.dp),
         )
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(20.dp))
         Text(
             text = title,
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
-    }
-}
-
-@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
-@androidx.compose.runtime.Composable
-private fun SearchScreenEmptyPreview() {
-    com.longboilauncher.app.core.designsystem.theme.LongboiLauncherTheme {
-        SearchScreen(
-            uiState = SearchState(searchQuery = ""),
-            onEvent = {},
-            onAppSelected = {},
-            onDismiss = {},
-        )
-    }
-}
-
-@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
-@androidx.compose.runtime.Composable
-private fun SearchScreenResultsPreview() {
-    com.longboilauncher.app.core.designsystem.theme.LongboiLauncherTheme {
-        SearchScreen(
-            uiState =
-                SearchState(
-                    searchQuery = "youtube",
-                    searchResults =
-                        listOf(
-                            SearchResult.CalculatorResult(expression = "1+1", result = "2"),
-                        ),
-                ),
-            onEvent = {},
-            onAppSelected = {},
-            onDismiss = {},
+            color = Color.White,
         )
     }
 }

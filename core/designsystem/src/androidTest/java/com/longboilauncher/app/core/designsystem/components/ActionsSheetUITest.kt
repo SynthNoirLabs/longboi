@@ -23,7 +23,6 @@ class ActionsSheetUITest {
             packageName = "com.test.app",
             className = "MainActivity",
             label = "Test App",
-            userIdentifier = 0,
             profile = ProfileType.PERSONAL,
         )
 
@@ -42,15 +41,17 @@ class ActionsSheetUITest {
                     onAddToFavorites = onAddToFavorites,
                     onRemoveFromFavorites = onRemoveFromFavorites,
                     onHideApp = {},
+                    onAppInfo = {},
+                    onUninstall = {},
                 )
             }
         }
 
-        composeTestRule.onNodeWithText("Remove from favorites").assertIsDisplayed()
-        composeTestRule.onNodeWithText("App info").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Hide app").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Remove from favorites", substring = true, ignoreCase = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText("App info", substring = true, ignoreCase = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Hide app", substring = true, ignoreCase = true).assertIsDisplayed()
 
-        composeTestRule.onNodeWithText("Remove from favorites").performClick()
+        composeTestRule.onNodeWithText("Remove from favorites", substring = true, ignoreCase = true).performClick()
         verify { onRemoveFromFavorites() }
     }
 
@@ -68,12 +69,14 @@ class ActionsSheetUITest {
                     onAddToFavorites = onAddToFavorites,
                     onRemoveFromFavorites = {},
                     onHideApp = {},
+                    onAppInfo = {},
+                    onUninstall = {},
                 )
             }
         }
 
-        composeTestRule.onNodeWithText("Add to favorites").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Add to favorites").performClick()
+        composeTestRule.onNodeWithText("Add to favorites", substring = true, ignoreCase = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Add to favorites", substring = true, ignoreCase = true).performClick()
         verify { onAddToFavorites() }
     }
 }

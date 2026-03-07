@@ -1,0 +1,172 @@
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .bg-mesh {
+            background-color: #101622;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(19, 91, 236, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(19, 91, 236, 0.1) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(19, 91, 236, 0.05) 0px, transparent 50%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-mesh overflow-x-hidden">
+<!-- Header Section -->
+<div class="flex items-center p-6 pb-2 justify-between sticky top-0 z-10 backdrop-blur-md bg-background-dark/20">
+<div class="flex items-center gap-4">
+<a class="flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors" href="#">
+<span class="material-symbols-outlined">arrow_back</span>
+</a>
+<h1 class="text-2xl font-light tracking-tight">Settings</h1>
+</div>
+<div class="text-xs font-medium uppercase tracking-widest text-primary/60">Longboi v1</div>
+</div>
+<div class="flex flex-col gap-6 p-4 pb-24">
+<!-- Theme Card -->
+<section class="flex flex-col gap-4">
+<h2 class="px-2 text-sm font-medium uppercase tracking-[0.2em] text-slate-400">Theme &amp; Style</h2>
+<div class="glass-card rounded-xl p-5 flex flex-col gap-6">
+<div class="flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<span class="text-base font-light">Blur Intensity</span>
+<span class="text-primary text-sm font-medium">85%</span>
+</div>
+<div class="relative flex h-6 w-full items-center">
+<div class="h-1 w-full rounded-full bg-primary/20">
+<div class="h-full w-[85%] rounded-full bg-primary relative">
+<div class="absolute right-0 -top-2 size-5 rounded-full bg-white shadow-lg border-2 border-primary"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<span class="text-base font-light">Color Mode</span>
+<span class="text-xs text-slate-500">Auto switch based on wallpaper</span>
+</div>
+<div class="w-12 h-6 rounded-full bg-primary relative flex items-center px-1">
+<div class="absolute right-1 size-4 rounded-full bg-white shadow-sm"></div>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-white/5">
+<span class="text-base font-light">Glass Opacity</span>
+<span class="text-primary text-sm font-medium">12%</span>
+</div>
+</div>
+</section>
+<!-- Layout Card -->
+<section class="flex flex-col gap-4">
+<h2 class="px-2 text-sm font-medium uppercase tracking-[0.2em] text-slate-400">Layout</h2>
+<div class="glass-card rounded-xl p-5 flex flex-col gap-5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary/60">grid_view</span>
+<span class="text-base font-light">Grid Size</span>
+</div>
+<div class="flex items-center gap-4 bg-primary/10 rounded-lg px-3 py-1">
+<span class="text-sm font-medium">4 x 6</span>
+<span class="material-symbols-outlined text-xs">expand_more</span>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary/60">star</span>
+<span class="text-base font-light">Favorite Apps Count</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="size-8 rounded-full border border-white/10 flex items-center justify-center">-</button>
+<span class="text-base font-medium">5</span>
+<button class="size-8 rounded-full border border-white/10 flex items-center justify-center">+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Icons Card -->
+<section class="flex flex-col gap-4">
+<h2 class="px-2 text-sm font-medium uppercase tracking-[0.2em] text-slate-400">Icons</h2>
+<div class="glass-card rounded-xl overflow-hidden">
+<div class="p-5 flex items-center justify-between hover:bg-white/5 transition-colors cursor-pointer">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary/60">category</span>
+<span class="text-base font-light">Icon Pack</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-sm text-slate-500">Longboi Minimal</span>
+<span class="material-symbols-outlined text-sm text-slate-500">chevron_right</span>
+</div>
+</div>
+<div class="px-5 py-4 border-t border-white/5 flex items-center justify-between">
+<span class="text-base font-light">Icon Labels</span>
+<div class="w-12 h-6 rounded-full bg-slate-700 relative flex items-center px-1">
+<div class="absolute left-1 size-4 rounded-full bg-white shadow-sm"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Gestures Card -->
+<section class="flex flex-col gap-4">
+<h2 class="px-2 text-sm font-medium uppercase tracking-[0.2em] text-slate-400">Gestures</h2>
+<div class="glass-card rounded-xl p-5 flex flex-col gap-4">
+<div class="flex items-center justify-between opacity-80">
+<span class="text-base font-light">Double Tap</span>
+<span class="text-sm text-primary">Lock Screen</span>
+</div>
+<div class="flex items-center justify-between opacity-80">
+<span class="text-base font-light">Swipe Down</span>
+<span class="text-sm text-primary">Notifications</span>
+</div>
+</div>
+</section>
+</div>
+<!-- Navigation Bar -->
+<nav class="fixed bottom-0 left-0 right-0 glass-card border-t border-white/10 px-4 pb-8 pt-4 flex items-center justify-around z-20">
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">home</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">search</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">history</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">settings</span>
+</a>
+</nav>
+</div>
+</body></html>

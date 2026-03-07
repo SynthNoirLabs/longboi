@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .slider-thumb::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #ffffff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(19, 91, 236, 0.5);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-x-hidden">
+<!-- Header -->
+<div class="flex items-center p-6 pb-2 justify-between">
+<button class="text-slate-900 dark:text-slate-100 flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined">arrow_back_ios_new</span>
+</button>
+<h2 class="text-slate-900 dark:text-slate-100 text-xl font-light leading-tight tracking-tight flex-1 text-center pr-10">Theme</h2>
+</div>
+<!-- Preview Section -->
+<div class="p-6 @container">
+<div class="relative flex flex-col items-stretch justify-start rounded-xl overflow-hidden shadow-2xl bg-slate-200 dark:bg-slate-900 min-h-[240px]">
+<!-- Abstract Background for Preview -->
+<div class="absolute inset-0 z-0 bg-gradient-to-tr from-primary/40 via-purple-600/20 to-blue-400/30" data-alt="Abstract gradient background with soft blues and purples"></div>
+<!-- Glassmorphism Preview Card -->
+<div class="relative z-10 m-6 p-6 glass-card rounded-xl flex flex-col gap-4">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-white/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-white">auto_awesome</span>
+</div>
+<div class="flex flex-col">
+<p class="text-white text-lg font-semibold tracking-tight">Longboi UI</p>
+<p class="text-white/60 text-xs font-light">Minimalist Launcher</p>
+</div>
+</div>
+<div class="h-2 w-full bg-white/10 rounded-full overflow-hidden">
+<div class="h-full w-2/3 bg-white/40"></div>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex -space-x-2">
+<div class="size-6 rounded-full border border-white/20 bg-primary/40"></div>
+<div class="size-6 rounded-full border border-white/20 bg-slate-400/40"></div>
+</div>
+<span class="text-[10px] text-white/50 uppercase tracking-widest font-bold">Active</span>
+</div>
+</div>
+<div class="relative z-10 px-6 pb-6 mt-auto">
+<p class="text-white text-sm font-medium">Real-time Preview</p>
+<p class="text-white/60 text-xs">Glassmorphism effect active</p>
+</div>
+</div>
+</div>
+<!-- Controls Section -->
+<div class="flex flex-col gap-1 px-6">
+<h3 class="text-slate-900 dark:text-slate-100 text-xs font-bold uppercase tracking-widest opacity-50 pb-2">Appearance</h3>
+<!-- Blur Intensity -->
+<div class="py-4 border-b border-slate-200 dark:border-slate-800">
+<div class="flex justify-between items-center mb-4">
+<p class="text-slate-700 dark:text-slate-300 text-sm font-medium">Blur Intensity</p>
+<p class="text-primary text-sm font-bold">60%</p>
+</div>
+<div class="relative w-full h-1 bg-slate-200 dark:bg-slate-800 rounded-full">
+<div class="absolute top-0 left-0 h-full w-[60%] bg-primary rounded-full shadow-[0_0_8px_rgba(19,91,236,0.4)]"></div>
+<div class="absolute top-1/2 left-[60%] -translate-y-1/2 -translate-x-1/2 size-4 bg-white rounded-full border-2 border-primary shadow-lg"></div>
+</div>
+</div>
+<!-- Saturation -->
+<div class="py-4 border-b border-slate-200 dark:border-slate-800">
+<div class="flex justify-between items-center mb-4">
+<p class="text-slate-700 dark:text-slate-300 text-sm font-medium">Saturation</p>
+<p class="text-primary text-sm font-bold">40%</p>
+</div>
+<div class="relative w-full h-1 bg-slate-200 dark:bg-slate-800 rounded-full">
+<div class="absolute top-0 left-0 h-full w-[40%] bg-primary rounded-full shadow-[0_0_8px_rgba(19,91,236,0.4)]"></div>
+<div class="absolute top-1/2 left-[40%] -translate-y-1/2 -translate-x-1/2 size-4 bg-white rounded-full border-2 border-primary shadow-lg"></div>
+</div>
+</div>
+<!-- Card Transparency -->
+<div class="py-4 border-b border-slate-200 dark:border-slate-800">
+<div class="flex justify-between items-center mb-4">
+<p class="text-slate-700 dark:text-slate-300 text-sm font-medium">Card Transparency</p>
+<p class="text-primary text-sm font-bold">15%</p>
+</div>
+<div class="relative w-full h-1 bg-slate-200 dark:bg-slate-800 rounded-full">
+<div class="absolute top-0 left-0 h-full w-[15%] bg-primary rounded-full shadow-[0_0_8px_rgba(19,91,236,0.4)]"></div>
+<div class="absolute top-1/2 left-[15%] -translate-y-1/2 -translate-x-1/2 size-4 bg-white rounded-full border-2 border-primary shadow-lg"></div>
+</div>
+</div>
+</div>
+<!-- Accent Color Selection -->
+<div class="p-6">
+<h3 class="text-slate-900 dark:text-slate-100 text-xs font-bold uppercase tracking-widest opacity-50 pb-4">Accent Color</h3>
+<div class="flex gap-4 items-center">
+<div class="size-8 rounded-full bg-primary ring-2 ring-primary ring-offset-4 ring-offset-background-light dark:ring-offset-background-dark"></div>
+<div class="size-8 rounded-full bg-purple-500"></div>
+<div class="size-8 rounded-full bg-rose-500"></div>
+<div class="size-8 rounded-full bg-emerald-500"></div>
+<div class="size-8 rounded-full bg-amber-500"></div>
+<button class="size-8 rounded-full border-2 border-dashed border-slate-400 dark:border-slate-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-sm text-slate-400">add</span>
+</button>
+</div>
+</div>
+<!-- Mode Toggle -->
+<div class="mx-6 mb-12 p-1 bg-slate-200 dark:bg-slate-800 rounded-xl flex">
+<button class="flex-1 py-3 flex items-center justify-center gap-2 text-sm font-medium text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-lg">light_mode</span>
+                Light
+            </button>
+<button class="flex-1 py-3 flex items-center justify-center gap-2 text-sm font-bold bg-white dark:bg-slate-700 rounded-lg shadow-sm text-slate-900 dark:text-white">
+<span class="material-symbols-outlined text-lg">dark_mode</span>
+                Dark
+            </button>
+</div>
+<div class="h-10"></div>
+</div>
+</body></html>

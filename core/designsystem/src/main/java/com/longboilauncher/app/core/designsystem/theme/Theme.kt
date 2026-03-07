@@ -12,6 +12,7 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
@@ -21,9 +22,28 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import com.longboilauncher.app.core.model.ThemeType
 
+@Immutable
+data class LongboiColors(
+    val onWallpaperContent: Color,
+    val cardAlpha: Float,
+    val borderAlpha: Float,
+    val useBlur: Boolean,
+    val glassIntensity: Float = 0f,
+)
+
+val LocalLongboiColors =
+    staticCompositionLocalOf {
+        LongboiColors(
+            onWallpaperContent = Color.White,
+            cardAlpha = 0.3f,
+            borderAlpha = 0.2f,
+            useBlur = false,
+        )
+    }
+
 val LocalThemeType = staticCompositionLocalOf { ThemeType.MATERIAL_YOU }
 
-// Default Material colors if none provided
+// Default Material colors
 private val Purple80 = Color(0xFFD0BCFF)
 private val PurpleGrey80 = Color(0xFFCCC2DC)
 private val Pink80 = Color(0xFFEFB8C8)
@@ -39,21 +59,54 @@ private val DarkColorScheme =
         tertiary = Pink80,
     )
 
+private val LightColorScheme =
+    lightColorScheme(
+        primary = Purple40,
+        secondary = PurpleGrey40,
+        tertiary = Pink40,
+    )
+
 private val MinimalistLightColors =
     lightColorScheme(
         primary = Color.Black,
         onPrimary = Color.White,
-        secondary = Color(0xFFF48C25), // Orange accent
+        secondary = Color(0xFFF48C25),
+        onSecondary = Color.White,
         background = Color.White,
+        onBackground = Color.Black,
         surface = Color.White,
+        onSurface = Color.Black,
+        surfaceVariant = Color(0xFFF5F5F5),
+        onSurfaceVariant = Color(0xFF757575),
     )
 
 private val SleekDarkColors =
     darkColorScheme(
-        primary = Color(0xFFF2CC0D), // Gold
+        primary = Color(0xFFF2CC0D),
         onPrimary = Color.Black,
+        secondary = Color(0xFFE0E0E0),
+        onSecondary = Color.Black,
         background = Color.Black,
+        onBackground = Color.White,
         surface = Color(0xFF121212),
+        onSurface = Color.White,
+        surfaceVariant = Color(0xFF1A1A1A),
+        onSurfaceVariant = Color(0xFFBDBDBD),
+    )
+
+private val PlayfulLightColors =
+    lightColorScheme(
+        primary = Color(0xFF25AFF4),
+        onPrimary = Color.White,
+        secondary = Color(0xFFF425AF),
+        onSecondary = Color.White,
+        tertiary = Color(0xFFA5D6A7),
+        background = Color(0xFFF0F8FF),
+        onBackground = Color(0xFF001F3F),
+        surface = Color.White,
+        onSurface = Color(0xFF001F3F),
+        surfaceVariant = Color(0xFFE1F5FE),
+        onSurfaceVariant = Color(0xFF0277BD),
     )
 
 private val PlayfulShapes =
@@ -65,20 +118,6 @@ private val PlayfulShapes =
         extraLarge = RoundedCornerShape(40.dp),
     )
 
-private val PlayfulLightColors =
-    lightColorScheme(
-        primary = Color(0xFF25AFF4),
-        secondary = Color(0xFFF425AF),
-        background = Color(0xFFF0F8FF),
-    )
-
-private val LightColorScheme =
-    lightColorScheme(
-        primary = Purple40,
-        secondary = PurpleGrey40,
-        tertiary = Pink40,
-    )
-
 @Composable
 fun LongboiLauncherTheme(
     themeType: ThemeType = ThemeType.MATERIAL_YOU,
@@ -86,6 +125,46 @@ fun LongboiLauncherTheme(
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit,
 ) {
+    val longboiColors =
+        when (themeType) {
+            ThemeType.GLASSMORPHISM ->
+                LongboiColors(
+                    onWallpaperContent = Color.White,
+                    cardAlpha = 0.15f,
+                    borderAlpha = 0.2f,
+                    useBlur = true,
+                    glassIntensity = 0.15f,
+                )
+            ThemeType.VIBRANT_PLAYFUL ->
+                LongboiColors(
+                    onWallpaperContent = Color(0xFF001F3F),
+                    cardAlpha = 1.0f,
+                    borderAlpha = 0.0f,
+                    useBlur = false,
+                )
+            ThemeType.SOPHISTICATED_SLEEK ->
+                LongboiColors(
+                    onWallpaperContent = Color(0xFFF2CC0D),
+                    cardAlpha = 0.8f,
+                    borderAlpha = 0.3f,
+                    useBlur = false,
+                )
+            ThemeType.MODERN_MINIMALIST ->
+                LongboiColors(
+                    onWallpaperContent = Color.Black,
+                    cardAlpha = 0.0f,
+                    borderAlpha = 0.0f,
+                    useBlur = false,
+                )
+            ThemeType.MATERIAL_YOU ->
+                LongboiColors(
+                    onWallpaperContent = if (darkTheme) Color.White else Color.Black,
+                    cardAlpha = 0.3f,
+                    borderAlpha = 0.1f,
+                    useBlur = false,
+                )
+        }
+
     val colorScheme =
         when (themeType) {
             ThemeType.MATERIAL_YOU -> {
@@ -102,10 +181,9 @@ fun LongboiLauncherTheme(
             ThemeType.SOPHISTICATED_SLEEK -> SleekDarkColors
             ThemeType.VIBRANT_PLAYFUL -> PlayfulLightColors
             ThemeType.GLASSMORPHISM -> {
-                // Glassmorphism uses transparency, so we'll use a modified dark theme
                 darkColorScheme(
                     primary = Color(0xFFBBDEFB),
-                    background = Color.Transparent, // Surface handles the background
+                    background = Color.Transparent,
                 )
             }
         }
@@ -113,16 +191,16 @@ fun LongboiLauncherTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            // Wallpaper-native: status bar is fully transparent so the wallpaper
-            // bleeds to the very top. Edge-to-edge is enabled for the same reason.
             window.statusBarColor = android.graphics.Color.TRANSPARENT
             WindowCompat.setDecorFitsSystemWindows(window, false)
-            // Light icons on dark wallpapers; invert when system is in light mode
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
         }
     }
 
-    CompositionLocalProvider(LocalThemeType provides themeType) {
+    CompositionLocalProvider(
+        LocalThemeType provides themeType,
+        LocalLongboiColors provides longboiColors,
+    ) {
         MaterialTheme(
             colorScheme = colorScheme,
             typography = Typography,

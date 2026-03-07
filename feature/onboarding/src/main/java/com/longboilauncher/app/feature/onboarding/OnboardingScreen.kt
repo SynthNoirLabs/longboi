@@ -37,6 +37,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -45,8 +46,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.longboilauncher.app.core.designsystem.components.GlassCard
+import com.longboilauncher.app.core.designsystem.components.ThemeBackground
 import com.longboilauncher.app.core.designsystem.theme.LongboiLauncherTheme
 import com.longboilauncher.app.core.designsystem.theme.LongboiSpacing
+import com.longboilauncher.app.core.model.ThemeType
 
 @Composable
 fun OnboardingScreen(
@@ -92,88 +96,112 @@ private fun OnboardingContent(
         }
     }
 
-    Column(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.surface)
-                .windowInsetsPadding(WindowInsets.safeDrawing)
-                .padding(LongboiSpacing.XL),
-    ) {
-        // Skip button
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End,
-        ) {
-            TextButton(onClick = { onEvent(OnboardingEvent.SkipOnboarding) }) {
-                Text(stringResource(R.string.onboarding_skip))
-            }
-        }
-
-        // Pager content
-        HorizontalPager(
-            state = pagerState,
+    ThemeBackground(themeType = ThemeType.GLASSMORPHISM) {
+        Column(
             modifier =
                 Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
-        ) { page ->
-            OnboardingPage(page = OnboardingPages.entries[page])
-        }
-
-        // Page indicators
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = LongboiSpacing.L),
-            horizontalArrangement = Arrangement.Center,
+                    .fillMaxSize()
+                    .windowInsetsPadding(WindowInsets.safeDrawing)
+                    .padding(LongboiSpacing.XL),
         ) {
-            repeat(state.totalPages) { index ->
-                PageIndicator(
-                    isSelected = index == state.currentPage,
-                    modifier = Modifier.padding(horizontal = 4.dp),
-                )
-            }
-        }
-
-        // Navigation buttons
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            if (state.currentPage > 0) {
-                TextButton(onClick = { onEvent(OnboardingEvent.PreviousPage) }) {
-                    Text(stringResource(R.string.onboarding_back))
-                }
-            } else {
-                Spacer(modifier = Modifier.width(1.dp))
-            }
-
-            Button(
-                onClick = {
-                    if (state.isLastPage) {
-                        onEvent(OnboardingEvent.CompleteOnboarding)
-                    } else {
-                        onEvent(OnboardingEvent.NextPage)
-                    }
-                },
+            // Skip button
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
             ) {
-                Text(
-                    if (state.isLastPage) {
-                        stringResource(R.string.onboarding_get_started)
-                    } else {
-                        stringResource(R.string.onboarding_next)
-                    },
-                )
-                Spacer(modifier = Modifier.width(LongboiSpacing.S))
-                Icon(
-                    imageVector =
-                        if (state.isLastPage) Icons.Default.Check else Icons.AutoMirrored.Filled.ArrowForward,
-                    contentDescription = null,
-                    modifier = Modifier.size(18.dp),
-                )
+                TextButton(onClick = { onEvent(OnboardingEvent.SkipOnboarding) }) {
+                    Text(
+                        stringResource(R.string.onboarding_skip),
+                        color = Color.White.copy(alpha = 0.6f),
+                        style = MaterialTheme.typography.labelLarge,
+                    )
+                }
+            }
+
+            // Pager content
+            HorizontalPager(
+                state = pagerState,
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+            ) { page ->
+                OnboardingPage(page = OnboardingPages.entries[page])
+            }
+
+            // Page indicators
+            Row(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = LongboiSpacing.XL),
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                repeat(state.totalPages) { index ->
+                    PageIndicator(
+                        isSelected = index == state.currentPage,
+                        modifier = Modifier.padding(horizontal = 6.dp),
+                    )
+                }
+            }
+
+            // Navigation buttons
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (state.currentPage > 0) {
+                    TextButton(onClick = { onEvent(OnboardingEvent.PreviousPage) }) {
+                        Text(
+                            stringResource(R.string.onboarding_back),
+                            color = Color.White.copy(alpha = 0.7f),
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                    }
+                } else {
+                    Spacer(modifier = Modifier.width(1.dp))
+                }
+
+                GlassCard(
+                    modifier = Modifier.padding(bottom = 8.dp),
+                    cornerRadius = 32.dp,
+                    backgroundAlpha = 0.4f,
+                ) {
+                    Button(
+                        onClick = {
+                            if (state.isLastPage) {
+                                onEvent(OnboardingEvent.CompleteOnboarding)
+                            } else {
+                                onEvent(OnboardingEvent.NextPage)
+                            }
+                        },
+                        colors =
+                            androidx.compose.material3.ButtonDefaults.buttonColors(
+                                containerColor = Color.Transparent,
+                                contentColor = Color.White,
+                            ),
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+                    ) {
+                        Text(
+                            text =
+                                if (state.isLastPage) {
+                                    stringResource(R.string.onboarding_get_started)
+                                } else {
+                                    stringResource(R.string.onboarding_next)
+                                },
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                        )
+                        Spacer(modifier = Modifier.width(LongboiSpacing.M))
+                        Icon(
+                            imageVector =
+                                if (state.isLastPage) Icons.Default.Check else Icons.AutoMirrored.Filled.ArrowForward,
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp),
+                        )
+                    }
+                }
             }
         }
     }
@@ -192,30 +220,39 @@ private fun OnboardingPage(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Icon(
-            imageVector = page.icon,
-            contentDescription = null,
-            modifier = Modifier.size(120.dp),
-            tint = MaterialTheme.colorScheme.primary,
-        )
+        GlassCard(
+            modifier = Modifier.size(160.dp),
+            cornerRadius = 40.dp,
+            backgroundAlpha = 0.15f,
+        ) {
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                Icon(
+                    imageVector = page.icon,
+                    contentDescription = null,
+                    modifier = Modifier.size(80.dp),
+                    tint = Color.White,
+                )
+            }
+        }
 
-        Spacer(modifier = Modifier.height(LongboiSpacing.XXL))
+        Spacer(modifier = Modifier.height(LongboiSpacing.XXXL))
 
         Text(
             text = stringResource(page.titleRes),
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.headlineLarge,
+            fontWeight = FontWeight.Light, // Premium thin typography
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurface,
+            color = Color.White,
         )
 
-        Spacer(modifier = Modifier.height(LongboiSpacing.M))
+        Spacer(modifier = Modifier.height(LongboiSpacing.L))
 
         Text(
             text = stringResource(page.descriptionRes),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = Color.White.copy(alpha = 0.7f),
+            modifier = Modifier.padding(horizontal = LongboiSpacing.XL),
         )
     }
 }
@@ -228,13 +265,13 @@ private fun PageIndicator(
     Box(
         modifier =
             modifier
-                .size(if (isSelected) 10.dp else 8.dp)
+                .size(width = if (isSelected) 24.dp else 8.dp, height = 8.dp)
                 .clip(CircleShape)
                 .background(
                     if (isSelected) {
-                        MaterialTheme.colorScheme.primary
+                        Color.White
                     } else {
-                        MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
+                        Color.White.copy(alpha = 0.3f)
                     },
                 ),
     )

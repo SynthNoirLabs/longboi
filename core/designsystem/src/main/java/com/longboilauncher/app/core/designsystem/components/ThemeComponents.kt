@@ -17,19 +17,11 @@ fun ThemeBackground(
 ) {
     when (themeType) {
         ThemeType.GLASSMORPHISM -> {
-            Box(
-                modifier =
-                    modifier
-                        .fillMaxSize()
-                        .background(
-                            Brush.verticalGradient(
-                                colors =
-                                    listOf(
-                                        Color(0xFFBBDEFB), // Soft blue
-                                        Color(0xFFE1BEE7), // Soft purple
-                                    ),
-                            ),
-                        ),
+            AmbientLightBackground(
+                modifier = modifier.fillMaxSize(),
+                primaryColor = Color(0xFFBBDEFB), // Soft blue
+                secondaryColor = Color(0xFFE1BEE7), // Soft purple
+                intensity = 0.15f,
             ) {
                 content()
             }

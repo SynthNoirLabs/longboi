@@ -1,24 +1,29 @@
 package com.longboilauncher.app.feature.allapps
 
-import androidx.compose.ui.test.assertDoesNotExist
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.fetchSemanticsNodes
+import androidx.compose.ui.test.bottomCenter
+import androidx.compose.ui.test.center
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipe
+import com.longboilauncher.app.core.common.HapticFeedbackManager
 import com.longboilauncher.app.core.designsystem.theme.LongboiLauncherTheme
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.model.ProfileType
-import com.longboilauncher.app.core.settings.NoOpHapticFeedbackManager
+import io.mockk.mockk
 import org.junit.Rule
 import org.junit.Test
 
 class AllAppsScreenUITest {
     @get:Rule
     val composeTestRule = createComposeRule()
+
+    private val hapticFeedbackManager = mockk<HapticFeedbackManager>(relaxed = true)
 
     private val testApps =
         listOf(
@@ -61,14 +66,14 @@ class AllAppsScreenUITest {
                     onEvent = {},
                     onAppSelected = {},
                     onDismiss = {},
-                    hapticFeedbackManager = NoOpHapticFeedbackManager(),
+                    hapticFeedbackManager = hapticFeedbackManager,
                 )
             }
         }
 
         // Verify section headers
-        composeTestRule.onNodeWithText("A").assertIsDisplayed()
-        composeTestRule.onNodeWithText("B").assertIsDisplayed()
+        composeTestRule.onAllNodesWithText("A").onFirst().assertIsDisplayed()
+        composeTestRule.onAllNodesWithText("B").onFirst().assertIsDisplayed()
 
         // Verify apps
         composeTestRule.onNodeWithText("Apple").assertIsDisplayed()
@@ -118,12 +123,12 @@ class AllAppsScreenUITest {
                     onEvent = {},
                     onAppSelected = {},
                     onDismiss = {},
-                    hapticFeedbackManager = NoOpHapticFeedbackManager(),
+                    hapticFeedbackManager = hapticFeedbackManager,
                 )
             }
         }
 
-        composeTestRule.onNodeWithText("Zebra").assertDoesNotExist()
+        composeTestRule.onAllNodesWithText("Zebra").assertCountEquals(0)
 
         composeTestRule
             .onNodeWithTag("alphabet_scrubber")
@@ -142,6 +147,6 @@ class AllAppsScreenUITest {
                 .isNotEmpty()
         }
 
-        composeTestRule.onNodeWithText("Zebra").assertIsDisplayed()
+        composeTestRule.onAllNodesWithText("Zebra").onFirst().assertIsDisplayed()
     }
 }

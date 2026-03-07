@@ -39,19 +39,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.longboilauncher.app.core.designsystem.components.GlassSurface
+import com.longboilauncher.app.core.designsystem.theme.LocalThemeType
 import com.longboilauncher.app.core.icons.AppIcon
 import com.longboilauncher.app.core.model.AppEntry
-
-data class PopupAction(
-    val title: String,
-    val icon: ImageVector,
-    val onClick: () -> Unit,
-)
+import com.longboilauncher.app.core.model.ThemeType
 
 @Composable
 fun PopupPanel(
@@ -81,87 +79,122 @@ fun PopupPanel(
                 visible = isVisible,
                 enter = slideInHorizontally(initialOffsetX = { it }) + fadeIn(),
                 exit = slideOutHorizontally(targetOffsetX = { it }) + fadeOut(),
+                modifier = Modifier.align(Alignment.CenterEnd),
             ) {
-                Surface(
+                val isGlass = LocalThemeType.current == ThemeType.GLASSMORPHISM
+
+                Box(
                     modifier =
                         Modifier
                             .fillMaxHeight()
                             .width(320.dp)
-                            .align(Alignment.CenterEnd)
-                            .shadow(8.dp, RoundedCornerShape(topStart = 16.dp, bottomStart = 16.dp)),
-                    shape = RoundedCornerShape(topStart = 16.dp, bottomStart = 16.dp),
-                    color = MaterialTheme.colorScheme.surface,
+                            .shadow(8.dp, RoundedCornerShape(topStart = 16.dp, bottomStart = 16.dp))
+                            .clip(RoundedCornerShape(topStart = 16.dp, bottomStart = 16.dp)),
                 ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp),
-                    ) {
-                        // Header
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                AppIcon(
-                                    appEntry = app,
-                                    modifier = Modifier.size(48.dp),
+                    val content =
+                        @Composable {
+                            Column(
+                                modifier = Modifier.padding(16.dp),
+                            ) {
+                                // Header
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        AppIcon(
+                                            appEntry = app,
+                                            modifier = Modifier.size(48.dp),
+                                        )
+                                        Spacer(modifier = Modifier.width(12.dp))
+                                        Column(modifier = Modifier.weight(1f)) {
+                                            Text(
+                                                text = app.label,
+                                                style = MaterialTheme.typography.titleMedium,
+                                                fontWeight = FontWeight.Medium,
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis,
+                                                color = if (isGlass) Color.White else Color.Unspecified,
+                                            )
+                                            Text(
+                                                text = app.packageName,
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color =
+                                                    if (isGlass) {
+                                                        Color.White.copy(
+                                                            alpha = 0.6f,
+                                                        )
+                                                    } else {
+                                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                                    },
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis,
+                                            )
+                                        }
+                                    }
+                                    IconButton(onClick = onDismiss) {
+                                        Icon(
+                                            imageVector = Icons.Default.Close,
+                                            contentDescription = "Close",
+                                            tint = if (isGlass) Color.White else Color.Unspecified,
+                                        )
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.height(24.dp))
+
+                                // Quick Actions
+                                Text(
+                                    text =
+                                        stringResource(
+                                            id = com.longboilauncher.core.designsystem.R.string.quick_actions,
+                                        ),
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = FontWeight.Medium,
+                                    color = if (isGlass) Color.White else MaterialTheme.colorScheme.primary,
                                 )
-                                Spacer(modifier = Modifier.width(12.dp))
-                                Column(modifier = Modifier.weight(1f)) {
+                                Spacer(modifier = Modifier.height(8.dp))
+                                QuickActionsGrid(
+                                    onAppInfo = onAppInfo,
+                                    onUninstall = onUninstall,
+                                    onHide = onHide,
+                                    isGlass = isGlass,
+                                )
+
+                                if (shortcuts.isNotEmpty()) {
+                                    Spacer(modifier = Modifier.height(24.dp))
                                     Text(
-                                        text = app.label,
-                                        style = MaterialTheme.typography.titleMedium,
+                                        text =
+                                            stringResource(
+                                                id = com.longboilauncher.core.designsystem.R.string.shortcuts,
+                                            ),
+                                        style = MaterialTheme.typography.titleSmall,
                                         fontWeight = FontWeight.Medium,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
+                                        color = if (isGlass) Color.White else MaterialTheme.colorScheme.primary,
                                     )
-                                    Text(
-                                        text = app.packageName,
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    ShortcutsList(
+                                        shortcuts = shortcuts,
+                                        onLaunchShortcut = onLaunchShortcut,
+                                        isGlass = isGlass,
                                     )
                                 }
                             }
-                            IconButton(onClick = onDismiss) {
-                                Icon(
-                                    imageVector = Icons.Default.Close,
-                                    contentDescription = "Close",
-                                )
-                            }
                         }
 
-                        Spacer(modifier = Modifier.height(24.dp))
-
-                        // Quick Actions
-                        Text(
-                            text = stringResource(id = com.longboilauncher.core.designsystem.R.string.quick_actions),
-                            style = MaterialTheme.typography.titleSmall,
-                            fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colorScheme.primary,
+                    if (isGlass) {
+                        GlassSurface(
+                            modifier = Modifier.fillMaxSize(),
+                            backgroundColor = Color.Black.copy(alpha = 0.3f),
+                            content = content,
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        QuickActionsGrid(
-                            onAppInfo = onAppInfo,
-                            onUninstall = onUninstall,
-                            onHide = onHide,
+                    } else {
+                        Surface(
+                            modifier = Modifier.fillMaxSize(),
+                            color = MaterialTheme.colorScheme.surface,
+                            content = content,
                         )
-
-                        if (shortcuts.isNotEmpty()) {
-                            Spacer(modifier = Modifier.height(24.dp))
-                            Text(
-                                text = stringResource(id = com.longboilauncher.core.designsystem.R.string.shortcuts),
-                                style = MaterialTheme.typography.titleSmall,
-                                fontWeight = FontWeight.Medium,
-                                color = MaterialTheme.colorScheme.primary,
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            ShortcutsList(
-                                shortcuts = shortcuts,
-                                onLaunchShortcut = onLaunchShortcut,
-                            )
-                        }
                     }
                 }
             }
@@ -174,22 +207,26 @@ private fun QuickActionsGrid(
     onAppInfo: () -> Unit,
     onUninstall: () -> Unit,
     onHide: () -> Unit,
+    isGlass: Boolean = false,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         ActionRow(
             icon = Icons.Default.Info,
             title = stringResource(id = com.longboilauncher.core.designsystem.R.string.app_info),
             onClick = onAppInfo,
+            isGlass = isGlass,
         )
         ActionRow(
             icon = Icons.Default.Delete,
             title = stringResource(id = com.longboilauncher.core.designsystem.R.string.uninstall),
             onClick = onUninstall,
+            isGlass = isGlass,
         )
         ActionRow(
             icon = Icons.Default.VisibilityOff,
             title = stringResource(id = com.longboilauncher.core.designsystem.R.string.hide_app),
             onClick = onHide,
+            isGlass = isGlass,
         )
     }
 }
@@ -199,6 +236,7 @@ private fun ActionRow(
     icon: ImageVector,
     title: String,
     onClick: () -> Unit,
+    isGlass: Boolean = false,
 ) {
     Row(
         modifier =
@@ -212,14 +250,14 @@ private fun ActionRow(
         Icon(
             imageVector = icon,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            tint = if (isGlass) Color.White.copy(alpha = 0.7f) else MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(20.dp),
         )
         Spacer(modifier = Modifier.width(12.dp))
         Text(
             text = title,
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface,
+            color = if (isGlass) Color.White else MaterialTheme.colorScheme.onSurface,
         )
     }
 }
@@ -228,6 +266,7 @@ private fun ActionRow(
 private fun ShortcutsList(
     shortcuts: List<ShortcutInfo>,
     onLaunchShortcut: (ShortcutInfo) -> Unit,
+    isGlass: Boolean = false,
 ) {
     LazyColumn(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         items(shortcuts, key = { it.id }) { shortcut ->
@@ -246,8 +285,13 @@ private fun ShortcutsList(
                         Modifier
                             .size(32.dp)
                             .background(
-                                MaterialTheme.colorScheme.primaryContainer,
-                                CircleShape,
+                                color =
+                                    if (isGlass) {
+                                        Color.White.copy(alpha = 0.2f)
+                                    } else {
+                                        MaterialTheme.colorScheme.primaryContainer
+                                    },
+                                shape = CircleShape,
                             ),
                     contentAlignment = Alignment.Center,
                 ) {
@@ -259,14 +303,14 @@ private fun ShortcutsList(
                                 ?.uppercaseChar()
                                 ?.toString() ?: "?",
                         style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        color = if (isGlass) Color.White else MaterialTheme.colorScheme.onPrimaryContainer,
                     )
                 }
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
                     text = shortcut.shortLabel?.toString() ?: "Shortcut",
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = if (isGlass) Color.White else MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )

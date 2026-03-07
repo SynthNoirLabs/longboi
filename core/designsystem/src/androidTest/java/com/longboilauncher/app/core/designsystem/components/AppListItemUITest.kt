@@ -21,7 +21,6 @@ class AppListItemUITest {
                 packageName = "com.test.app",
                 className = "MainActivity",
                 label = "Test App",
-                userIdentifier = 0,
                 profile = ProfileType.PERSONAL,
             )
 
@@ -41,7 +40,6 @@ class AppListItemUITest {
                 packageName = "com.test.app",
                 className = "MainActivity",
                 label = "Test App",
-                userIdentifier = 0,
                 profile = ProfileType.WORK,
             )
 

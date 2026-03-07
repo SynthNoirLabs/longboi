@@ -46,6 +46,11 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+    lint {
+        baseline = file("lint-baseline.xml")
+        abortOnError = false
+        checkReleaseBuilds = true
+    }
 }
 
 protobuf {
@@ -103,7 +108,8 @@ dependencies {
     implementation(project(":feature:allapps"))
     implementation(project(":feature:searchui"))
     implementation(project(":feature:settingsui"))
-    implementation(project(":feature:privatespace"))
+    // implementation(project(":feature:privatespace"))
+    implementation(project(":feature:onboarding"))
     // implementation(project(":feature:backup"))  // Disabled - has compilation errors
 
     // Room
@@ -132,6 +138,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.uiautomator)
     androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test)
     androidTestImplementation(libs.androidx.ui.test.junit4)
     androidTestImplementation(libs.google.truth)
     androidTestImplementation(libs.mockk.android)

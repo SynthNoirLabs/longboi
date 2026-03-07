@@ -67,4 +67,12 @@ dependencies {
     testImplementation(libs.androidx.junit)
     testImplementation(libs.turbine)
     testImplementation("androidx.arch.core:core-testing:2.2.0")
+
+    androidTestImplementation(libs.androidx.test.core)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.ui.test)
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    androidTestImplementation(libs.mockk.android)
+    debugImplementation(libs.androidx.ui.test.manifest)
 }

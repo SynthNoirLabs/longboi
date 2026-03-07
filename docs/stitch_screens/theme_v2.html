@@ -1,0 +1,182 @@
+<html class="dark"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#135bec",
+            "background-light": "#f6f6f8",
+            "background-dark": "#101622",
+          },
+          fontFamily: {
+            "display": ["Manrope", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+<style>
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glow-thumb::-webkit-slider-thumb {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      background: #135bec;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(19, 91, 236, 0.6);
+      border: 2px solid white;
+    }
+    .glow-thumb::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      background: #135bec;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(19, 91, 236, 0.6);
+      border: 2px solid white;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased text-slate-900 dark:text-slate-100">
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-x-hidden">
+<!-- Top App Bar -->
+<div class="flex items-center px-4 pt-6 pb-2 justify-between sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
+<div class="flex size-10 shrink-0 items-center justify-start">
+<span class="material-symbols-outlined text-slate-900 dark:text-slate-100 cursor-pointer">arrow_back_ios</span>
+</div>
+<h2 class="text-slate-900 dark:text-slate-100 text-sm font-light uppercase tracking-[0.2em] flex-1 text-center">Longboi Editor</h2>
+<div class="flex size-10 items-center justify-end">
+<button class="flex items-center justify-center rounded-full size-8 bg-primary text-white shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-[20px]">done</span>
+</button>
+</div>
+</div>
+<!-- Live Preview Container -->
+<div class="px-4 py-6">
+<div class="relative w-full aspect-[9/10] rounded-xl overflow-hidden bg-gradient-to-tr from-slate-900 via-primary/20 to-slate-800 flex flex-col items-center justify-center border border-slate-200 dark:border-slate-800 shadow-2xl" data-alt="Dark moody abstract gradient background">
+<!-- Mock Phone UI Inside Preview -->
+<div class="absolute inset-0 flex flex-col items-center justify-center p-8">
+<div class="w-full h-full glass-effect rounded-2xl flex flex-col p-6 items-center justify-between shadow-2xl">
+<div class="w-12 h-1 bg-white/20 rounded-full mb-8"></div>
+<div class="flex flex-col items-center">
+<span class="text-5xl font-extralight tracking-tighter text-white">12:48</span>
+<span class="text-[10px] uppercase tracking-[0.4em] text-white/60 mt-2">Monday, Oct 24</span>
+</div>
+<div class="grid grid-cols-3 gap-6 w-full mt-auto">
+<div class="aspect-square rounded-xl bg-white/10 flex items-center justify-center border border-white/5">
+<span class="material-symbols-outlined text-white/80">chat_bubble</span>
+</div>
+<div class="aspect-square rounded-xl bg-primary/40 flex items-center justify-center border border-primary/20 shadow-lg shadow-primary/10">
+<span class="material-symbols-outlined text-white">fingerprint</span>
+</div>
+<div class="aspect-square rounded-xl bg-white/10 flex items-center justify-center border border-white/5">
+<span class="material-symbols-outlined text-white/80">settings</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Customization Controls -->
+<div class="flex-1 px-6 pb-12 space-y-8">
+<!-- Glassmorphism Sliders -->
+<div class="space-y-6">
+<h3 class="text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">Effects</h3>
+<!-- Slider 1 -->
+<div class="space-y-3">
+<div class="flex justify-between items-end">
+<span class="text-sm font-light tracking-wide">Blur Intensity</span>
+<span class="text-xs font-medium text-primary">75%</span>
+</div>
+<div class="relative h-6 flex items-center">
+<input class="w-full h-1 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-primary glow-thumb" type="range" value="75"/>
+</div>
+</div>
+<!-- Slider 2 -->
+<div class="space-y-3">
+<div class="flex justify-between items-end">
+<span class="text-sm font-light tracking-wide">Glass Saturation</span>
+<span class="text-xs font-medium text-primary">32%</span>
+</div>
+<div class="relative h-6 flex items-center">
+<input class="w-full h-1 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-primary glow-thumb" type="range" value="32"/>
+</div>
+</div>
+<!-- Slider 3 -->
+<div class="space-y-3">
+<div class="flex justify-between items-end">
+<span class="text-sm font-light tracking-wide">Edge Transparency</span>
+<span class="text-xs font-medium text-primary">50%</span>
+</div>
+<div class="relative h-6 flex items-center">
+<input class="w-full h-1 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-primary glow-thumb" type="range" value="50"/>
+</div>
+</div>
+</div>
+<!-- Accent Color Picker -->
+<div class="space-y-4">
+<h3 class="text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">Accent Color</h3>
+<div class="flex justify-between items-center bg-slate-100/50 dark:bg-slate-800/40 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+<div class="flex gap-3">
+<div class="size-6 rounded-full bg-primary ring-2 ring-primary ring-offset-4 ring-offset-background-light dark:ring-offset-background-dark"></div>
+<div class="size-6 rounded-full bg-emerald-500"></div>
+<div class="size-6 rounded-full bg-amber-500"></div>
+<div class="size-6 rounded-full bg-rose-500"></div>
+<div class="size-6 rounded-full bg-indigo-500"></div>
+</div>
+<button class="flex items-center gap-1 text-xs font-medium text-primary uppercase tracking-wider">
+            Custom <span class="material-symbols-outlined text-sm">palette</span>
+</button>
+</div>
+</div>
+<!-- Theme Mode Switcher -->
+<div class="space-y-4">
+<h3 class="text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">System Mode</h3>
+<div class="grid grid-cols-2 gap-3">
+<button class="flex items-center justify-center gap-3 p-4 rounded-xl border border-primary bg-primary/10 text-primary">
+<span class="material-symbols-outlined text-[20px] fill-1">dark_mode</span>
+<span class="text-sm font-medium">Dark Mode</span>
+</button>
+<button class="flex items-center justify-center gap-3 p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent text-slate-400">
+<span class="material-symbols-outlined text-[20px]">light_mode</span>
+<span class="text-sm font-medium">Light Mode</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Bottom Action Hint -->
+<div class="px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-background-light dark:bg-background-dark/95">
+<div class="flex items-center justify-between opacity-60">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">info</span>
+<p class="text-[10px] font-light italic">Changes are applied in real-time</p>
+</div>
+<p class="text-[10px] uppercase tracking-widest font-bold">LB v2.4.0</p>
+</div>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Longboi All Apps Drawer v2</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#06080c",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-heavy {
+            background: rgba(16, 22, 34, 0.7);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .glass-item {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased overflow-hidden h-screen w-full">
+<!-- Background Wallpaper Simulation -->
+<div class="fixed inset-0 z-0">
+<div class="absolute inset-0 bg-gradient-to-br from-primary/20 via-background-dark to-primary/10"></div>
+<div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/30 rounded-full blur-[120px]"></div>
+<div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-900/40 rounded-full blur-[100px]"></div>
+</div>
+<!-- Main Drawer Container -->
+<div class="relative z-10 flex flex-col h-screen w-full max-w-md mx-auto glass-heavy shadow-2xl overflow-hidden">
+<!-- Top Search Bar (Fixed) -->
+<header class="pt-12 px-6 pb-6 bg-transparent">
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-slate-400 group-focus-within:text-primary transition-colors">search</span>
+</div>
+<input class="block w-full pl-12 pr-4 py-4 glass-item border-none rounded-xl text-lg font-light tracking-wide focus:ring-1 focus:ring-primary/50 placeholder:text-slate-500 text-slate-100 outline-none transition-all" placeholder="Search your world..." type="text"/>
+</div>
+</header>
+<!-- Vertical Alphabet Scrubber (Floating Right) -->
+<aside class="absolute right-2 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1.5 py-6 px-1.5 rounded-full bg-white/5 backdrop-blur-md border border-white/5 z-20">
+<span class="text-[10px] font-bold text-primary">#</span>
+<span class="text-[10px] font-medium text-slate-400">A</span>
+<span class="text-[10px] font-medium text-slate-400">B</span>
+<span class="text-[10px] font-medium text-slate-400">C</span>
+<span class="text-[10px] font-medium text-slate-400">D</span>
+<span class="text-[10px] font-medium text-slate-400">E</span>
+<span class="text-[10px] font-medium text-slate-400">F</span>
+<span class="text-[10px] font-medium text-slate-400">G</span>
+<span class="text-[10px] font-medium text-slate-400">H</span>
+<span class="text-[10px] font-medium text-slate-400">I</span>
+<span class="text-[10px] font-medium text-slate-400">J</span>
+<span class="text-[10px] font-medium text-slate-400">K</span>
+<div class="h-1.5 w-1.5 bg-primary rounded-full my-1"></div>
+<span class="text-[10px] font-medium text-slate-400">L</span>
+<span class="text-[10px] font-medium text-slate-400">M</span>
+<span class="text-[10px] font-medium text-slate-400">N</span>
+<span class="text-[10px] font-medium text-slate-400">O</span>
+<span class="text-[10px] font-medium text-slate-400">P</span>
+<span class="text-[10px] font-medium text-slate-400">Q</span>
+<span class="text-[10px] font-medium text-slate-400">R</span>
+<span class="text-[10px] font-medium text-slate-400">S</span>
+<span class="text-[10px] font-medium text-slate-400">T</span>
+<span class="text-[10px] font-medium text-slate-400">U</span>
+</aside>
+<!-- App List -->
+<main class="flex-1 overflow-y-auto px-6 pb-24 scroll-smooth">
+<div class="space-y-2 pt-4">
+<!-- Section Header -->
+<div class="flex items-center gap-4 py-4 opacity-40">
+<div class="h-[1px] flex-1 bg-gradient-to-r from-transparent to-slate-500"></div>
+<span class="text-xs tracking-[0.3em] font-semibold uppercase">Frequently Used</span>
+<div class="h-[1px] flex-1 bg-gradient-to-l from-transparent to-slate-500"></div>
+</div>
+<!-- App Item -->
+<div class="flex items-center gap-5 p-4 rounded-lg hover:bg-white/5 transition-colors group">
+<div class="w-12 h-12 flex items-center justify-center rounded-2xl glass-item border border-white/10 group-hover:border-primary/50 transition-all">
+<span class="material-symbols-outlined text-2xl font-light text-slate-200">camera</span>
+</div>
+<div class="flex-1 border-b border-white/5 pb-4 group-last:border-none">
+<p class="text-lg font-light tracking-wide group-hover:text-primary transition-colors">Aperture</p>
+<p class="text-xs text-slate-500 font-medium tracking-tight">System Camera</p>
+</div>
+</div>
+<div class="flex items-center gap-5 p-4 rounded-lg hover:bg-white/5 transition-colors group">
+<div class="w-12 h-12 flex items-center justify-center rounded-2xl glass-item border border-white/10 group-hover:border-primary/50 transition-all">
+<span class="material-symbols-outlined text-2xl font-light text-slate-200">chat_bubble</span>
+</div>
+<div class="flex-1 border-b border-white/5 pb-4">
+<p class="text-lg font-light tracking-wide group-hover:text-primary transition-colors">Echo</p>
+<p class="text-xs text-slate-500 font-medium tracking-tight">Messages • 2 New</p>
+</div>
+</div>
+<div class="flex items-center gap-5 p-4 rounded-lg hover:bg-white/5 transition-colors group">
+<div class="w-12 h-12 flex items-center justify-center rounded-2xl glass-item border border-white/10 group-hover:border-primary/50 transition-all">
+<span class="material-symbols-outlined text-2xl font-light text-slate-200">calendar_today</span>
+</div>
+<div class="flex-1 border-b border-white/5 pb-4">
+<p class="text-lg font-light tracking-wide group-hover:text-primary transition-colors">Eventide</p>
+<p class="text-xs text-slate-500 font-medium tracking-tight">Calendar</p>
+</div>
+</div>
+<div class="flex items-center gap-4 py-4 opacity-40">
+<div class="h-[1px] flex-1 bg-gradient-to-r from-transparent to-slate-500"></div>
+<span class="text-xs tracking-[0.3em] font-semibold uppercase">All Apps</span>
+<div class="h-[1px] flex-1 bg-gradient-to-l from-transparent to-slate-500"></div>
+</div>
+<!-- Alphabetical List Sample -->
+<div class="flex items-center gap-5 p-4 rounded-lg hover:bg-white/5 transition-colors group">
+<div class="w-12 h-12 flex items-center justify-center rounded-2xl glass-item border border-white/10 group-hover:border-primary/50 transition-all">
+<span class="material-symbols-outlined text-2xl font-light text-slate-200">flight</span>
+</div>
+<div class="flex-1 border-b border-white/5 pb-4">
+<p class="text-lg font-light tracking-wide">Aero</p>
+<p class="text-xs text-slate-500 font-medium tracking-tight">Travel Assistant</p>
+</div>
+</div>
+<div class="flex items-center gap-5 p-4 rounded-lg hover:bg-white/5 transition-colors group">
+<div class="w-12 h-12 flex items-center justify-center rounded-2xl glass-item border border-white/10 group-hover:border-primary/50 transition-all">
+<span class="material-symbols-outlined text-2xl font-light text-slate-200">fitness_center</span>
+</div>
+<div class="flex-1 border-b border-white/5 pb-4">
+<p class="text-lg font-light tracking-wide">Atlas</p>
+<p class="text-xs text-slate-500 font-medium tracking-tight">Fitness Tracker</p>
+</div>
+</div>
+<div class="flex items-center gap-5 p-4 rounded-lg hover:bg-white/5 transition-colors group">
+<div class="w-12 h-12 flex items-center justify-center rounded-2xl glass-item border border-white/10 group-hover:border-primary/50 transition-all">
+<span class="material-symbols-outlined text-2xl font-light text-slate-200">account_balance_wallet</span>
+</div>
+<div class="flex-1 border-b border-white/5 pb-4">
+<p class="text-lg font-light tracking-wide">Banko</p>
+<p class="text-xs text-slate-500 font-medium tracking-tight">Finance</p>
+</div>
+</div>
+<div class="flex items-center gap-5 p-4 rounded-lg hover:bg-white/5 transition-colors group">
+<div class="w-12 h-12 flex items-center justify-center rounded-2xl glass-item border border-white/10 group-hover:border-primary/50 transition-all">
+<span class="material-symbols-outlined text-2xl font-light text-slate-200">grid_view</span>
+</div>
+<div class="flex-1 border-b border-white/5 pb-4">
+<p class="text-lg font-light tracking-wide">Blocks</p>
+<p class="text-xs text-slate-500 font-medium tracking-tight">Custom Widgets</p>
+</div>
+</div>
+<div class="flex items-center gap-5 p-4 rounded-lg hover:bg-white/5 transition-colors group">
+<div class="w-12 h-12 flex items-center justify-center rounded-2xl glass-item border border-white/10 group-hover:border-primary/50 transition-all">
+<span class="material-symbols-outlined text-2xl font-light text-slate-200">cloud</span>
+</div>
+<div class="flex-1 border-b border-white/5 pb-4">
+<p class="text-lg font-light tracking-wide">Cirrus</p>
+<p class="text-xs text-slate-500 font-medium tracking-tight">Cloud Storage</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation (Fixed) -->
+<nav class="absolute bottom-0 left-0 right-0 glass-item border-t border-white/5 px-8 pt-4 pb-8 flex justify-between items-center">
+<button class="flex flex-col items-center gap-1 group">
+<div class="p-3 rounded-full text-slate-400 group-hover:bg-primary/20 group-hover:text-primary transition-all">
+<span class="material-symbols-outlined text-[28px]">home</span>
+</div>
+</button>
+<button class="flex flex-col items-center gap-1 group">
+<div class="p-4 bg-primary text-white rounded-full shadow-lg shadow-primary/30 transform -translate-y-4 scale-110">
+<span class="material-symbols-outlined text-[32px]">apps</span>
+</div>
+</button>
+<button class="flex flex-col items-center gap-1 group">
+<div class="p-3 rounded-full text-slate-400 group-hover:bg-primary/20 group-hover:text-primary transition-all">
+<span class="material-symbols-outlined text-[28px]">settings</span>
+</div>
+</button>
+</nav>
+<!-- iOS Home Indicator -->
+<div class="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-32 h-1.5 bg-white/20 rounded-full z-30"></div>
+</div>
+</body></html>

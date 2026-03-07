@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Longboi All Apps Drawer v1</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(16, 22, 34, 0.6);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-input {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .alphabet-scroller {
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+        }
+        /* Custom curve for the alphabet scrubber */
+        .curved-scrubber {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-right: 8px;
+        }
+        .scrubber-char {
+            font-size: 10px;
+            padding: 2px 0;
+            transition: all 0.2s ease;
+        }
+        /* Approximate visual curve for thumb reach */
+        .scrubber-char:nth-child(n+10):nth-child(-n+18) {
+            transform: translateX(-12px);
+        }
+        .scrubber-char:nth-child(n+5):nth-child(-n+9),
+        .scrubber-char:nth-child(n+19):nth-child(-n+23) {
+            transform: translateX(-6px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 overflow-hidden">
+<!-- Main Launcher Background Simulation -->
+<div class="fixed inset-0 z-0 bg-gradient-to-br from-primary/40 via-background-dark to-slate-900" data-alt="Abstract gradient background with deep blues and purples"></div>
+<!-- Glassmorphism Container -->
+<div class="relative z-10 min-h-screen flex flex-col glass-panel">
+<!-- Top Search Bar -->
+<header class="pt-14 pb-4 px-6">
+<div class="glass-input rounded-full flex items-center px-4 h-14 w-full shadow-2xl">
+<span class="material-symbols-outlined text-slate-400 mr-3">search</span>
+<input class="bg-transparent border-none focus:ring-0 w-full text-slate-100 placeholder:text-slate-500 font-light tracking-wide" placeholder="Search apps..." type="text"/>
+<span class="material-symbols-outlined text-slate-400 ml-2">mic</span>
+</div>
+</header>
+<!-- Main Content Area with Scrubber -->
+<main class="flex-1 flex overflow-hidden">
+<!-- Apps List -->
+<div class="flex-1 overflow-y-auto px-6 space-y-6 pb-24 no-scrollbar">
+<!-- Section A -->
+<div class="pt-4">
+<h3 class="text-xs font-semibold text-primary mb-4 tracking-widest uppercase opacity-80">A</h3>
+<div class="space-y-4">
+<div class="flex items-center group">
+<div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mr-4 group-active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-2xl font-light">account_circle</span>
+</div>
+<span class="text-lg font-light tracking-tight">Accounts</span>
+</div>
+<div class="flex items-center group">
+<div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mr-4 group-active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-2xl font-light">alarm</span>
+</div>
+<span class="text-lg font-light tracking-tight">Alarms</span>
+</div>
+</div>
+</div>
+<!-- Section B -->
+<div>
+<h3 class="text-xs font-semibold text-primary mb-4 tracking-widest uppercase opacity-80">B</h3>
+<div class="space-y-4">
+<div class="flex items-center group">
+<div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mr-4 group-active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-2xl font-light">account_balance</span>
+</div>
+<span class="text-lg font-light tracking-tight">Bank</span>
+</div>
+<div class="flex items-center group">
+<div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mr-4 group-active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-2xl font-light">language</span>
+</div>
+<span class="text-lg font-light tracking-tight">Browser</span>
+</div>
+</div>
+</div>
+<!-- Section C -->
+<div>
+<h3 class="text-xs font-semibold text-primary mb-4 tracking-widest uppercase opacity-80">C</h3>
+<div class="space-y-4">
+<div class="flex items-center group">
+<div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mr-4 group-active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-2xl font-light">calendar_today</span>
+</div>
+<span class="text-lg font-light tracking-tight">Calendar</span>
+</div>
+<div class="flex items-center group">
+<div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mr-4 group-active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-2xl font-light">photo_camera</span>
+</div>
+<span class="text-lg font-light tracking-tight">Camera</span>
+</div>
+<div class="flex items-center group">
+<div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mr-4 group-active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-2xl font-light">chat_bubble</span>
+</div>
+<span class="text-lg font-light tracking-tight">Chats</span>
+</div>
+</div>
+</div>
+<!-- Section D -->
+<div>
+<h3 class="text-xs font-semibold text-primary mb-4 tracking-widest uppercase opacity-80">D</h3>
+<div class="space-y-4">
+<div class="flex items-center group">
+<div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mr-4 group-active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-2xl font-light">description</span>
+</div>
+<span class="text-lg font-light tracking-tight">Documents</span>
+</div>
+</div>
+</div>
+<!-- Spacer for scroll -->
+<div class="h-20"></div>
+</div>
+<!-- Curved Alphabet Scrubber -->
+<div class="w-10 h-full flex items-center justify-end pr-1">
+<div class="curved-scrubber text-slate-500 font-bold opacity-60">
+<span class="scrubber-char text-primary opacity-100">•</span>
+<span class="scrubber-char">A</span>
+<span class="scrubber-char">B</span>
+<span class="scrubber-char">C</span>
+<span class="scrubber-char">D</span>
+<span class="scrubber-char">E</span>
+<span class="scrubber-char">F</span>
+<span class="scrubber-char">G</span>
+<span class="scrubber-char text-primary opacity-100">H</span>
+<span class="scrubber-char">I</span>
+<span class="scrubber-char">J</span>
+<span class="scrubber-char">K</span>
+<span class="scrubber-char">L</span>
+<span class="scrubber-char">M</span>
+<span class="scrubber-char">N</span>
+<span class="scrubber-char">O</span>
+<span class="scrubber-char">P</span>
+<span class="scrubber-char">Q</span>
+<span class="scrubber-char">R</span>
+<span class="scrubber-char">S</span>
+<span class="scrubber-char">T</span>
+<span class="scrubber-char text-primary opacity-100">U</span>
+<span class="scrubber-char">V</span>
+<span class="scrubber-char">W</span>
+<span class="scrubber-char">X</span>
+<span class="scrubber-char">Y</span>
+<span class="scrubber-char">Z</span>
+<span class="scrubber-char">#</span>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar (Floating Style) -->
+<footer class="absolute bottom-6 left-6 right-6 h-16 glass-input rounded-full flex items-center justify-between px-4">
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined text-2xl font-light">home</span>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined text-2xl font-variation-fill">grid_view</span>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined text-2xl font-light">star</span>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined text-2xl font-light">settings</span>
+</a>
+</footer>
+<!-- iOS Indicator Bar -->
+<div class="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-32 h-1 bg-white/20 rounded-full"></div>
+</div>
+</body></html>

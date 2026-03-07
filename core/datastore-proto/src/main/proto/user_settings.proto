@@ -63,4 +63,5 @@ message UserSettings {
   bool private_space_unlocked = 15;
   PrivateSpaceAuthMethod private_space_auth_method = 16;
   string private_space_pin_hash = 17;
+  bool onboarding_completed = 18;
 }

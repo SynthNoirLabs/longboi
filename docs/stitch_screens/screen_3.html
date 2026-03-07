@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Launcher Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#dc2626", // High-contrast red
+                        "background-light": "#f8fafc",
+                        "background-dark": "#000000", // AMOLED black
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1e293b",
+                        "text-light": "#0f172a",
+                        "text-dark": "#f8fafc",
+                        "text-muted-light": "#64748b",
+                        "text-muted-dark": "#94a3b8",
+                    },
+                    fontFamily: {
+                        display: ["Outfit", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "1rem",
+                    }
+                },
+            },
+        };
+    </script>
+<style>
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark font-display h-screen w-full flex items-center justify-center dark">
+<div class="relative w-[390px] h-[844px] bg-black overflow-hidden rounded-[3rem] border-[14px] border-slate-800 shadow-2xl flex flex-col">
+<div class="relative z-10 w-full pt-4 pb-2 px-6 flex justify-between items-center text-sm font-medium text-white/90">
+<span>14:30</span>
+<div class="flex space-x-2">
+<span class="material-symbols-outlined text-[16px]">signal_cellular_4_bar</span>
+<span class="material-symbols-outlined text-[16px]">wifi</span>
+<span class="material-symbols-outlined text-[16px]">battery_full</span>
+</div>
+</div>
+<div class="relative z-10 px-6 pt-6 pb-2">
+<div class="w-full border-b border-gray-800 pb-4 flex items-center">
+<span class="text-white text-3xl font-light tracking-wide">Settings</span>
+</div>
+</div>
+<div class="relative z-10 flex-1 flex px-6 pb-8 overflow-hidden">
+<div class="flex-1 overflow-y-auto hide-scrollbar flex flex-col space-y-8 pt-6">
+<button class="flex items-center space-x-6 w-full text-left group">
+<span class="material-symbols-outlined text-2xl font-light text-blue-400 group-hover:text-blue-300 transition-colors">home</span>
+<span class="text-xl font-light text-white tracking-wide group-hover:text-white transition-colors">Home Screen</span>
+</button>
+<button class="flex items-center space-x-6 w-full text-left group">
+<span class="material-symbols-outlined text-2xl font-light text-green-400 group-hover:text-green-300 transition-colors">apps</span>
+<span class="text-xl font-light text-white tracking-wide group-hover:text-white transition-colors">App Drawer</span>
+</button>
+<button class="flex items-center space-x-6 w-full text-left group">
+<span class="material-symbols-outlined text-2xl font-light text-yellow-400 group-hover:text-yellow-300 transition-colors">touch_app</span>
+<span class="text-xl font-light text-white tracking-wide group-hover:text-white transition-colors">Gestures</span>
+</button>
+<button class="flex items-center space-x-6 w-full text-left group">
+<span class="material-symbols-outlined text-2xl font-light text-red-400 group-hover:text-red-300 transition-colors">palette</span>
+<span class="text-xl font-light text-white tracking-wide group-hover:text-white transition-colors">Icons</span>
+</button>
+<button class="flex items-center space-x-6 w-full text-left group">
+<span class="material-symbols-outlined text-2xl font-light text-purple-400 group-hover:text-purple-300 transition-colors">info</span>
+<span class="text-xl font-light text-white tracking-wide group-hover:text-white transition-colors">About</span>
+</button>
+</div>
+</div>
+<div class="relative z-10 w-full pb-2 flex justify-center bg-transparent">
+<div class="w-1/3 h-1 bg-white/30 rounded-full"></div>
+</div>
+</div>
+</body></html>

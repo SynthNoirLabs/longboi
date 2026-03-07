@@ -1,8 +1,8 @@
 package com.longboilauncher.app.core.settings
 
 import androidx.datastore.core.DataStore
-import com.longboilauncher.core.datastore_proto.UserSettings
 import com.longboilauncher.app.core.model.ThemeType
+import com.longboilauncher.core.datastore_proto.UserSettings
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
@@ -108,6 +108,16 @@ class PreferencesRepository
                     }
                 }.map { it.reduceMotion }
 
+        val isOnboardingCompleted: Flow<Boolean> =
+            dataStore.data
+                .catch { exception ->
+                    if (exception is IOException) {
+                        emit(UserSettings.getDefaultInstance())
+                    } else {
+                        throw exception
+                    }
+                }.map { it.onboardingCompleted }
+
         suspend fun setTheme(theme: String) {
             dataStore.updateData { currentSettings ->
                 currentSettings
@@ -167,6 +177,15 @@ class PreferencesRepository
                 currentSettings
                     .toBuilder()
                     .setDensity(density)
+                    .build()
+            }
+        }
+
+        suspend fun setOnboardingCompleted(completed: Boolean) {
+            dataStore.updateData { currentSettings ->
+                currentSettings
+                    .toBuilder()
+                    .setOnboardingCompleted(completed)
                     .build()
             }
         }
