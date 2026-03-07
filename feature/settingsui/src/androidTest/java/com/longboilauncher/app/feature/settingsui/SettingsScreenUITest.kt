@@ -25,7 +25,7 @@ class SettingsScreenUITest {
             }
         }
 
-        composeTestRule.onNodeWithText("Appearance").assertIsDisplayed()
+        composeTestRule.onNodeWithText("APPEARANCE").assertIsDisplayed()
         composeTestRule.onNodeWithText("Theme").assertIsDisplayed()
         composeTestRule.onNodeWithText("Haptic feedback").assertIsDisplayed()
     }

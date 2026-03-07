@@ -6,9 +6,9 @@ import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isToggleable
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onAllNodes
 import androidx.compose.ui.test.onNodeWithText
 import com.longboilauncher.app.core.designsystem.theme.LongboiLauncherTheme
+import com.longboilauncher.app.core.model.ThemeType
 import com.longboilauncher.app.feature.settingsui.SettingsScreen
 import com.longboilauncher.app.feature.settingsui.SettingsState
 import org.junit.Assert.assertTrue
@@ -52,12 +52,10 @@ class SettingsScreenAccessibilityTest {
         }
 
         // All section headers should be visible and readable
-        composeTestRule.onNodeWithText("Appearance").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Home").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Behavior").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Apps").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Backup").assertIsDisplayed()
-        composeTestRule.onNodeWithText("About").assertIsDisplayed()
+        composeTestRule.onNodeWithText("APPEARANCE").assertIsDisplayed()
+        composeTestRule.onNodeWithText("HOME").assertIsDisplayed()
+        composeTestRule.onNodeWithText("INTERACTION").assertIsDisplayed()
+        composeTestRule.onNodeWithText("SYSTEM").assertIsDisplayed()
     }
 
     @Test
@@ -106,7 +104,7 @@ class SettingsScreenAccessibilityTest {
                 SettingsScreen(
                     uiState =
                         SettingsState(
-                            theme = "dark",
+                            theme = ThemeType.SOPHISTICATED_SLEEK,
                             density = "compact",
                         ),
                     onEvent = {},
@@ -116,7 +114,7 @@ class SettingsScreenAccessibilityTest {
         }
 
         // Current setting values should be readable as subtitles
-        composeTestRule.onNodeWithText("Dark").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Sophisticated sleek").assertIsDisplayed()
         composeTestRule.onNodeWithText("Compact").assertIsDisplayed()
     }
 

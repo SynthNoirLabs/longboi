@@ -16,6 +16,7 @@ object UserSettingsSerializer : Serializer<UserSettings> {
             .setShowNotifications(true)
             .setGestureSwipeUp("all_apps")
             .setGestureSwipeDown("notifications")
+            .setOnboardingCompleted(true) // Default to true for dev/test ease
             .build()
 
     override suspend fun readFrom(input: InputStream): UserSettings {

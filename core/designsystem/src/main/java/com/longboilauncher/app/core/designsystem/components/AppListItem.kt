@@ -21,8 +21,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.longboilauncher.app.core.designsystem.theme.LocalLongboiColors
 import com.longboilauncher.app.core.designsystem.theme.LocalThemeType
-import com.longboilauncher.app.core.designsystem.theme.LongboiSpacing
 import com.longboilauncher.app.core.icons.AppIcon
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.model.ProfileType
@@ -41,21 +41,14 @@ fun AppListItem(
 
     val alpha = if (app.isArchived) 0.5f else 1f
     val themeType = LocalThemeType.current
-    val isGlass = themeType == ThemeType.GLASSMORPHISM
+    val customColors = LocalLongboiColors.current
+    val isGlass = customColors.useBlur
 
     val containerColor =
         when (themeType) {
-            ThemeType.GLASSMORPHISM -> Color.White.copy(alpha = 0.1f)
-            ThemeType.VIBRANT_PLAYFUL -> Color.Transparent
-            ThemeType.SOPHISTICATED_SLEEK -> Color.Transparent
-            ThemeType.MODERN_MINIMALIST -> Color.Transparent
-            else -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+            else -> MaterialTheme.colorScheme.surfaceVariant
         }
-    val contentColor =
-        when (themeType) {
-            ThemeType.GLASSMORPHISM -> Color.White
-            else -> MaterialTheme.colorScheme.onSurface
-        }
+
     val shape =
         when (themeType) {
             ThemeType.VIBRANT_PLAYFUL -> RoundedCornerShape(24.dp)
@@ -84,7 +77,7 @@ fun AppListItem(
                     text = app.label,
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = if (isGlass) FontWeight.Light else FontWeight.Medium,
-                    color = contentColor,
+                    color = customColors.onWallpaperContent,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f),
@@ -107,8 +100,8 @@ fun AppListItem(
                     .scale(scale)
                     .alpha(alpha)
                     .fillMaxWidth(),
-            containerColor = Color.White.copy(alpha = 0.05f),
-            borderColor = Color.White.copy(alpha = 0.1f),
+            containerColor = Color.White.copy(alpha = customColors.cardAlpha),
+            borderColor = Color.White.copy(alpha = customColors.borderAlpha),
             cornerRadius = 12.dp,
         ) {
             itemContent()
@@ -123,8 +116,8 @@ fun AppListItem(
             shape = shape,
             colors =
                 CardDefaults.cardColors(
-                    containerColor = containerColor,
-                    contentColor = contentColor,
+                    containerColor = containerColor.copy(alpha = customColors.cardAlpha),
+                    contentColor = customColors.onWallpaperContent,
                 ),
             elevation =
                 CardDefaults.cardElevation(

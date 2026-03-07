@@ -35,7 +35,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -147,7 +146,10 @@ fun PopupPanel(
 
                                 // Quick Actions
                                 Text(
-                                    text = stringResource(id = com.longboilauncher.core.designsystem.R.string.quick_actions),
+                                    text =
+                                        stringResource(
+                                            id = com.longboilauncher.core.designsystem.R.string.quick_actions,
+                                        ),
                                     style = MaterialTheme.typography.titleSmall,
                                     fontWeight = FontWeight.Medium,
                                     color = if (isGlass) Color.White else MaterialTheme.colorScheme.primary,
@@ -163,7 +165,10 @@ fun PopupPanel(
                                 if (shortcuts.isNotEmpty()) {
                                     Spacer(modifier = Modifier.height(24.dp))
                                     Text(
-                                        text = stringResource(id = com.longboilauncher.core.designsystem.R.string.shortcuts),
+                                        text =
+                                            stringResource(
+                                                id = com.longboilauncher.core.designsystem.R.string.shortcuts,
+                                            ),
                                         style = MaterialTheme.typography.titleSmall,
                                         fontWeight = FontWeight.Medium,
                                         color = if (isGlass) Color.White else MaterialTheme.colorScheme.primary,

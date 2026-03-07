@@ -3,20 +3,16 @@ package com.longboilauncher.app.core.designsystem.components
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -30,7 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -40,8 +35,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.longboilauncher.app.core.designsystem.theme.LocalLongboiColors
 import com.longboilauncher.app.core.designsystem.theme.LocalThemeType
-import com.longboilauncher.app.core.designsystem.theme.LongboiSpacing
 import com.longboilauncher.app.core.icons.AppIcon
 import com.longboilauncher.app.core.model.FavoriteEntry
 import com.longboilauncher.app.core.model.ThemeType
@@ -64,7 +59,8 @@ fun FavoriteAppItem(
 
     var dragOffset by remember { mutableFloatStateOf(0f) }
     val themeType = LocalThemeType.current
-    val isGlass = themeType == ThemeType.GLASSMORPHISM
+    val customColors = LocalLongboiColors.current
+    val isGlass = customColors.useBlur
 
     val playfulColors =
         listOf(
@@ -78,30 +74,15 @@ fun FavoriteAppItem(
 
     val containerColor =
         when (themeType) {
-            ThemeType.GLASSMORPHISM -> Color.White.copy(alpha = 0.15f)
             ThemeType.VIBRANT_PLAYFUL -> playfulColors[appColorIndex]
-            ThemeType.SOPHISTICATED_SLEEK -> Color(0xFF1A1A1A)
-            ThemeType.MODERN_MINIMALIST -> Color.Transparent
-            else -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+            else -> MaterialTheme.colorScheme.surfaceVariant
         }
-    val contentColor =
-        when (themeType) {
-            ThemeType.GLASSMORPHISM -> Color.White
-            ThemeType.VIBRANT_PLAYFUL -> Color.White
-            ThemeType.SOPHISTICATED_SLEEK -> Color(0xFFF2CC0D)
-            else -> MaterialTheme.colorScheme.onSurface
-        }
+
     val shape =
         when (themeType) {
             ThemeType.VIBRANT_PLAYFUL -> RoundedCornerShape(32.dp)
             ThemeType.MODERN_MINIMALIST -> RoundedCornerShape(0.dp)
             else -> RoundedCornerShape(16.dp)
-        }
-    val borderStroke =
-        when (themeType) {
-            ThemeType.GLASSMORPHISM -> Modifier.border(1.dp, Color.White.copy(alpha = 0.2f), shape)
-            ThemeType.SOPHISTICATED_SLEEK -> Modifier.border(0.5.dp, Color(0xFFF2CC0D).copy(alpha = 0.3f), shape)
-            else -> Modifier
         }
 
     val itemModifier =
@@ -123,7 +104,7 @@ fun FavoriteAppItem(
                 )
             }.combinedClickable(
                 onClick = onClick,
-                onLongClick = onLongClick
+                onLongClick = onLongClick,
             )
 
     val itemContent =
@@ -136,13 +117,13 @@ fun FavoriteAppItem(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(if (isGlass) 24.dp else 12.dp),
             ) {
-                // App Icon - with glass backdrop for glass theme
+                // App Icon - with glass backdrop if theme supports it
                 if (isGlass) {
                     GlassCard(
                         modifier = Modifier.size(64.dp),
                         cornerRadius = 24.dp,
                         backgroundAlpha = 0.1f,
-                        blurRadius = 12.dp
+                        blurRadius = 12.dp,
                     ) {
                         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                             AppIcon(
@@ -161,20 +142,22 @@ fun FavoriteAppItem(
                 // App Label
                 Text(
                     text = favorite.displayLabel,
-                    style = if (isGlass) {
-                        MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Light,
-                            letterSpacing = 0.5.sp,
-                            shadow = Shadow(
-                                color = Color.Black.copy(alpha = 0.15f),
-                                offset = Offset(0f, 2f),
-                                blurRadius = 4f
+                    style =
+                        if (isGlass) {
+                            MaterialTheme.typography.titleLarge.copy(
+                                fontWeight = FontWeight.Light,
+                                letterSpacing = 0.5.sp,
+                                shadow =
+                                    Shadow(
+                                        color = Color.Black.copy(alpha = 0.15f),
+                                        offset = Offset(0f, 2f),
+                                        blurRadius = 4f,
+                                    ),
                             )
-                        )
-                    } else {
-                        MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)
-                    },
-                    color = contentColor,
+                        } else {
+                            MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)
+                        },
+                    color = customColors.onWallpaperContent,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f),
@@ -194,20 +177,20 @@ fun FavoriteAppItem(
     if (isGlass) {
         GlassCard(
             modifier = modifier.then(itemModifier),
-            containerColor = Color.White.copy(alpha = 0.1f),
-            borderColor = Color.White.copy(alpha = 0.2f),
+            containerColor = Color.White.copy(alpha = customColors.cardAlpha),
+            borderColor = Color.White.copy(alpha = customColors.borderAlpha),
             cornerRadius = 24.dp,
         ) {
             itemContent()
         }
     } else {
         Card(
-            modifier = modifier.then(itemModifier).then(borderStroke),
+            modifier = modifier.then(itemModifier),
             shape = shape,
             colors =
                 CardDefaults.cardColors(
-                    containerColor = containerColor,
-                    contentColor = contentColor,
+                    containerColor = containerColor.copy(alpha = customColors.cardAlpha),
+                    contentColor = customColors.onWallpaperContent,
                 ),
             elevation =
                 CardDefaults.cardElevation(

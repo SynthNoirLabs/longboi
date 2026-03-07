@@ -22,14 +22,13 @@ class SearchScreenUITest {
                     packageName = "com.test.youtube",
                     className = "MainActivity",
                     label = "YouTube",
-                    userIdentifier = 0,
                     profile = ProfileType.PERSONAL,
                 ),
             ),
         )
 
     @Test
-    fun searchScreen_displaysHint_whenQueryEmpty() {
+    fun searchScreen_displaysPlaceholder_whenQueryEmpty() {
         composeTestRule.setContent {
             LongboiLauncherTheme {
                 SearchScreen(
@@ -45,7 +44,7 @@ class SearchScreenUITest {
             }
         }
 
-        composeTestRule.onNodeWithText("Type to search apps, settings, or calculate").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Search apps, settings...", substring = true).assertIsDisplayed()
     }
 
     @Test
@@ -125,6 +124,6 @@ class SearchScreenUITest {
             }
         }
 
-        composeTestRule.onNodeWithText("No results").assertIsDisplayed()
+        composeTestRule.onNodeWithText("No results found").assertIsDisplayed()
     }
 }

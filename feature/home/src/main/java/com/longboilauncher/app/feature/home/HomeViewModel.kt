@@ -133,7 +133,7 @@ class HomeViewModel
                     _uiState.update { state ->
                         state.copy(
                             isOnboardingCompleted = completed,
-                            currentSurface = if (!completed) LauncherSurface.ONBOARDING else state.currentSurface
+                            currentSurface = if (!completed) LauncherSurface.ONBOARDING else state.currentSurface,
                         )
                     }
                 }.launchIn(viewModelScope)

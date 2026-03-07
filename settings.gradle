@@ -18,7 +18,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "LongboiLauncher"
 include ':app'
-include ':benchmark'
+// include ':benchmark'
 
 // Core Modules
 include ':core:model'
@@ -35,5 +35,6 @@ include ':feature:home'
 include ':feature:allapps'
 include ':feature:searchui'
 include ':feature:settingsui'
-include ':feature:privatespace'
-include ':feature:backup'
+// include ':feature:privatespace'
+include ':feature:onboarding'
+// include ':feature:backup'

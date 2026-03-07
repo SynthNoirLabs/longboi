@@ -23,7 +23,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CircularProgressIndicator
@@ -46,6 +45,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.longboilauncher.app.core.common.HapticFeedbackManager
 import com.longboilauncher.app.core.designsystem.components.ActionsSheet
 import com.longboilauncher.app.core.designsystem.components.AppListItem
 import com.longboilauncher.app.core.designsystem.components.CompactCurvedAlphabetScrubber
@@ -54,11 +54,11 @@ import com.longboilauncher.app.core.designsystem.components.FloatingLetterIndica
 import com.longboilauncher.app.core.designsystem.components.GlanceHeader
 import com.longboilauncher.app.core.designsystem.components.GlassCard
 import com.longboilauncher.app.core.designsystem.components.ThemeBackground
+import com.longboilauncher.app.core.designsystem.theme.LocalLongboiColors
 import com.longboilauncher.app.core.designsystem.theme.LongboiSpacing
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.model.FavoriteEntry
 import com.longboilauncher.app.core.model.ThemeType
-import com.longboilauncher.app.core.common.HapticFeedbackManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,6 +69,8 @@ fun HomeScreen(
 ) {
     val favoritesListState = rememberLazyListState()
     val scrubbedListState = rememberLazyListState()
+    val customColors = LocalLongboiColors.current
+    val contentColor = customColors.onWallpaperContent
 
     var showActionsSheet by remember { mutableStateOf<AppEntry?>(null) }
     var isScrubbing by remember { mutableStateOf(false) }
@@ -115,7 +117,8 @@ fun HomeScreen(
                         if (overscrollAccumulator > 50f) {
                             onEvent(HomeEvent.ExpandNotifications)
                             overscrollAccumulator = 0f
-                            return androidx.compose.ui.geometry.Offset(0f, available.y)
+                            return androidx.compose.ui.geometry
+                                .Offset(0f, available.y)
                         }
                     } else if (available.y < 0) {
                         overscrollAccumulator = 0f
@@ -138,23 +141,25 @@ fun HomeScreen(
 
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = if (uiState.theme == ThemeType.MATERIAL_YOU) {
-                MaterialTheme.colorScheme.background
-            } else {
-                Color.Transparent
-            },
+            color =
+                if (uiState.theme == ThemeType.MATERIAL_YOU) {
+                    MaterialTheme.colorScheme.background
+                } else {
+                    Color.Transparent
+                },
         ) {
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .pointerInput(Unit) {
-                        detectVerticalDragGestures { _, dragAmount ->
-                            if (dragAmount < -20f && uiState.currentSurface == LauncherSurface.HOME) {
-                                onEvent(HomeEvent.UpdateScrubberLetter(null))
-                                onEvent(HomeEvent.NavigateTo(LauncherSurface.SEARCH))
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .pointerInput(Unit) {
+                            detectVerticalDragGestures { _, dragAmount ->
+                                if (dragAmount < -20f && uiState.currentSurface == LauncherSurface.HOME) {
+                                    onEvent(HomeEvent.UpdateScrubberLetter(null))
+                                    onEvent(HomeEvent.NavigateTo(LauncherSurface.SEARCH))
+                                }
                             }
-                        }
-                    }
+                        },
             ) {
                 if (uiState.isLoading) {
                     CircularProgressIndicator(
@@ -170,16 +175,17 @@ fun HomeScreen(
                             if (!isScrubbing) {
                                 LazyColumn(
                                     state = favoritesListState,
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .nestedScroll(nestedScrollConnection),
+                                    modifier =
+                                        Modifier
+                                            .fillMaxSize()
+                                            .nestedScroll(nestedScrollConnection),
                                 ) {
                                     item {
                                         Spacer(modifier = Modifier.height(LongboiSpacing.XXXL + LongboiSpacing.XXXL))
                                         AnimatedVisibility(
                                             visible = !isScrubbing,
                                             enter = fadeIn(),
-                                            exit = fadeOut()
+                                            exit = fadeOut(),
                                         ) {
                                             GlanceHeader(
                                                 data = uiState.glanceData,
@@ -211,19 +217,20 @@ fun HomeScreen(
                                             }
                                             is HomeScreenItem.EmptyFavorites -> {
                                                 Box(
-                                                    modifier = Modifier
-                                                        .fillMaxWidth()
-                                                        .height(200.dp)
-                                                        .clickable { 
-                                                            onEvent(HomeEvent.UpdateScrubberLetter(null))
-                                                            onEvent(HomeEvent.NavigateTo(LauncherSurface.SEARCH)) 
-                                                        },
-                                                    contentAlignment = Alignment.Center
+                                                    modifier =
+                                                        Modifier
+                                                            .fillMaxWidth()
+                                                            .height(200.dp)
+                                                            .clickable {
+                                                                onEvent(HomeEvent.UpdateScrubberLetter(null))
+                                                                onEvent(HomeEvent.NavigateTo(LauncherSurface.SEARCH))
+                                                            },
+                                                    contentAlignment = Alignment.Center,
                                                 ) {
                                                     Text(
                                                         text = "Tap or swipe up to search",
                                                         style = MaterialTheme.typography.bodyMedium,
-                                                        color = (if (isGlass) Color.White else MaterialTheme.colorScheme.onBackground).copy(alpha = 0.5f)
+                                                        color = contentColor.copy(alpha = 0.5f),
                                                     )
                                                 }
                                             }
@@ -234,23 +241,28 @@ fun HomeScreen(
                                     item {
                                         Spacer(modifier = Modifier.height(LongboiSpacing.XXL))
                                         Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .clickable { onEvent(HomeEvent.NavigateTo(LauncherSurface.SETTINGS)) }
-                                                .padding(vertical = LongboiSpacing.L, horizontal = LongboiSpacing.L),
+                                            modifier =
+                                                Modifier
+                                                    .fillMaxWidth()
+                                                    .clickable {
+                                                        onEvent(HomeEvent.NavigateTo(LauncherSurface.SETTINGS))
+                                                    }.padding(
+                                                        vertical = LongboiSpacing.L,
+                                                        horizontal = LongboiSpacing.L,
+                                                    ),
                                             verticalAlignment = Alignment.CenterVertically,
                                         ) {
                                             Icon(
                                                 imageVector = Icons.Default.Settings,
                                                 contentDescription = "Launcher Settings",
-                                                tint = if (isGlass) Color.White else MaterialTheme.colorScheme.onBackground,
+                                                tint = contentColor,
                                                 modifier = Modifier.padding(end = LongboiSpacing.M),
                                             )
                                             Text(
                                                 text = "Launcher Settings",
                                                 style = MaterialTheme.typography.bodyLarge,
                                                 fontWeight = FontWeight.Medium,
-                                                color = if (isGlass) Color.White else MaterialTheme.colorScheme.onBackground,
+                                                color = contentColor,
                                             )
                                         }
                                         Spacer(modifier = Modifier.height(LongboiSpacing.XXXL + LongboiSpacing.XXXL))
@@ -264,14 +276,23 @@ fun HomeScreen(
                                 ) {
                                     item {
                                         // Keep top spacer but remove GlanceHeader
-                                        Spacer(modifier = Modifier.height(LongboiSpacing.XXXL + LongboiSpacing.XXXL + 100.dp))
+                                        Spacer(
+                                            modifier =
+                                                Modifier.height(
+                                                    LongboiSpacing.XXXL + LongboiSpacing.XXXL + 100.dp,
+                                                ),
+                                        )
                                     }
 
                                     items(
                                         items = scrubbedFlatList,
                                         key = { item ->
                                             when (item) {
-                                                is HomeScreenItem.App -> "scrub_app_${item.entry.packageName}_${item.entry.userSerialNumber}"
+                                                is HomeScreenItem.App -> {
+                                                    val pkg = item.entry.packageName
+                                                    val serial = item.entry.userSerialNumber
+                                                    "scrub_app_${pkg}_$serial"
+                                                }
                                                 else -> item.hashCode()
                                             }
                                         },
@@ -279,9 +300,10 @@ fun HomeScreen(
                                         if (item is HomeScreenItem.App) {
                                             AppListItem(
                                                 app = item.entry,
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .clickable { onEvent(HomeEvent.LaunchApp(item.entry)) }
+                                                modifier =
+                                                    Modifier
+                                                        .fillMaxWidth()
+                                                        .clickable { onEvent(HomeEvent.LaunchApp(item.entry)) },
                                             )
                                         }
                                     }
@@ -292,34 +314,35 @@ fun HomeScreen(
                         // Premium Bottom Search Bar
                         if (!isScrubbing) {
                             GlassCard(
-                                modifier = Modifier
-                                    .align(Alignment.BottomCenter)
-                                    .padding(bottom = 32.dp, start = 48.dp, end = 48.dp)
-                                    .fillMaxWidth()
-                                    .height(56.dp)
-                                    .clickable { 
-                                        onEvent(HomeEvent.NavigateTo(LauncherSurface.SEARCH)) 
-                                    },
+                                modifier =
+                                    Modifier
+                                        .align(Alignment.BottomCenter)
+                                        .padding(bottom = 32.dp, start = 48.dp, end = 48.dp)
+                                        .fillMaxWidth()
+                                        .height(56.dp)
+                                        .clickable {
+                                            onEvent(HomeEvent.NavigateTo(LauncherSurface.SEARCH))
+                                        },
                                 cornerRadius = 28.dp,
                                 backgroundAlpha = 0.15f,
-                                blurRadius = 16.dp
+                                blurRadius = 16.dp,
                             ) {
                                 Row(
                                     modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp),
                                     verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Start
+                                    horizontalArrangement = Arrangement.Start,
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Search,
                                         contentDescription = null,
-                                        tint = Color.White.copy(alpha = 0.5f),
-                                        modifier = Modifier.size(24.dp)
+                                        tint = contentColor.copy(alpha = 0.5f),
+                                        modifier = Modifier.size(24.dp),
                                     )
                                     Spacer(modifier = Modifier.width(12.dp))
                                     Text(
                                         text = "Search apps...",
                                         style = MaterialTheme.typography.bodyLarge,
-                                        color = Color.White.copy(alpha = 0.4f)
+                                        color = contentColor.copy(alpha = 0.4f),
                                     )
                                 }
                             }
@@ -346,24 +369,24 @@ fun HomeScreen(
                                 onEvent(HomeEvent.NavigateTo(LauncherSurface.ALL_APPS))
                             },
                             modifier =
-                            Modifier
-                                .align(Alignment.CenterEnd)
-                                .fillMaxHeight()
-                                .padding(
-                                    top = LongboiSpacing.XXXL + LongboiSpacing.XXXL,
-                                    bottom = LongboiSpacing.XXL,
-                                    end = LongboiSpacing.S,
-                                ).width(LongboiSpacing.XXL + LongboiSpacing.XXXL)
-                                .testTag("alphabet_scrubber"),
+                                Modifier
+                                    .align(Alignment.CenterEnd)
+                                    .fillMaxHeight()
+                                    .padding(
+                                        top = LongboiSpacing.XXXL + LongboiSpacing.XXXL,
+                                        bottom = LongboiSpacing.XXL,
+                                        end = LongboiSpacing.S,
+                                    ).width(LongboiSpacing.XXL + LongboiSpacing.XXXL)
+                                    .testTag("alphabet_scrubber"),
                         )
 
                         // Accent letter bubble — shown only while actively scrubbing.
                         AnimatedVisibility(
                             visible = isScrubbing,
                             modifier =
-                            Modifier
-                                .align(Alignment.Center)
-                                .padding(end = LongboiSpacing.XXL + LongboiSpacing.XXL),
+                                Modifier
+                                    .align(Alignment.Center)
+                                    .padding(end = LongboiSpacing.XXL + LongboiSpacing.XXL),
                             enter = fadeIn() + scaleIn(initialScale = 0.7f),
                             exit = fadeOut() + scaleOut(targetScale = 0.7f),
                         ) {
@@ -379,7 +402,11 @@ fun HomeScreen(
 
                 // Long-press context sheet
                 showActionsSheet?.let { app ->
-                    val isFav = uiState.favorites.any { it.appEntry.packageName == app.packageName && it.appEntry.userSerialNumber == app.userSerialNumber }
+                    val isFav =
+                        uiState.favorites.any {
+                            it.appEntry.packageName == app.packageName &&
+                                it.appEntry.userSerialNumber == app.userSerialNumber
+                        }
                     ActionsSheet(
                         app = app,
                         isFavorite = isFav,
@@ -389,9 +416,13 @@ fun HomeScreen(
                             showActionsSheet = null
                         },
                         onRemoveFromFavorites = {
-                            uiState.favorites.find { it.appEntry.packageName == app.packageName && it.appEntry.userSerialNumber == app.userSerialNumber }?.let {
-                                onEvent(HomeEvent.RemoveFromFavorites(it.id))
-                            }
+                            uiState.favorites
+                                .find {
+                                    it.appEntry.packageName == app.packageName &&
+                                        it.appEntry.userSerialNumber == app.userSerialNumber
+                                }?.let {
+                                    onEvent(HomeEvent.RemoveFromFavorites(it.id))
+                                }
                             showActionsSheet = null
                         },
                         onHideApp = {

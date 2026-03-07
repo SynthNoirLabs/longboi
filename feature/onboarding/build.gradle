@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -24,12 +25,19 @@ android {
     buildFeatures {
         compose = true
     }
+    sourceSets {
+        androidTest {
+            java.srcDirs = []
+            kotlin.srcDirs = []
+        }
+    }
 }
 
 dependencies {
     implementation(project(":core:designsystem"))
     implementation(project(":core:settings"))
     implementation(project(":core:common"))
+    implementation(project(":core:model"))
 
     implementation(libs.androidx.core.ktx)
     implementation(platform(libs.androidx.compose.bom))

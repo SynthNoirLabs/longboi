@@ -50,6 +50,6 @@ class ArchitectureTest {
                 .haveSimpleNameEndingWith("ViewModel")
 
         rule.check(coreClasses)
-        */
+         */
     }
 }

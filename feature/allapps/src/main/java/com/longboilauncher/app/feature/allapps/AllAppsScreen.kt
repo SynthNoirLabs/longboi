@@ -17,7 +17,6 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -30,22 +29,22 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.longboilauncher.app.core.common.HapticFeedbackManager
+import com.longboilauncher.app.core.designsystem.components.AmbientLightBackground
 import com.longboilauncher.app.core.designsystem.components.AppListItem
 import com.longboilauncher.app.core.designsystem.components.CompactCurvedAlphabetScrubber
 import com.longboilauncher.app.core.designsystem.components.FloatingLetterIndicator
 import com.longboilauncher.app.core.designsystem.components.GlassSurface
-import com.longboilauncher.app.core.designsystem.components.AmbientLightBackground
-import com.longboilauncher.app.core.designsystem.theme.LongboiSpacing
-import com.longboilauncher.app.core.designsystem.theme.LocalThemeType
 import com.longboilauncher.app.core.designsystem.effects.StaggeredSlideIn
+import com.longboilauncher.app.core.designsystem.theme.LocalThemeType
+import com.longboilauncher.app.core.designsystem.theme.LongboiSpacing
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.model.ThemeType
-import com.longboilauncher.app.core.common.HapticFeedbackManager
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -137,7 +136,7 @@ fun AllAppsScreen(
                 // Minimalist, borderless Search Bar
                 TextField(
                     value = uiState.searchQuery,
-                    onValueChange = { 
+                    onValueChange = {
                         onEvent(AllAppsEvent.UpdateSearchQuery(it))
                         if (it.isNotEmpty()) {
                             onEvent(AllAppsEvent.SetTargetLetter(null))
@@ -149,9 +148,12 @@ fun AllAppsScreen(
                             .padding(top = 16.dp, start = 8.dp, end = 8.dp),
                     placeholder = {
                         Text(
-                            text = stringResource(id = com.longboilauncher.core.designsystem.R.string.search_apps_placeholder),
+                            text =
+                                stringResource(
+                                    id = com.longboilauncher.core.designsystem.R.string.search_apps_placeholder,
+                                ),
                             style = MaterialTheme.typography.bodyLarge,
-                            color = Color.White.copy(alpha = 0.5f)
+                            color = Color.White.copy(alpha = 0.5f),
                         )
                     },
                     leadingIcon = {
@@ -173,18 +175,19 @@ fun AllAppsScreen(
                         }
                     },
                     singleLine = true,
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        disabledContainerColor = Color.Transparent,
-                        focusedIndicatorColor = Color.White.copy(alpha = 0.2f),
-                        unfocusedIndicatorColor = Color.White.copy(alpha = 0.1f),
-                        cursorColor = Color.White,
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White,
-                    ),
+                    colors =
+                        TextFieldDefaults.colors(
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent,
+                            disabledContainerColor = Color.Transparent,
+                            focusedIndicatorColor = Color.White.copy(alpha = 0.2f),
+                            unfocusedIndicatorColor = Color.White.copy(alpha = 0.1f),
+                            cursorColor = Color.White,
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Color.White,
+                        ),
                 )
-                
+
                 Box(
                     modifier =
                         Modifier
@@ -226,7 +229,11 @@ fun AllAppsScreen(
                                             modifier =
                                                 Modifier
                                                     .fillMaxWidth()
-                                                    .padding(start = LongboiSpacing.ScreenEdgePadding, top = 16.dp, bottom = 8.dp),
+                                                    .padding(
+                                                        start = LongboiSpacing.ScreenEdgePadding,
+                                                        top = 16.dp,
+                                                        bottom = 8.dp,
+                                                    ),
                                         )
                                     }
                                     is ListItem.App -> {
@@ -252,12 +259,15 @@ fun AllAppsScreen(
                             isScrubbing = active
                             scrubbingLetter = letter
                             if (active) {
-                                onEvent(AllAppsEvent.SetTargetLetter(null)) // Exit single-letter mode when scrubbing starts
+                                // Exit single-letter mode when scrubbing starts
+                                onEvent(AllAppsEvent.SetTargetLetter(null))
                             }
                         },
                         onLetterSelected = { letter ->
                             scrubbingLetter = letter
-                            val index = uiState.sectionIndices[letter] ?: return@CompactCurvedAlphabetScrubber
+                            val index =
+                                uiState.sectionIndices[letter]
+                                    ?: return@CompactCurvedAlphabetScrubber
                             scrollJob?.cancel()
                             scrollJob =
                                 coroutineScope.launch {

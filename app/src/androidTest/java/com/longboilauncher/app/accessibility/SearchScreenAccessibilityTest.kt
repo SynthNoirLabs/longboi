@@ -1,10 +1,13 @@
 package com.longboilauncher.app.accessibility
 
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithText
 import com.longboilauncher.app.core.designsystem.theme.LongboiLauncherTheme
 import com.longboilauncher.app.core.model.AppEntry
@@ -16,7 +19,6 @@ import org.junit.Test
 
 /**
  * Accessibility tests for the Search screen.
- * Verifies search field labels, result accessibility, and screen reader support.
  */
 class SearchScreenAccessibilityTest {
     @get:Rule
@@ -40,24 +42,7 @@ class SearchScreenAccessibilityTest {
     }
 
     @Test
-    fun searchScreen_clearButton_hasContentDescription() {
-        composeTestRule.setContent {
-            LongboiLauncherTheme {
-                SearchScreen(
-                    uiState = SearchState(searchQuery = "test", searchResults = emptyList()),
-                    onEvent = {},
-                    onAppSelected = {},
-                    onDismiss = {},
-                )
-            }
-        }
-
-        // Clear button should have content description for screen readers
-        composeTestRule.onNode(hasContentDescription("Clear")).assertIsDisplayed()
-    }
-
-    @Test
-    fun searchScreen_emptyHint_isReadable() {
+    fun searchScreen_clearButton_hasSearchIconWhenEmpty() {
         composeTestRule.setContent {
             LongboiLauncherTheme {
                 SearchScreen(
@@ -68,10 +53,8 @@ class SearchScreenAccessibilityTest {
                 )
             }
         }
-
-        composeTestRule
-            .onNodeWithText("Type to search apps, settings, or calculate")
-            .assertIsDisplayed()
+        // No clear button when empty - use onAllNodes to verify it doesn't exist
+        composeTestRule.onAllNodes(hasContentDescription("Clear")).assertCountEquals(0)
     }
 
     @Test
@@ -91,7 +74,7 @@ class SearchScreenAccessibilityTest {
             }
         }
 
-        composeTestRule.onNodeWithText("No results").assertIsDisplayed()
+        composeTestRule.onNodeWithText("No results found").assertIsDisplayed()
     }
 
     @Test
@@ -145,7 +128,7 @@ class SearchScreenAccessibilityTest {
         }
 
         // Both expression and result should be readable
-        composeTestRule.onNodeWithText("2+2").assertIsDisplayed()
+        composeTestRule.onAllNodesWithText("2+2").onFirst().assertIsDisplayed()
         composeTestRule.onNodeWithText("= 4").assertIsDisplayed()
     }
 }

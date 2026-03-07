@@ -1,7 +1,6 @@
 package com.longboilauncher.app.feature.settingsui
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -43,7 +42,6 @@ import androidx.compose.ui.unit.dp
 import com.longboilauncher.app.core.designsystem.components.GlassCard
 import com.longboilauncher.app.core.designsystem.components.ThemeBackground
 import com.longboilauncher.app.core.designsystem.theme.LocalThemeType
-import com.longboilauncher.app.core.designsystem.theme.LongboiSpacing
 import com.longboilauncher.app.core.model.ThemeType
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,7 +54,8 @@ fun SettingsScreen(
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     ThemeBackground(themeType = LocalThemeType.current) {
-        val isGlass = LocalThemeType.current == ThemeType.GLASSMORPHISM
+        val themeType = LocalThemeType.current
+        val isGlass = themeType == ThemeType.GLASSMORPHISM
 
         Scaffold(
             containerColor = Color.Transparent, // Immersive background
@@ -67,7 +66,7 @@ fun SettingsScreen(
                         Text(
                             "Settings",
                             style = MaterialTheme.typography.headlineMedium,
-                            color = if (isGlass) Color.White else Color.Unspecified,
+                            color = MaterialTheme.colorScheme.onBackground,
                         )
                     },
                     navigationIcon = {
@@ -75,15 +74,23 @@ fun SettingsScreen(
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = "Back",
-                                tint = if (isGlass) Color.White else Color.Unspecified,
+                                tint = MaterialTheme.colorScheme.onBackground,
                             )
                         }
                     },
-                    colors = TopAppBarDefaults.largeTopAppBarColors(
-                        containerColor = Color.Transparent,
-                        scrolledContainerColor = if (isGlass) Color.Black.copy(alpha = 0.5f) else MaterialTheme.colorScheme.surface,
-                        titleContentColor = if (isGlass) Color.White else MaterialTheme.colorScheme.onSurface,
-                    ),
+                    colors =
+                        TopAppBarDefaults.largeTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            scrolledContainerColor =
+                                if (isGlass) {
+                                    Color.Black.copy(
+                                        alpha = 0.5f,
+                                    )
+                                } else {
+                                    MaterialTheme.colorScheme.surface
+                                },
+                            titleContentColor = MaterialTheme.colorScheme.onBackground,
+                        ),
                     scrollBehavior = scrollBehavior,
                 )
             },
@@ -101,12 +108,18 @@ fun SettingsScreen(
                     SettingsItem(
                         icon = Icons.Default.ColorLens,
                         title = "Theme",
-                        subtitle = uiState.theme.name.lowercase().replace("_", " ").capitalize(),
+                        subtitle =
+                            uiState.theme.name
+                                .lowercase()
+                                .replace("_", " ")
+                                .capitalize(),
                         isGlass = isGlass,
                         onClick = {
-                            onEvent(SettingsEvent.SetTheme(
-                                ThemeType.entries[(uiState.theme.ordinal + 1) % ThemeType.entries.size]
-                            ))
+                            onEvent(
+                                SettingsEvent.SetTheme(
+                                    ThemeType.entries[(uiState.theme.ordinal + 1) % ThemeType.entries.size],
+                                ),
+                            )
                         },
                     )
                     SettingsItem(
@@ -197,7 +210,14 @@ private fun SettingsSection(
         Text(
             text = title,
             style = MaterialTheme.typography.labelLarge,
-            color = if (isGlass) Color.White.copy(alpha = 0.4f) else MaterialTheme.colorScheme.primary,
+            color =
+                if (isGlass) {
+                    MaterialTheme.colorScheme.onBackground.copy(
+                        alpha = 0.4f,
+                    )
+                } else {
+                    MaterialTheme.colorScheme.primary
+                },
             modifier = Modifier.padding(start = 8.dp, bottom = 8.dp),
         )
         if (isGlass) {
@@ -238,19 +258,19 @@ private fun SettingsItem(
             imageVector = icon,
             contentDescription = null,
             modifier = Modifier.size(24.dp),
-            tint = if (isGlass) Color.White.copy(alpha = 0.6f) else MaterialTheme.colorScheme.onSurfaceVariant,
+            tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
         )
         Spacer(modifier = Modifier.width(20.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge,
-                color = if (isGlass) Color.White else MaterialTheme.colorScheme.onSurface,
+                color = MaterialTheme.colorScheme.onBackground,
             )
             Text(
                 text = subtitle,
                 style = MaterialTheme.typography.bodyMedium,
-                color = if (isGlass) Color.White.copy(alpha = 0.5f) else MaterialTheme.colorScheme.onSurfaceVariant,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
             )
         }
     }
@@ -277,30 +297,31 @@ private fun SettingsSwitchItem(
             imageVector = icon,
             contentDescription = null,
             modifier = Modifier.size(24.dp),
-            tint = if (isGlass) Color.White.copy(alpha = 0.6f) else MaterialTheme.colorScheme.onSurfaceVariant,
+            tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
         )
         Spacer(modifier = Modifier.width(20.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge,
-                color = if (isGlass) Color.White else MaterialTheme.colorScheme.onSurface,
+                color = MaterialTheme.colorScheme.onBackground,
             )
             Text(
                 text = subtitle,
                 style = MaterialTheme.typography.bodyMedium,
-                color = if (isGlass) Color.White.copy(alpha = 0.5f) else MaterialTheme.colorScheme.onSurfaceVariant,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
             )
         }
         Switch(
             checked = checked,
             onCheckedChange = onCheckedChange,
-            colors = SwitchDefaults.colors(
-                checkedThumbColor = Color.White,
-                checkedTrackColor = MaterialTheme.colorScheme.primary,
-                uncheckedThumbColor = Color.White.copy(alpha = 0.6f),
-                uncheckedTrackColor = Color.White.copy(alpha = 0.2f),
-            )
+            colors =
+                SwitchDefaults.colors(
+                    checkedThumbColor = MaterialTheme.colorScheme.primary,
+                    checkedTrackColor = MaterialTheme.colorScheme.primaryContainer,
+                    uncheckedThumbColor = MaterialTheme.colorScheme.outline,
+                    uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
+                ),
         )
     }
 }

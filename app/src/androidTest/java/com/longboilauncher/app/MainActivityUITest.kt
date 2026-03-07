@@ -1,52 +1,102 @@
 package com.longboilauncher.app
 
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performTouchInput
-import androidx.compose.ui.test.swipeUp
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import dagger.hilt.android.testing.HiltAndroidRule
-import dagger.hilt.android.testing.HiltAndroidTest
+import androidx.compose.ui.test.*
+import androidx.compose.ui.test.junit4.createComposeRule
+import com.longboilauncher.app.core.common.HapticFeedbackManager
+import com.longboilauncher.app.core.common.LauncherRoleHelper
+import com.longboilauncher.app.core.designsystem.theme.LongboiLauncherTheme
+import com.longboilauncher.app.feature.allapps.AllAppsState
+import com.longboilauncher.app.feature.allapps.AllAppsViewModel
+import com.longboilauncher.app.feature.home.HomeState
+import com.longboilauncher.app.feature.home.HomeViewModel
+import com.longboilauncher.app.feature.home.LauncherSurface
+import com.longboilauncher.app.feature.onboarding.OnboardingEffect
+import com.longboilauncher.app.feature.onboarding.OnboardingState
+import com.longboilauncher.app.feature.onboarding.OnboardingViewModel
+import com.longboilauncher.app.feature.searchui.SearchState
+import com.longboilauncher.app.feature.searchui.SearchViewModel
+import com.longboilauncher.app.feature.settingsui.SettingsState
+import com.longboilauncher.app.feature.settingsui.SettingsViewModel
+import io.mockk.every
+import io.mockk.mockk
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 
 /**
- * Basic integration test for MainActivity using Hilt.
- * Note: Requires Hilt test setup in build.gradle which we have partially.
- * This test verifies the core navigation flow.
+ * UI test for the main app structure.
+ * Tests LauncherApp composable directly to avoid Activity launch issues.
  */
-@HiltAndroidTest
-@RunWith(AndroidJUnit4::class)
 class MainActivityUITest {
-    @get:Rule(order = 0)
-    val hiltRule = HiltAndroidRule(this)
+    @get:Rule
+    val composeTestRule = createComposeRule()
 
-    @get:Rule(order = 1)
-    val composeTestRule = createAndroidComposeRule<MainActivity>()
+    private val hapticFeedbackManager = mockk<HapticFeedbackManager>(relaxed = true)
+    private val roleHelper = mockk<LauncherRoleHelper>(relaxed = true)
+    private val homeViewModel = mockk<HomeViewModel>(relaxed = true)
+    private val allAppsViewModel = mockk<AllAppsViewModel>(relaxed = true)
+    private val searchViewModel = mockk<SearchViewModel>(relaxed = true)
+    private val settingsViewModel = mockk<SettingsViewModel>(relaxed = true)
+    private val onboardingViewModel = mockk<OnboardingViewModel>(relaxed = true)
+
+    private val uiState = MutableStateFlow(HomeState(isLoading = false))
+    private val shouldRequestRole = MutableStateFlow(false)
 
     @Before
     fun setup() {
-        hiltRule.inject()
+        every { homeViewModel.uiState } returns uiState
+        every { roleHelper.shouldRequestRole } returns shouldRequestRole
+        every { allAppsViewModel.uiState } returns MutableStateFlow(AllAppsState())
+        every { searchViewModel.uiState } returns MutableStateFlow(SearchState())
+        every { settingsViewModel.uiState } returns MutableStateFlow(SettingsState())
+        every { onboardingViewModel.uiState } returns MutableStateFlow(OnboardingState())
+        every { onboardingViewModel.effects } returns MutableSharedFlow<OnboardingEffect>()
     }
 
     @Test
     fun app_startsOnHomeScreen() {
-        // Verify we are on Home Screen by checking for Glance header or "Swipe up" hint
-        composeTestRule.onNodeWithText("Swipe up for all apps").assertIsDisplayed()
+        composeTestRule.setContent {
+            LongboiLauncherTheme {
+                LauncherApp(
+                    hapticFeedbackManager = hapticFeedbackManager,
+                    homeViewModel = homeViewModel,
+                    roleHelper = roleHelper,
+                    allAppsViewModel = allAppsViewModel,
+                    searchViewModel = searchViewModel,
+                    settingsViewModel = settingsViewModel,
+                    onboardingViewModel = onboardingViewModel,
+                )
+            }
+        }
+
+        // Verify we are on Home Screen
+        composeTestRule.onNodeWithText("Search apps...", substring = true).assertIsDisplayed()
     }
 
     @Test
-    fun app_swipingUp_opensAllApps() {
-        // Perform swipe up on the background
-        composeTestRule.onNodeWithText("Swipe up for all apps").performTouchInput {
-            swipeUp()
+    fun app_showsOnboarding_whenNotCompleted() {
+        uiState.value = HomeState(isLoading = false, currentSurface = LauncherSurface.ONBOARDING)
+        every { onboardingViewModel.uiState } returns MutableStateFlow(
+            OnboardingState(currentPage = 0, isLastPage = false)
+        )
+
+        composeTestRule.setContent {
+            LongboiLauncherTheme {
+                LauncherApp(
+                    hapticFeedbackManager = hapticFeedbackManager,
+                    homeViewModel = homeViewModel,
+                    roleHelper = roleHelper,
+                    allAppsViewModel = allAppsViewModel,
+                    searchViewModel = searchViewModel,
+                    settingsViewModel = settingsViewModel,
+                    onboardingViewModel = onboardingViewModel,
+                )
+            }
         }
 
-        // Verify "A" header or "Apple" (if using mock data) appears
-        // In a real integration test, it would show real apps or Hilt test data
-        // For now, we verify the screen transition if possible
+        // Verify Onboarding screen content (Welcome title)
+        composeTestRule.onNodeWithText("Welcome", substring = true, ignoreCase = true).assertIsDisplayed()
     }
 }

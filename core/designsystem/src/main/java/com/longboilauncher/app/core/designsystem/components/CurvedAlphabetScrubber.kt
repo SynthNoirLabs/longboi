@@ -11,14 +11,12 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -37,6 +35,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.longboilauncher.app.core.designsystem.theme.LocalLongboiColors
 import com.longboilauncher.app.core.designsystem.theme.shouldReduceMotion
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -157,6 +156,7 @@ private fun CurvedLetter(
     onClick: () -> Unit,
 ) {
     val density = LocalDensity.current
+    val customColors = LocalLongboiColors.current
     val letterSpacingPx = with(density) { letterSpacing.toPx() }
 
     val distanceFromActive = index - activeIndex
@@ -219,7 +219,8 @@ private fun CurvedLetter(
     val isActive = absDistanceInt == 0
     val highlightColor = MaterialTheme.colorScheme.primary
     val onHighlightColor = MaterialTheme.colorScheme.onPrimary
-    val textColor = MaterialTheme.colorScheme.onBackground
+    val textColor = customColors.onWallpaperContent
+    val shadowColor = if (textColor.luminance() > 0.5f) Color.Black else Color.White
 
     Box(
         modifier =
@@ -246,7 +247,7 @@ private fun CurvedLetter(
                     shadow =
                         if (!isActive) {
                             Shadow(
-                                color = Color.Black.copy(alpha = 0.3f),
+                                color = shadowColor.copy(alpha = 0.3f),
                                 offset = Offset(0f, 2f),
                                 blurRadius = 4f,
                             )
@@ -270,12 +271,16 @@ fun FloatingLetterIndicator(
     letter: String,
     modifier: Modifier = Modifier,
 ) {
+    val customColors = LocalLongboiColors.current
+    val bgColor = customColors.onWallpaperContent
+    val textColor = if (bgColor.luminance() > 0.5f) Color.Black else Color.White
+
     Box(
         modifier =
             modifier
                 .size(72.dp)
                 .background(
-                    color = Color(0xFFEA4335),
+                    color = bgColor,
                     shape = CircleShape,
                 ),
         contentAlignment = Alignment.Center,
@@ -284,11 +289,13 @@ fun FloatingLetterIndicator(
             text = letter,
             style = MaterialTheme.typography.displaySmall,
             fontWeight = FontWeight.Black,
-            color = Color.White,
+            color = textColor,
             textAlign = TextAlign.Center,
         )
     }
 }
+
+private fun Color.luminance(): Float = 0.2126f * red + 0.7152f * green + 0.0722f * blue
 
 /**
  * Compact version of the curved scrubber for home screen use.

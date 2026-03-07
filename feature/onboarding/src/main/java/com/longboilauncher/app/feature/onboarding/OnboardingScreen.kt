@@ -37,6 +37,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -45,8 +46,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.longboilauncher.app.core.designsystem.components.GlassCard
+import com.longboilauncher.app.core.designsystem.components.ThemeBackground
 import com.longboilauncher.app.core.designsystem.theme.LongboiLauncherTheme
 import com.longboilauncher.app.core.designsystem.theme.LongboiSpacing
+import com.longboilauncher.app.core.model.ThemeType
 
 @Composable
 fun OnboardingScreen(
@@ -70,10 +74,6 @@ fun OnboardingScreen(
         onEvent = viewModel::onEvent,
     )
 }
-
-import com.longboilauncher.app.core.designsystem.components.GlassCard
-import com.longboilauncher.app.core.designsystem.components.ThemeBackground
-import com.longboilauncher.app.core.model.ThemeType
 
 @Composable
 private fun OnboardingContent(
@@ -113,7 +113,7 @@ private fun OnboardingContent(
                     Text(
                         stringResource(R.string.onboarding_skip),
                         color = Color.White.copy(alpha = 0.6f),
-                        style = MaterialTheme.typography.labelLarge
+                        style = MaterialTheme.typography.labelLarge,
                     )
                 }
             }
@@ -156,7 +156,7 @@ private fun OnboardingContent(
                         Text(
                             stringResource(R.string.onboarding_back),
                             color = Color.White.copy(alpha = 0.7f),
-                            style = MaterialTheme.typography.bodyLarge
+                            style = MaterialTheme.typography.bodyLarge,
                         )
                     }
                 } else {
@@ -165,8 +165,8 @@ private fun OnboardingContent(
 
                 GlassCard(
                     modifier = Modifier.padding(bottom = 8.dp),
-                    cornerRadius = 32f,
-                    backgroundAlpha = 0.4f
+                    cornerRadius = 32.dp,
+                    backgroundAlpha = 0.4f,
                 ) {
                     Button(
                         onClick = {
@@ -176,20 +176,22 @@ private fun OnboardingContent(
                                 onEvent(OnboardingEvent.NextPage)
                             }
                         },
-                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-                            containerColor = Color.Transparent,
-                            contentColor = Color.White
-                        ),
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                        colors =
+                            androidx.compose.material3.ButtonDefaults.buttonColors(
+                                containerColor = Color.Transparent,
+                                contentColor = Color.White,
+                            ),
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
                     ) {
                         Text(
-                            text = if (state.isLastPage) {
-                                stringResource(R.string.onboarding_get_started)
-                            } else {
-                                stringResource(R.string.onboarding_next)
-                            },
+                            text =
+                                if (state.isLastPage) {
+                                    stringResource(R.string.onboarding_get_started)
+                                } else {
+                                    stringResource(R.string.onboarding_next)
+                                },
                             style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
                         )
                         Spacer(modifier = Modifier.width(LongboiSpacing.M))
                         Icon(
@@ -220,8 +222,8 @@ private fun OnboardingPage(
     ) {
         GlassCard(
             modifier = Modifier.size(160.dp),
-            cornerRadius = 40f,
-            backgroundAlpha = 0.15f
+            cornerRadius = 40.dp,
+            backgroundAlpha = 0.15f,
         ) {
             Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                 Icon(
@@ -250,7 +252,7 @@ private fun OnboardingPage(
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             color = Color.White.copy(alpha = 0.7f),
-            modifier = Modifier.padding(horizontal = LongboiSpacing.XL)
+            modifier = Modifier.padding(horizontal = LongboiSpacing.XL),
         )
     }
 }

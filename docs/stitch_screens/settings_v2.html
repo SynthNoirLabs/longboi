@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Longboi Launcher Settings v2</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#080a0f",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
+        }
+        .bg-gradient-main {
+            background: radial-gradient(circle at 0% 0%, #1a1f35 0%, #080a0f 100%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="relative flex min-h-screen w-full flex-col bg-gradient-main overflow-x-hidden pb-24">
+<!-- Header Section -->
+<header class="sticky top-0 z-50 px-6 pt-12 pb-6 flex items-center justify-between backdrop-blur-md">
+<button class="flex items-center justify-center size-10 rounded-full glass hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-slate-100 font-extralight">arrow_back_ios_new</span>
+</button>
+<h1 class="text-slate-100 text-sm font-light tracking-[0.2em] uppercase">Longboi v2</h1>
+<div class="size-10"></div> <!-- Spacer for centering -->
+</header>
+<div class="px-6 space-y-8">
+<!-- Title -->
+<div class="space-y-1">
+<h2 class="text-slate-100 text-4xl font-extralight tracking-tight">Launcher</h2>
+<p class="text-slate-400 text-sm font-light uppercase tracking-widest">Configuration &amp; Style</p>
+</div>
+<!-- Appearance Card (Large Preview) -->
+<section class="glass rounded-xl p-6 space-y-6">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-slate-100 text-lg font-medium">Appearance</h3>
+<p class="text-slate-400 text-sm font-light">Frosted glass &amp; active gradients</p>
+</div>
+<span class="material-symbols-outlined text-primary">palette</span>
+</div>
+<div class="relative h-40 w-full rounded-lg overflow-hidden bg-primary/10 flex items-center justify-center">
+<div class="absolute inset-0 bg-gradient-to-br from-primary/30 to-transparent"></div>
+<div class="glass size-24 rounded-2xl flex items-center justify-center relative z-10 shadow-2xl">
+<div class="size-12 rounded-full bg-primary/80 blur-xl absolute"></div>
+<span class="material-symbols-outlined text-3xl text-white">blur_on</span>
+</div>
+<img class="absolute inset-0 object-cover opacity-40 mix-blend-overlay" data-alt="Abstract blue and purple gradient background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCN0TE7L1cFToWepOTb2W8dMIMRRMaz4e7z5tQcxBOascjUtXijHvBGGDIvqYtr5wWUI1SZd7cyXdk9h4I4BJPi7HJUwGuRPgnq4qrOJNDPlg5pfaEOAuxY6VFMAYopqmLNK7lS5X2MpACJwmxpxsHyEQrgIs4Z63JNGXZRUFCJamGqN9pKRMVTFxd0AdxG_JKb7B2FisDIaBXikUA0fg_aBvkry77jUOWG2DGmR3_3Adz9UGgTFS82qttVZA02VZ9mQUabpNwv5lk"/>
+</div>
+<div class="space-y-4 pt-2">
+<div class="space-y-2">
+<div class="flex justify-between text-xs font-light tracking-wider text-slate-400 uppercase">
+<span>Glass Blur</span>
+<span>75%</span>
+</div>
+<div class="h-1 w-full bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-3/4 rounded-full"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Categorized Settings -->
+<div class="grid grid-cols-2 gap-4">
+<!-- Layout Card -->
+<div class="glass rounded-xl p-5 space-y-4">
+<div class="size-10 rounded-lg bg-primary/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">grid_view</span>
+</div>
+<div>
+<h4 class="text-slate-100 font-medium">Layout</h4>
+<p class="text-slate-500 text-xs font-light">6x4 Grid</p>
+</div>
+</div>
+<!-- Gestures Card -->
+<div class="glass rounded-xl p-5 space-y-4">
+<div class="size-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-emerald-500">gesture</span>
+</div>
+<div>
+<h4 class="text-slate-100 font-medium">Gestures</h4>
+<p class="text-slate-500 text-xs font-light">Custom actions</p>
+</div>
+</div>
+</div>
+<!-- Detailed Settings List -->
+<section class="glass rounded-xl divide-y divide-white/5">
+<div class="p-4 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-slate-400 font-light">notifications</span>
+<span class="text-slate-200 font-light">Badge Notifications</span>
+</div>
+<div class="w-10 h-5 bg-primary/30 rounded-full relative">
+<div class="absolute right-0.5 top-0.5 size-4 bg-primary rounded-full"></div>
+</div>
+</div>
+<div class="p-4 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-slate-400 font-light">dock</span>
+<span class="text-slate-200 font-light">Persistent Dock</span>
+</div>
+<div class="w-10 h-5 bg-white/10 rounded-full relative">
+<div class="absolute left-0.5 top-0.5 size-4 bg-slate-500 rounded-full"></div>
+</div>
+</div>
+<div class="p-4 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-slate-400 font-light">dark_mode</span>
+<span class="text-slate-200 font-light">Adaptive Theme</span>
+</div>
+<span class="material-symbols-outlined text-slate-500 text-sm">chevron_right</span>
+</div>
+</section>
+<!-- Bottom Action -->
+<div class="pt-4">
+<button class="w-full h-14 bg-primary text-white font-medium rounded-xl shadow-lg shadow-primary/20 flex items-center justify-center gap-2">
+<span>Apply Changes</span>
+<span class="material-symbols-outlined text-sm">check_circle</span>
+</button>
+</div>
+</div>
+<!-- Bottom Navigation Bar -->
+<div class="fixed bottom-0 left-0 right-0 z-[60] px-4 pb-6 pt-2">
+<div class="glass rounded-full px-6 py-3 flex items-center justify-between">
+<a class="text-primary flex flex-col items-center" href="#">
+<span class="material-symbols-outlined fill-1">home</span>
+</a>
+<a class="text-slate-400 flex flex-col items-center" href="#">
+<span class="material-symbols-outlined">search</span>
+</a>
+<div class="size-12 -mt-10 rounded-full bg-primary flex items-center justify-center shadow-xl shadow-primary/40 border-4 border-background-dark">
+<span class="material-symbols-outlined text-white">add</span>
+</div>
+<a class="text-slate-100 flex flex-col items-center" href="#">
+<span class="material-symbols-outlined fill-1">settings</span>
+</a>
+<a class="text-slate-400 flex flex-col items-center" href="#">
+<span class="material-symbols-outlined">person</span>
+</a>
+</div>
+</div>
+</div>
+</body></html>

@@ -1,6 +1,5 @@
 package com.longboilauncher.app.feature.searchui
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -43,9 +42,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.longboilauncher.app.core.designsystem.components.AppListItem
-import com.longboilauncher.app.core.designsystem.theme.LongboiSpacing
 import com.longboilauncher.app.core.model.AppEntry
 
 @Composable
@@ -88,7 +85,7 @@ fun SearchScreen(
                     Text(
                         text = "Search apps, settings...",
                         style = MaterialTheme.typography.bodyLarge,
-                        color = Color.White.copy(alpha = 0.5f)
+                        color = Color.White.copy(alpha = 0.5f),
                     )
                 },
                 leadingIcon = {
@@ -111,48 +108,57 @@ fun SearchScreen(
                 },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                keyboardActions = KeyboardActions(
-                    onSearch = {
-                        keyboardController?.hide()
-                        if (uiState.searchResults.isNotEmpty()) {
-                            when (val first = uiState.searchResults.first()) {
-                                is SearchResult.AppResult -> onAppSelected(first.app)
-                                is SearchResult.ShortcutResult -> onEvent(SearchEvent.LaunchShortcut(first.app, first.shortcutId))
-                                is SearchResult.CalculatorResult -> { /* No action */ }
-                                is SearchResult.SettingsShortcutResult -> onEvent(SearchEvent.OpenSettings(first.destination))
+                keyboardActions =
+                    KeyboardActions(
+                        onSearch = {
+                            keyboardController?.hide()
+                            if (uiState.searchResults.isNotEmpty()) {
+                                when (val first = uiState.searchResults.first()) {
+                                    is SearchResult.AppResult -> onAppSelected(first.app)
+                                    is SearchResult.ShortcutResult ->
+                                        onEvent(
+                                            SearchEvent.LaunchShortcut(first.app, first.shortcutId),
+                                        )
+                                    is SearchResult.CalculatorResult -> { /* No action */ }
+                                    is SearchResult.SettingsShortcutResult ->
+                                        onEvent(
+                                            SearchEvent.OpenSettings(first.destination),
+                                        )
+                                }
                             }
-                        }
-                    }
-                ),
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                    disabledContainerColor = Color.Transparent,
-                    focusedIndicatorColor = Color.White.copy(alpha = 0.2f),
-                    unfocusedIndicatorColor = Color.White.copy(alpha = 0.1f),
-                    cursorColor = Color.White,
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                ),
+                        },
+                    ),
+                colors =
+                    TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        disabledContainerColor = Color.Transparent,
+                        focusedIndicatorColor = Color.White.copy(alpha = 0.2f),
+                        unfocusedIndicatorColor = Color.White.copy(alpha = 0.1f),
+                        cursorColor = Color.White,
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White,
+                    ),
             )
 
             // Dynamic Results
             if (uiState.searchQuery.isNotEmpty()) {
-                val groupedResults = remember(uiState.searchResults) {
-                    uiState.searchResults.groupBy {
-                        when(it) {
-                            is SearchResult.AppResult -> "APPS"
-                            is SearchResult.ShortcutResult -> "SHORTCUTS"
-                            is SearchResult.CalculatorResult -> "CALCULATOR"
-                            is SearchResult.SettingsShortcutResult -> "SETTINGS"
+                val groupedResults =
+                    remember(uiState.searchResults) {
+                        uiState.searchResults.groupBy {
+                            when (it) {
+                                is SearchResult.AppResult -> "APPS"
+                                is SearchResult.ShortcutResult -> "SHORTCUTS"
+                                is SearchResult.CalculatorResult -> "CALCULATOR"
+                                is SearchResult.SettingsShortcutResult -> "SETTINGS"
+                            }
                         }
                     }
-                }
 
                 if (uiState.searchResults.isEmpty()) {
                     Box(
                         modifier = Modifier.fillMaxWidth().padding(top = 64.dp),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.Center,
                     ) {
                         Text("No results found", color = Color.White.copy(alpha = 0.4f))
                     }
@@ -167,7 +173,7 @@ fun SearchScreen(
                                     text = category,
                                     style = MaterialTheme.typography.labelLarge,
                                     color = Color.White.copy(alpha = 0.3f),
-                                    modifier = Modifier.padding(start = 24.dp, top = 24.dp, bottom = 8.dp)
+                                    modifier = Modifier.padding(start = 24.dp, top = 24.dp, bottom = 8.dp),
                                 )
                             }
                             items(results) { result ->
@@ -175,10 +181,11 @@ fun SearchScreen(
                                     is SearchResult.AppResult -> {
                                         AppListItem(
                                             app = result.app,
-                                            modifier = Modifier.fillMaxWidth().clickable {
-                                                keyboardController?.hide()
-                                                onAppSelected(result.app)
-                                            },
+                                            modifier =
+                                                Modifier.fillMaxWidth().clickable {
+                                                    keyboardController?.hide()
+                                                    onAppSelected(result.app)
+                                                },
                                         )
                                     }
                                     is SearchResult.ShortcutResult -> { /* TODO */ }
@@ -236,7 +243,7 @@ private fun CalculatorResultItem(
                 text = "= $resultValue",
                 style = MaterialTheme.typography.bodyLarge,
                 color = Color.White,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
         }
     }
@@ -249,9 +256,10 @@ private fun SettingsShortcutItem(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier
-            .clickable { onClick() }
-            .padding(horizontal = 24.dp, vertical = 16.dp),
+        modifier =
+            modifier
+                .clickable { onClick() }
+                .padding(horizontal = 24.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(

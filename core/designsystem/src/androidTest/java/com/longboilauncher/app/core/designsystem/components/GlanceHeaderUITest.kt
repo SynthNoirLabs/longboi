@@ -5,6 +5,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.longboilauncher.app.core.designsystem.components.GlanceHeader
 import com.longboilauncher.app.core.designsystem.theme.LongboiLauncherTheme
+import com.longboilauncher.app.core.model.CalendarEvent
 import com.longboilauncher.app.core.model.GlanceHeaderData
 import org.junit.Rule
 import org.junit.Test
@@ -41,7 +42,7 @@ class GlanceHeaderUITest {
             GlanceHeaderData(
                 currentTime = "14:30",
                 currentDate = "Friday, January 17",
-                nextEvent = GlanceHeaderData.CalendarEvent("Meeting with Team", "15:00"),
+                nextEvent = CalendarEvent("Meeting with Team", "15:00", 0),
                 weather = null,
                 nextAlarm = null,
                 nowPlaying = null,
@@ -53,7 +54,7 @@ class GlanceHeaderUITest {
             }
         }
 
-        composeTestRule.onNodeWithText("Meeting with Team").assertIsDisplayed()
-        composeTestRule.onNodeWithText("15:00").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Meeting with Team", substring = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText("15:00", substring = true).assertIsDisplayed()
     }
 }

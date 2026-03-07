@@ -44,6 +44,7 @@ import com.longboilauncher.app.feature.home.HomeEvent
 import com.longboilauncher.app.feature.home.HomeScreen
 import com.longboilauncher.app.feature.home.HomeViewModel
 import com.longboilauncher.app.feature.home.LauncherSurface
+import com.longboilauncher.app.feature.onboarding.OnboardingScreen
 import com.longboilauncher.app.feature.searchui.SearchScreen
 import com.longboilauncher.app.feature.searchui.SearchViewModel
 import com.longboilauncher.app.feature.settingsui.SettingsScreen
@@ -71,38 +72,45 @@ class MainActivity : ComponentActivity() {
             val context = LocalContext.current
             val wallpaperManager = remember { WallpaperManager.getInstance(context) }
             val systemDarkTheme = isSystemInDarkTheme()
-            
+
             // Smart wallpaper luminance detection
             var isWallpaperDark by remember { mutableStateOf(systemDarkTheme) }
 
             DisposableEffect(wallpaperManager) {
                 val handler = Handler(Looper.getMainLooper())
-                val listener = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-                    WallpaperManager.OnColorsChangedListener { colors, _ ->
-                        if (colors != null) {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                                isWallpaperDark = (colors.colorHints and WallpaperColors.HINT_SUPPORTS_DARK_THEME) != 0
-                            } else {
-                                val primary = colors.primaryColor.toArgb()
-                                val luminance = 0.299 * android.graphics.Color.red(primary) + 
-                                               0.587 * android.graphics.Color.green(primary) + 
-                                               0.114 * android.graphics.Color.blue(primary)
-                                isWallpaperDark = luminance < 128
+                val listener =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                        WallpaperManager.OnColorsChangedListener { colors, _ ->
+                            if (colors != null) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                    isWallpaperDark =
+                                        (colors.colorHints and WallpaperColors.HINT_SUPPORTS_DARK_THEME) != 0
+                                } else {
+                                    val primary = colors.primaryColor.toArgb()
+                                    val luminance =
+                                        0.299 * android.graphics.Color.red(primary) +
+                                            0.587 * android.graphics.Color.green(primary) +
+                                            0.114 * android.graphics.Color.blue(primary)
+                                    isWallpaperDark = luminance < 128
+                                }
                             }
                         }
+                    } else {
+                        null
                     }
-                } else null
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1 && listener != null) {
                     val currentColors = wallpaperManager.getWallpaperColors(WallpaperManager.FLAG_SYSTEM)
                     if (currentColors != null) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                            isWallpaperDark = (currentColors.colorHints and WallpaperColors.HINT_SUPPORTS_DARK_THEME) != 0
+                            isWallpaperDark =
+                                (currentColors.colorHints and WallpaperColors.HINT_SUPPORTS_DARK_THEME) != 0
                         } else {
                             val primary = currentColors.primaryColor.toArgb()
-                            val luminance = 0.299 * android.graphics.Color.red(primary) + 
-                                           0.587 * android.graphics.Color.green(primary) + 
-                                           0.114 * android.graphics.Color.blue(primary)
+                            val luminance =
+                                0.299 * android.graphics.Color.red(primary) +
+                                    0.587 * android.graphics.Color.green(primary) +
+                                    0.114 * android.graphics.Color.blue(primary)
                             isWallpaperDark = luminance < 128
                         }
                     }
@@ -144,17 +152,19 @@ class MainActivity : ComponentActivity() {
 
             val homeViewModel: HomeViewModel = hiltViewModel()
             val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
-            
-            val finalDarkTheme = when (uiState.theme) {
-                ThemeType.MATERIAL_YOU -> isWallpaperDark
-                ThemeType.SOPHISTICATED_SLEEK -> true
-                ThemeType.MODERN_MINIMALIST -> false
-                else -> isWallpaperDark
-            }
+
+            val finalDarkTheme =
+                when (uiState.theme) {
+                    ThemeType.MATERIAL_YOU -> isWallpaperDark
+                    ThemeType.SOPHISTICATED_SLEEK -> true
+                    ThemeType.MODERN_MINIMALIST -> false
+                    ThemeType.VIBRANT_PLAYFUL -> false // Always light/high-contrast
+                    else -> isWallpaperDark
+                }
 
             LongboiLauncherTheme(
                 themeType = uiState.theme,
-                darkTheme = finalDarkTheme
+                darkTheme = finalDarkTheme,
             ) {
                 ThemeBackground(themeType = uiState.theme) {
                     Surface(
@@ -173,26 +183,32 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-import com.longboilauncher.app.feature.onboarding.OnboardingScreen
-
 @Composable
 fun LauncherApp(
     hapticFeedbackManager: HapticFeedbackManager,
     homeViewModel: HomeViewModel,
     roleHelper: LauncherRoleHelper,
+    allAppsViewModel: AllAppsViewModel = hiltViewModel(),
+    searchViewModel: SearchViewModel = hiltViewModel(),
+    settingsViewModel: SettingsViewModel = hiltViewModel(),
+    onboardingViewModel: com.longboilauncher.app.feature.onboarding.OnboardingViewModel = hiltViewModel(),
 ) {
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
 
     LauncherRoleHandler(roleHelper)
 
-    BackHandler(enabled = uiState.currentSurface != LauncherSurface.HOME && uiState.currentSurface != LauncherSurface.ONBOARDING) {
+    BackHandler(
+        enabled =
+            uiState.currentSurface != LauncherSurface.HOME && uiState.currentSurface != LauncherSurface.ONBOARDING,
+    ) {
         homeViewModel.onEvent(HomeEvent.NavigateTo(LauncherSurface.HOME))
     }
 
     if (uiState.currentSurface == LauncherSurface.ONBOARDING) {
         OnboardingScreen(
             onComplete = { homeViewModel.onEvent(HomeEvent.CompleteOnboarding) },
-            onRequestDefaultLauncher = { roleHelper.requestRole() }
+            onRequestDefaultLauncher = { roleHelper.requestDefaultLauncher() },
+            viewModel = onboardingViewModel,
         )
     } else {
         HomeScreen(
@@ -207,7 +223,6 @@ fun LauncherApp(
         enter = fadeIn(),
         exit = fadeOut(),
     ) {
-        val allAppsViewModel: AllAppsViewModel = hiltViewModel()
         val allAppsState by allAppsViewModel.uiState.collectAsStateWithLifecycle()
 
         // Apply target letter from Home scrubber if available
@@ -234,7 +249,6 @@ fun LauncherApp(
         enter = fadeIn(),
         exit = fadeOut(),
     ) {
-        val searchViewModel: SearchViewModel = hiltViewModel()
         val searchState by searchViewModel.uiState.collectAsStateWithLifecycle()
 
         SearchScreen(
@@ -253,7 +267,6 @@ fun LauncherApp(
         enter = fadeIn(),
         exit = fadeOut(),
     ) {
-        val settingsViewModel: SettingsViewModel = hiltViewModel()
         val settingsState by settingsViewModel.uiState.collectAsStateWithLifecycle()
 
         SettingsScreen(

@@ -16,12 +16,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.BlurEffect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlin.math.cos
@@ -122,8 +123,7 @@ fun AmbientLightBackground(
 
 /**
  * A sophisticated glass-like surface with frosted appearance.
- * Features a real blur effect (on supported API levels), a semi-transparent background,
- * and a subtle elegant border.
+ * Modernized for 2026: Uses graphicsLayer for GPU-side blur rendering.
  */
 @Composable
 fun GlassSurface(
@@ -137,13 +137,21 @@ fun GlassSurface(
     content: @Composable () -> Unit = {},
 ) {
     val shape = RoundedCornerShape(cornerRadius)
-    
+
     Box(
         modifier =
             modifier
-                .clip(shape)
-                .blur(blurRadius)
-                .background(
+                .graphicsLayer {
+                    if (blurRadius > 0.dp) {
+                        renderEffect =
+                            BlurEffect(
+                                radiusX = blurRadius.toPx(),
+                                radiusY = blurRadius.toPx(),
+                            )
+                    }
+                    clip = true
+                    this.shape = shape
+                }.background(
                     Brush.verticalGradient(
                         colors =
                             listOf(
@@ -152,17 +160,18 @@ fun GlassSurface(
                                 tintColor.copy(alpha = tintAlpha),
                             ),
                     ),
-                )
-                .border(
+                ).border(
                     width = 0.5.dp,
-                    brush = Brush.verticalGradient(
-                        colors = listOf(
-                            Color.White.copy(alpha = 0.2f),
-                            Color.White.copy(alpha = 0.05f),
-                            Color.Black.copy(alpha = 0.05f),
-                        )
-                    ),
-                    shape = shape
+                    brush =
+                        Brush.verticalGradient(
+                            colors =
+                                listOf(
+                                    Color.White.copy(alpha = 0.2f),
+                                    Color.White.copy(alpha = 0.05f),
+                                    Color.Black.copy(alpha = 0.05f),
+                                ),
+                        ),
+                    shape = shape,
                 ),
     ) {
         content()
@@ -171,7 +180,7 @@ fun GlassSurface(
 
 /**
  * Enhanced Glass Card that provides the background blur without blurring the content.
- * Integrates the best of the premium design and consistent project components.
+ * Modernized for 2026: Uses graphicsLayer for optimized drawing.
  */
 @Composable
 fun GlassCard(
@@ -184,33 +193,44 @@ fun GlassCard(
     content: @Composable () -> Unit,
 ) {
     val shape = RoundedCornerShape(cornerRadius)
-    
+
     Box(modifier = modifier) {
-        // Blur Layer
+        // Blur Layer - Optimized via graphicsLayer
         Box(
-            modifier = Modifier
-                .matchParentSize()
-                .clip(shape)
-                .blur(blurRadius)
-                .background(containerColor.copy(alpha = backgroundAlpha))
+            modifier =
+                Modifier
+                    .matchParentSize()
+                    .graphicsLayer {
+                        if (blurRadius > 0.dp) {
+                            renderEffect =
+                                BlurEffect(
+                                    radiusX = blurRadius.toPx(),
+                                    radiusY = blurRadius.toPx(),
+                                )
+                        }
+                        clip = true
+                        this.shape = shape
+                    }.background(containerColor.copy(alpha = backgroundAlpha)),
         )
-        
+
         // Content Layer with Border
         Box(
-            modifier = Modifier
-                .matchParentSize()
-                .border(
-                    width = 0.5.dp,
-                    brush = Brush.verticalGradient(
-                        colors = listOf(
-                            borderColor,
-                            borderColor.copy(alpha = 0.5f),
-                            Color.Black.copy(alpha = 0.1f),
-                        )
-                    ),
-                    shape = shape
-                )
-                .padding(0.5.dp) // Slight offset for border
+            modifier =
+                Modifier
+                    .matchParentSize()
+                    .border(
+                        width = 0.5.dp,
+                        brush =
+                            Brush.verticalGradient(
+                                colors =
+                                    listOf(
+                                        borderColor,
+                                        borderColor.copy(alpha = 0.5f),
+                                        Color.Black.copy(alpha = 0.1f),
+                                    ),
+                            ),
+                        shape = shape,
+                    ).padding(0.5.dp),
         ) {
             content()
         }
