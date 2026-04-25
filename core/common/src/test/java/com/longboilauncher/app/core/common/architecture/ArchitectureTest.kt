@@ -40,7 +40,6 @@ class ArchitectureTest {
 
     @Test
     fun `Repositories in core should not depend on ViewModels`() {
-        /*
         val rule =
             noClasses()
                 .that()
@@ -50,6 +49,5 @@ class ArchitectureTest {
                 .haveSimpleNameEndingWith("ViewModel")
 
         rule.check(coreClasses)
-        */
     }
 }

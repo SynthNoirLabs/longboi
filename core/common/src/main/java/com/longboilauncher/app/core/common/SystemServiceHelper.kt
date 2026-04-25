@@ -2,6 +2,7 @@ package com.longboilauncher.app.core.common
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -24,7 +25,7 @@ class SystemServiceHelper
                 val method = statusBarManager.getMethod("expandNotificationsPanel")
                 method.invoke(service)
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e(TAG, "expandNotificationsPanel reflection failed", e)
             }
         }
 
@@ -39,7 +40,11 @@ class SystemServiceHelper
                 val method = statusBarManager.getMethod("expandSettingsPanel")
                 method.invoke(service)
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e(TAG, "expandSettingsPanel reflection failed", e)
             }
+        }
+
+        private companion object {
+            const val TAG = "SystemServiceHelper"
         }
     }

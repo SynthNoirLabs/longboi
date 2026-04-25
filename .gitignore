@@ -143,3 +143,8 @@ docs/build/*.tmp
 .hook_output/
 .hook_cache/
 .cursor/rules/do-not-edit-these-rules-from-mcp-gateway/
+
+# Local debug artifacts (screenshots, ui hierarchy dumps, stray lockfiles)
+current_screen.png
+view.xml
+package-lock.json
