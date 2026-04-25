@@ -195,10 +195,18 @@ class AppCatalogRepository
         private fun isPrivateSpace(user: UserHandle): Boolean {
             // Private space arrived in Android 14 (API 34) but a stable public detection
             // API (UserProperties.PROFILE_TYPE_PRIVATE) only exists from API 35.
+            // Use reflection to avoid a compile-time hard dependency on SDK 35 symbols.
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) return false
             return try {
-                val properties = userManager.getUserProperties(user)
-                properties.profileType == android.content.pm.UserProperties.PROFILE_TYPE_PRIVATE
+                val userPropertiesClass = Class.forName("android.content.pm.UserProperties")
+                val getPropertiesMethod =
+                    UserManager::class.java.getMethod("getUserProperties", UserHandle::class.java)
+                val properties = getPropertiesMethod.invoke(userManager, user) ?: return false
+                val profileType =
+                    userPropertiesClass.getMethod("getProfileType").invoke(properties) as? Int
+                        ?: return false
+                val privateType = userPropertiesClass.getField("PROFILE_TYPE_PRIVATE").getInt(null)
+                profileType == privateType
             } catch (e: Exception) {
                 Log.w(TAG, "Could not resolve profile type for $user", e)
                 false

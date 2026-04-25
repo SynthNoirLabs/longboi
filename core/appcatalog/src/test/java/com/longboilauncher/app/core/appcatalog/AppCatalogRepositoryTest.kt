@@ -1,16 +1,13 @@
 package com.longboilauncher.app.core.appcatalog
 
 import android.content.Context
-import android.content.pm.ApplicationInfo
 import android.content.pm.LauncherApps
 import android.os.Process
-import android.os.UserHandle
 import android.os.UserManager
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.longboilauncher.app.core.common.UserHandleManager
 import com.longboilauncher.app.core.model.AppEntry
-import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -110,7 +107,7 @@ class AppCatalogRepositoryTest {
                 className = "MainActivity",
                 label = "Test App",
                 userSerialNumber = 0L,
-                user = Process.myUserHandle()
+                user = Process.myUserHandle(),
             )
 
         repository.launchApp(appEntry)
