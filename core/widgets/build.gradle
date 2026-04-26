@@ -62,6 +62,17 @@ dependencies {
 
     debugImplementation(libs.androidx.ui.tooling)
 
+    // Unit Test dependencies
+    testImplementation(libs.junit)
+    testImplementation(libs.google.truth)
+    testImplementation(libs.mockk)
+    testImplementation(libs.mockk.android)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.androidx.test.core)
+    testImplementation(libs.androidx.junit)
+    testImplementation(libs.turbine)
+
     // Android Test dependencies
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.test.core)

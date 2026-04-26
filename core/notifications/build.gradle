@@ -34,7 +34,9 @@ dependencies {
 
     // Testing
     testImplementation(libs.junit)
+    testImplementation(libs.google.truth)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
 
     // Android Test dependencies
     androidTestImplementation(libs.androidx.junit)
