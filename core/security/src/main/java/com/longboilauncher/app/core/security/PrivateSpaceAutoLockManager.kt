@@ -7,13 +7,13 @@ import android.content.IntentFilter
 import com.longboilauncher.app.PrivateSpaceAutoLockPolicy
 import com.longboilauncher.app.core.settings.PreferencesRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class PrivateSpaceAutoLockManager

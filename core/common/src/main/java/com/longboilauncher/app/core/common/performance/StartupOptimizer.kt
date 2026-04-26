@@ -3,11 +3,11 @@ package com.longboilauncher.app.core.common.performance
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * Utilities for optimizing app startup time.

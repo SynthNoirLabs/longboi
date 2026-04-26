@@ -14,8 +14,8 @@ import coil.request.Options
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.settings.PreferencesRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.first
 import javax.inject.Inject
+import kotlinx.coroutines.flow.first
 
 class AppEntryFetcher(
     private val appEntry: AppEntry,

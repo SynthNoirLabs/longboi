@@ -4,12 +4,12 @@ import androidx.datastore.core.DataStore
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.core.datastore_proto.AppUsageStat
 import com.longboilauncher.core.datastore_proto.UserSettings
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
 
 @Singleton
 class AppUsageRepository

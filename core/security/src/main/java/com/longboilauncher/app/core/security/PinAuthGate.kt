@@ -1,8 +1,8 @@
 package com.longboilauncher.app.core.security
 
 import com.longboilauncher.app.core.settings.PreferencesRepository
-import kotlinx.coroutines.flow.first
 import javax.inject.Inject
+import kotlinx.coroutines.flow.first
 
 class PinAuthGate
     @Inject

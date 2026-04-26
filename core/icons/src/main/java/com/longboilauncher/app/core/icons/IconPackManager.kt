@@ -8,9 +8,9 @@ import android.util.Xml
 import androidx.core.content.res.ResourcesCompat
 import com.longboilauncher.app.core.model.AppEntry
 import dagger.hilt.android.qualifiers.ApplicationContext
-import org.xmlpull.v1.XmlPullParser
 import javax.inject.Inject
 import javax.inject.Singleton
+import org.xmlpull.v1.XmlPullParser
 
 @Singleton
 class IconPackManager

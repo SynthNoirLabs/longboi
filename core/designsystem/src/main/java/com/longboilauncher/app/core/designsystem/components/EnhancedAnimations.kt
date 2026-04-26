@@ -23,8 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.graphicsLayer
 import com.longboilauncher.app.core.designsystem.theme.LongboiMotion
-import kotlinx.coroutines.delay
 import kotlin.random.Random
+import kotlinx.coroutines.delay
 
 /**
  * Wrapper for staggered entrance animations. Each item fades in and scales up with a delay based on

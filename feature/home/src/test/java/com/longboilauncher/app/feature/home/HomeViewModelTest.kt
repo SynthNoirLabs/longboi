@@ -7,16 +7,17 @@ import com.longboilauncher.app.core.appcatalog.AppCatalogRepository
 import com.longboilauncher.app.core.common.ClockTicker
 import com.longboilauncher.app.core.common.NowProvider
 import com.longboilauncher.app.core.datastore.FavoritesRepository
-import com.longboilauncher.app.core.settings.PreferencesRepository
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.model.FavoriteEntry
 import com.longboilauncher.app.core.model.ProfileType
 import com.longboilauncher.app.core.model.ThemeType
+import com.longboilauncher.app.core.settings.PreferencesRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.unmockkAll
+import java.time.Instant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -32,7 +33,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import java.time.Instant
 
 /**
  * Tests for [HomeViewModel].
