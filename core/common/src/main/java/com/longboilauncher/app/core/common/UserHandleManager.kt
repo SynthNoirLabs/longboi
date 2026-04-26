@@ -19,29 +19,21 @@ class UserHandleManager
          * Gets a stable serial number for a [UserHandle].
          * This is the recommended way to persist user identification.
          */
-        fun getSerialNumberForUser(user: UserHandle): Long {
-            return userManager.getSerialNumberForUser(user)
-        }
+        fun getSerialNumberForUser(user: UserHandle): Long = userManager.getSerialNumberForUser(user)
 
         /**
          * Resolves a serial number back to a [UserHandle].
          * Returns null if the user no longer exists.
          */
-        fun getUserForSerialNumber(serialNumber: Long): UserHandle? {
-            return userManager.getUserForSerialNumber(serialNumber)
-        }
+        fun getUserForSerialNumber(serialNumber: Long): UserHandle? = userManager.getUserForSerialNumber(serialNumber)
 
         /**
          * Returns the [UserHandle] for the current process.
          */
-        fun myUserHandle(): UserHandle {
-            return android.os.Process.myUserHandle()
-        }
+        fun myUserHandle(): UserHandle = android.os.Process.myUserHandle()
 
         /**
          * Returns the serial number for the current process user.
          */
-        fun myUserSerialNumber(): Long {
-            return getSerialNumberForUser(myUserHandle())
-        }
+        fun myUserSerialNumber(): Long = getSerialNumberForUser(myUserHandle())
     }
