@@ -23,10 +23,10 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.metrics.performance.JankStats
+import com.longboilauncher.app.core.common.HapticFeedbackManager
 import com.longboilauncher.app.core.common.LauncherRoleHandler
 import com.longboilauncher.app.core.common.LauncherRoleHelper
 import com.longboilauncher.app.core.designsystem.theme.LongboiLauncherTheme
-import com.longboilauncher.app.core.common.HapticFeedbackManager
 import com.longboilauncher.app.core.settings.PreferencesRepository
 import com.longboilauncher.app.feature.allapps.AllAppsScreen
 import com.longboilauncher.app.feature.allapps.AllAppsViewModel

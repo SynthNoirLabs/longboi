@@ -1,16 +1,10 @@
 package com.longboilauncher.app.accessibility
 
-import androidx.compose.ui.semantics.SemanticsProperties
-import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasClickAction
-import androidx.compose.ui.test.hasContentDescription
-import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.unit.dp
 import com.longboilauncher.app.core.designsystem.theme.LongboiLauncherTheme
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.model.FavoriteEntry
@@ -167,7 +161,7 @@ class HomeScreenAccessibilityTest {
             val width = bounds.right - bounds.left
             // Material Design minimum touch target: 48dp
             assert(height >= 48f || width >= 48f) {
-                "Clickable node at index $i has bounds ${width}x${height}, " +
+                "Clickable node at index $i has bounds ${width}x$height, " +
                     "which may be too small for touch targets"
             }
         }

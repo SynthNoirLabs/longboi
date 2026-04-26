@@ -40,6 +40,9 @@ class ArchitectureTest {
 
     @Test
     fun `Repositories in core should not depend on ViewModels`() {
+        // Allow zero matches: the full check belongs in :app where every Repository
+        // class is on the classpath. Here we only see core:common's classes, which
+        // contain no Repository today, but the rule still guards against future ones.
         val rule =
             noClasses()
                 .that()
@@ -47,6 +50,7 @@ class ArchitectureTest {
                 .should()
                 .dependOnClassesThat()
                 .haveSimpleNameEndingWith("ViewModel")
+                .allowEmptyShould(true)
 
         rule.check(coreClasses)
     }
