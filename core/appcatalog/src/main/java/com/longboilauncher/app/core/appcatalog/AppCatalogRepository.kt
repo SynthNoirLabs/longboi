@@ -7,6 +7,7 @@ import android.content.pm.LauncherApps
 import android.content.pm.ShortcutInfo
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build
 import android.os.UserHandle
 import android.os.UserManager
 import android.util.Log
@@ -123,7 +124,7 @@ class AppCatalogRepository
 
                     _apps.value = allApps.sortedBy { it.label.lowercase() }
                 } catch (e: Exception) {
-                    Log.e("AppCatalogRepository", "Failed to refresh app catalog", e)
+                    Log.e(TAG, "Failed to refresh app catalog", e)
                 } finally {
                     _isLoading.value = false
                 }
@@ -187,11 +188,30 @@ class AppCatalogRepository
             } catch (e: SecurityException) {
                 emptyList()
             } catch (e: Exception) {
-                Log.e("AppCatalogRepository", "Error getting apps for user $user", e)
+                Log.e(TAG, "Error getting apps for user $user", e)
                 emptyList()
             }
 
-        private fun isPrivateSpace(user: UserHandle): Boolean = false
+        private fun isPrivateSpace(user: UserHandle): Boolean {
+            // Private space arrived in Android 14 (API 34) but a stable public detection
+            // API (UserProperties.PROFILE_TYPE_PRIVATE) only exists from API 35.
+            // Use reflection to avoid a compile-time hard dependency on SDK 35 symbols.
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) return false
+            return try {
+                val userPropertiesClass = Class.forName("android.content.pm.UserProperties")
+                val getPropertiesMethod =
+                    UserManager::class.java.getMethod("getUserProperties", UserHandle::class.java)
+                val properties = getPropertiesMethod.invoke(userManager, user) ?: return false
+                val profileType =
+                    userPropertiesClass.getMethod("getProfileType").invoke(properties) as? Int
+                        ?: return false
+                val privateType = userPropertiesClass.getField("PROFILE_TYPE_PRIVATE").getInt(null)
+                profileType == privateType
+            } catch (e: Exception) {
+                Log.w(TAG, "Could not resolve profile type for $user", e)
+                false
+            }
+        }
 
         fun getAppIcon(appEntry: AppEntry): Drawable? {
             val user = appEntry.user ?: return null
@@ -223,7 +243,7 @@ class AppCatalogRepository
                 val component = ComponentName(appEntry.packageName, appEntry.className)
                 launcherApps.startMainActivity(component, user, null, null)
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e(TAG, "Failed to launch ${appEntry.packageName}", e)
             }
         }
 
@@ -236,7 +256,7 @@ class AppCatalogRepository
                 val component = ComponentName(packageName, className)
                 launcherApps.startMainActivity(component, user, null, null)
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e(TAG, "Failed to launch $packageName/$className", e)
             }
         }
 
@@ -248,7 +268,7 @@ class AppCatalogRepository
             try {
                 launcherApps.startShortcut(appEntry.packageName, shortcutId, null, null, user)
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e(TAG, "Failed to launch shortcut $shortcutId for ${appEntry.packageName}", e)
             }
         }
 
@@ -258,7 +278,7 @@ class AppCatalogRepository
                 val component = ComponentName(appEntry.packageName, appEntry.className)
                 launcherApps.startAppDetailsActivity(component, user, null, null)
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e(TAG, "Failed to open app info for ${appEntry.packageName}", e)
             }
         }
 
@@ -280,7 +300,7 @@ class AppCatalogRepository
                     }
                 context.startActivity(intent)
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e(TAG, "Failed to open settings destination=$destination", e)
             }
         }
 
@@ -293,7 +313,7 @@ class AppCatalogRepository
                     }
                 context.startActivity(intent)
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e(TAG, "Failed to start uninstall for ${appEntry.packageName}", e)
             }
         }
 
@@ -321,5 +341,9 @@ class AppCatalogRepository
 
         fun unregisterPackageListener(callback: LauncherApps.Callback) {
             launcherApps.unregisterCallback(callback)
+        }
+
+        private companion object {
+            const val TAG = "AppCatalogRepository"
         }
     }

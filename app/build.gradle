@@ -104,7 +104,6 @@ dependencies {
     implementation(project(":feature:searchui"))
     implementation(project(":feature:settingsui"))
     implementation(project(":feature:privatespace"))
-    // implementation(project(":feature:backup"))  // Disabled - has compilation errors
 
     // Room
     implementation(libs.room.runtime)

@@ -12,25 +12,27 @@ import javax.inject.Singleton
  * - State managed externally (e.g. by ViewModels)
  */
 @Singleton
-class HapticFeedbackManager @Inject constructor() : HapticFeedbackInterface {
-    @Volatile
-    var isEnabled: Boolean = true
+class HapticFeedbackManager
+    @Inject
+    constructor() : HapticFeedbackInterface {
+        @Volatile
+        var isEnabled: Boolean = true
 
-    override fun tick(view: View) {
-        if (isEnabled) {
-            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+        override fun tick(view: View) {
+            if (isEnabled) {
+                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+            }
+        }
+
+        override fun confirm(view: View) {
+            if (isEnabled) {
+                view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+            }
+        }
+
+        override fun heavy(view: View) {
+            if (isEnabled) {
+                view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+            }
         }
     }
-
-    override fun confirm(view: View) {
-        if (isEnabled) {
-            view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
-        }
-    }
-
-    override fun heavy(view: View) {
-        if (isEnabled) {
-            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-        }
-    }
-}

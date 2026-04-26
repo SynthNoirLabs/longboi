@@ -7,11 +7,11 @@ import com.longboilauncher.app.core.appcatalog.AppCatalogRepository
 import com.longboilauncher.app.core.common.ClockTicker
 import com.longboilauncher.app.core.common.NowProvider
 import com.longboilauncher.app.core.datastore.FavoritesRepository
-import com.longboilauncher.app.core.settings.PreferencesRepository
 import com.longboilauncher.app.core.model.AppEntry
 import com.longboilauncher.app.core.model.FavoriteEntry
 import com.longboilauncher.app.core.model.ProfileType
 import com.longboilauncher.app.core.model.ThemeType
+import com.longboilauncher.app.core.settings.PreferencesRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
