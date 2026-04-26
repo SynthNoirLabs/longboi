@@ -13,8 +13,6 @@ import com.longboilauncher.app.core.model.GlanceHeaderData
 import com.longboilauncher.app.core.model.ThemeType
 import com.longboilauncher.app.core.settings.PreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.format.DateTimeFormatter
-import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,6 +21,8 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 
 enum class LauncherSurface {
     HOME,

@@ -6,10 +6,10 @@ import com.longboilauncher.app.core.common.testing.assertError
 import com.longboilauncher.app.core.common.testing.assertErrorType
 import com.longboilauncher.app.core.common.testing.assertLoading
 import com.longboilauncher.app.core.common.testing.assertSuccessWithData
-import java.io.IOException
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import java.io.IOException
 
 class ResultTest {
     @Test

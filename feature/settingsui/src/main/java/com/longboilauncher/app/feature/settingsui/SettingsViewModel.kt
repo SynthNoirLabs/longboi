@@ -5,12 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.longboilauncher.app.core.model.ThemeType
 import com.longboilauncher.app.core.settings.PreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 data class SettingsState(
     val theme: ThemeType = ThemeType.MATERIAL_YOU,
