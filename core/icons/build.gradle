@@ -40,4 +40,14 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.material3)
     implementation("androidx.compose.foundation:foundation")
+
+    // Unit Test dependencies
+    testImplementation(libs.junit)
+    testImplementation(libs.google.truth)
+    testImplementation(libs.mockk)
+    testImplementation(libs.mockk.android)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.androidx.test.core)
+    testImplementation(libs.androidx.junit)
 }
