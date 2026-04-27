@@ -25,6 +25,8 @@ benchmark = "1.2.2"
 robolectric = "4.14.1"
 truth = "1.4.4"
 coroutinesTest = "1.9.0"
+coroutines = "1.9.0"
+biometric = "1.1.0"
 turbine = "1.1.0"
 window = "1.2.0"
 material = "1.11.0"
@@ -71,7 +73,7 @@ androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomato
 androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmark" }
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 google-truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
-kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutinesTest" }
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesTest" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
@@ -79,7 +81,7 @@ androidx-window = { group = "androidx.window", name = "window", version.ref = "w
 google-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-test-core = { group = "androidx.test", name = "core", version.ref = "testCore" }
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "testCore" }
-androidx-biometric = { group = "androidx.biometric", name = "biometric", version = "1.1.0" }
+androidx-biometric = { group = "androidx.biometric", name = "biometric", version.ref = "biometric" }
 archunit = { group = "com.tngtech.archunit", name = "archunit", version.ref = "archunit" }
 
 [plugins]
